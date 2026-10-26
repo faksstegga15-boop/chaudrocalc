@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1C44C9">
+<meta name="description" content="Calculs de chaudronnerie et tôlerie hors ligne : développé de pliage, virole et cône, poids de tôle, cintrage, piquage, coude à segments et facteur K.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://chaudrocalc.netlify.app/">
+<meta name="author" content="STEGGA GROUP">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ChaudroCalc">
+<meta property="og:title" content="ChaudroCalc · Calculs de chaudronnerie et tôlerie">
+<meta property="og:description" content="Calculs de chaudronnerie et tôlerie hors ligne : développé de pliage, virole et cône, poids de tôle, cintrage, piquage, coude à segments et facteur K.">
+<meta property="og:url" content="https://chaudrocalc.netlify.app/">
+<meta property="og:image" content="https://chaudrocalc.netlify.app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "ChaudroCalc", "url": "https://chaudrocalc.netlify.app/", "description": "Calculs de chaudronnerie et tôlerie hors ligne : développé de pliage, virole et cône, poids de tôle, cintrage, piquage, coude à segments et facteur K.", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Android, Windows, macOS, Linux, iOS", "inLanguage": ["fr", "en"], "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "XAF"}, "publisher": {"@type": "Organization", "name": "STEGGA GROUP"}, "copyrightHolder": {"@type": "Organization", "name": "STEGGA GROUP"}, "copyrightYear": 2026}</script>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-48.png" sizes="48x48" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>ChaudroCalc · Calculs de chaudronnerie et tôlerie</title>
+<style>
+@font-face{font-family:'Barlow Condensed';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/barlow-condensed-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Barlow Condensed';font-style:normal;font-weight:700;font-display:swap;src:url(fonts/barlow-condensed-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Sans';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/ibm-plex-sans-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Sans';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/ibm-plex-sans-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Sans';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/ibm-plex-sans-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/ibm-plex-mono-latin-500-normal.woff2) format('woff2')}
+/* Layout : héros en deux colonnes (texte | planche animée), puis bandes pleine largeur séparées par des lignes de cote */
+:root{
+  --bg:#EDF0F3; --surface:#FFFFFF; --surface-2:#E3E8EE; --ink:#16202B; --muted:#566475;
+  --line:#C6CFD9; --accent:#1C44C9; --accent-ink:#FFFFFF; --accent-soft:#DCE4FB; --grid:rgba(28,68,201,.07);
+  --f-display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
+  --r:6px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F151C; --surface:#17202A; --surface-2:#1F2A36; --ink:#E5EBF1; --muted:#95A3B2;
+  --line:#2C3947; --accent:#86A2FF; --accent-ink:#0A1024; --accent-soft:#1D2A4F; --grid:rgba(134,162,255,.07); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F151C; --surface:#17202A; --surface-2:#1F2A36; --ink:#E5EBF1; --muted:#95A3B2;
+  --line:#2C3947; --accent:#86A2FF; --accent-ink:#0A1024; --accent-soft:#1D2A4F; --grid:rgba(134,162,255,.07); color-scheme:dark}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--f-body);-webkit-text-size-adjust:100%}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+a{color:var(--accent)}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* Barre du haut */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-block:10px}
+.logo{font:700 24px/1 var(--f-display);text-transform:uppercase;letter-spacing:.02em;color:var(--ink);text-decoration:none}
+.logo .wm span{color:var(--accent)}
+.logo{display:inline-flex;align-items:center;gap:8px}
+.mark{width:1.15em;height:1.15em;flex:none;color:var(--accent);margin-top:-.08em}
+.bar nav{display:flex;gap:18px;margin-left:12px}
+.bar nav a{color:var(--muted);text-decoration:none;font-size:14px}
+.bar nav a:hover{color:var(--ink)}
+.prefs{margin-left:auto;display:flex;gap:8px;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.seg button{appearance:none;border:0;background:var(--surface);color:var(--muted);font:500 13px var(--f-body);padding:5px 9px;min-width:34px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+@media (max-width:760px){.bar nav{display:none}}
+@media (max-width:440px){.bar{flex-wrap:nowrap;gap:8px}.logo{font-size:20px}.prefs{gap:5px}.seg button{padding:5px 6px;min-width:28px;font-size:12.5px}}
+
+/* Boutons */
+.btn{display:inline-flex;align-items:center;gap:8px;appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:600 15px var(--f-body);padding:12px 18px;border-radius:4px;cursor:pointer;text-decoration:none;transition:transform .15s,border-color .15s}
+.btn:hover{border-color:var(--accent);transform:translateY(-1px)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Héros */
+.hero{display:grid;grid-template-columns:minmax(0,1fr);gap:32px;align-items:center;padding-block:48px 40px}
+@media (min-width:900px){.hero{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);padding-block:72px 56px}}
+.eyebrow{font:600 14px var(--f-display);letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 14px}
+.hero h1{font:700 clamp(42px,7vw,76px)/.95 var(--f-display);text-transform:uppercase;letter-spacing:.005em;margin:0 0 20px;text-wrap:balance}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.lead{font-size:18px;color:var(--muted);max-width:56ch;margin:0 0 28px}
+.ctas{display:flex;flex-wrap:wrap;gap:12px}
+.facts{display:flex;flex-wrap:wrap;gap:10px 24px;margin:28px 0 0;padding:0;list-style:none;font:500 14px var(--f-mono);color:var(--muted)}
+.facts li::before{content:"▸ ";color:var(--accent)}
+
+/* Planche animée */
+.plate{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;min-width:0;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px}
+.plate svg{display:block;width:100%;height:auto}
+.plate .cart{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:8px;padding-top:10px;font:500 12.5px var(--f-mono);color:var(--muted)}
+.plate .cart b{color:var(--ink);font-weight:500}
+.plate .tag{position:absolute;top:12px;left:14px;font:600 12px var(--f-display);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+
+/* Ligne de cote séparatrice */
+.cote-sep{position:relative;height:18px;margin-block:8px}
+.cote-sep::before{content:"";position:absolute;left:0;right:0;top:50%;border-top:1.5px solid var(--line)}
+.cote-sep::after{content:"";position:absolute;inset:0;border-left:1.5px solid var(--line);border-right:1.5px solid var(--line)}
+.cote-sep span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--bg);padding:0 10px;font:500 12px var(--f-mono);color:var(--muted);white-space:nowrap}
+
+section.band{padding-block:56px}
+.band h2{font:700 clamp(30px,4.4vw,44px)/1 var(--f-display);text-transform:uppercase;margin:0 0 12px;text-wrap:balance}
+.band .sub{color:var(--muted);max-width:62ch;margin:0 0 32px}
+
+/* Modules */
+.mods{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+@media (min-width:600px){.mods{grid-template-columns:repeat(2,minmax(0,1fr))}.mod.wide{grid-column:span 2}}
+@media (min-width:1000px){.mods{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.mod{display:grid;grid-template-rows:auto auto 1fr auto;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;color:inherit;text-decoration:none;transition:border-color .2s,transform .2s}
+.mod:hover{border-color:var(--accent);transform:translateY(-3px)}
+.mod svg{width:100%;height:76px;display:block}
+.mod h3{margin:4px 0 0;font:700 21px/1.1 var(--f-display);text-transform:uppercase;letter-spacing:.03em}
+.mod p{margin:0;color:var(--muted);font-size:14.5px}
+.mod .ex{font:500 12.5px var(--f-mono);color:var(--ink);background:var(--surface-2);border-radius:4px;padding:6px 8px;font-variant-numeric:tabular-nums}
+
+/* Vérifications */
+.checks{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:11px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{font:600 13px var(--f-display);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+td.n{font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+td .ok{color:var(--accent);font-weight:600}
+
+/* Installation */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;counter-reset:s}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.step h3{text-transform:none!important;margin:0 0 8px;font:700 20px var(--f-display);text-transform:uppercase;letter-spacing:.03em}
+.step ol{margin:0;padding-left:20px;color:var(--muted);font-size:14.5px}
+.step li{margin:4px 0}
+.note{font-size:13px;color:var(--muted);margin:16px 0 0}
+
+/* Appel final */
+.final{display:grid;gap:18px;justify-items:start;background:var(--accent);color:var(--accent-ink);border-radius:var(--r);padding:36px 28px}
+.final h2{font:700 clamp(30px,4.4vw,46px)/1 var(--f-display);text-transform:uppercase;margin:0;text-wrap:balance}
+.final p{margin:0;max-width:56ch;opacity:.9}
+.final .btn{background:var(--accent-ink);color:var(--accent);border-color:var(--accent-ink)}
+.final .btn.ghost{background:transparent;color:var(--accent-ink)}
+
+footer{color:var(--muted);font-size:13px;padding-block:28px 40px;display:flex;flex-wrap:wrap;gap:8px 18px;border-top:1px solid var(--line);margin-top:56px}
+footer a{color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap bar">
+    <a class="logo" href="#haut"><svg class="mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M28 26 V70 H72 V26" fill="none" stroke="currentColor" stroke-width="10" stroke-linejoin="miter"/><path d="M24 82 H76 M24 77 V87 M76 77 V87" stroke="currentColor" stroke-width="3"/></svg><span class="wm">Chaudro<span>Calc</span></span></a>
+    <nav aria-label="Sections" data-en-aria-label="Sections">
+      <a href="#modules" data-en="Calculators">Calculs</a>
+      <a href="#verifications" data-en="Checks">Vérifications</a>
+      <a href="#installer" data-en="Install">Installer</a>
+    </nav>
+    <div class="prefs">
+      <div class="seg" role="group" aria-label="Langue" data-en-aria-label="Language">
+        <button type="button" data-lang="fr" aria-pressed="true" lang="fr">FR</button>
+        <button type="button" data-lang="en" aria-pressed="false" lang="en">EN</button>
+      </div>
+      <div class="seg" role="group" aria-label="Thème" data-en-aria-label="Theme">
+        <button type="button" data-theme-set="light" aria-pressed="false" aria-label="Thème clair" data-en-aria-label="Light theme">☀︎</button>
+        <button type="button" data-theme-set="auto" aria-pressed="true" aria-label="Thème du système" data-en-aria-label="System theme">Auto</button>
+        <button type="button" data-theme-set="dark" aria-pressed="false" aria-label="Thème sombre" data-en-aria-label="Dark theme">☾</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="haut">
+<div class="wrap">
+  <section class="hero">
+    <div>
+      <p class="eyebrow" data-en="Sheet metal &amp; plate work calculator">Calculateur de chaudronnerie et tôlerie</p>
+      <h1 data-en="The right flat pattern, <em>before the first cut.</em>">Le bon développé, <em>avant la première découpe.</em></h1>
+      <p class="lead" data-en="ChaudroCalc works out bending, shells and cones, plate weight, rolling, branches and segmented elbows. Free, offline, in French and English, with every formula and its source.">ChaudroCalc calcule le pliage, les viroles et les cônes, le poids des tôles, le cintrage, les piquages et les coudes à segments. Gratuit, hors ligne, en français et en anglais, avec chaque formule et sa source.</p>
+      <div class="ctas">
+        <a class="btn primary" href="app.html" data-en="Open the tool →">Ouvrir l'outil →</a>
+        <button class="btn" type="button" id="install-btn" data-en="Install on my phone">Installer sur mon téléphone</button>
+      </div>
+      <ul class="facts">
+        <li data-en="7 calculators">7 calculs</li>
+        <li data-en="Works offline">Fonctionne hors ligne</li>
+        <li data-en="No account">Sans compte</li>
+        <li data-en="Sources cited">Sources citées</li>
+      </ul>
+    </div>
+    <figure class="plate" style="margin:0">
+      <span class="tag" data-en="Bent U · t 3 · Ri 3 · K 0.33">Profil en U · e 3 · Ri 3 · K 0,33</span>
+      <svg id="fold" viewBox="-125 -34 250 92" role="img" aria-label="Une bande de tôle de 188,53 mm se plie en U de 50, 100 et 50 mm" data-en-aria-label="A 188.53 mm sheet strip bends into a 50, 100, 50 mm U"></svg>
+      <figcaption class="cart">
+        <span data-en="Flat length"><b>Développé</b></span>
+        <span data-en="<b>188.53 mm</b> = 200.00 − 2 × 5.73"><b>188,53 mm</b> = 200,00 − 2 × 5,73</span>
+      </figcaption>
+    </figure>
+  </section>
+</div>
+
+<div class="wrap"><div class="cote-sep"><span data-en="7 calculators">7 calculs</span></div></div>
+
+<section class="band" id="modules">
+  <div class="wrap">
+    <h2 data-en="Everything the layout bench needs">Ce qu'il faut au poste de traçage</h2>
+    <p class="sub" data-en="Each tab gives the figures to mark out, a table per line and a sketch. Tap a card to open the calculator directly.">Chaque onglet donne les cotes à reporter, un tableau par génératrice et un croquis. Touche une carte pour ouvrir directement le calcul.</p>
+    <div class="mods">
+      <a class="mod" href="app.html#pliage">
+        <svg viewBox="0 0 200 76" aria-hidden="true"><path d="M40 12 V62 H160 V12" fill="none" stroke="var(--accent)" stroke-width="5" stroke-linejoin="round"/><path d="M40 70 H160" stroke="var(--muted)" stroke-width="1.2"/><path d="M40 66 V74 M160 66 V74" stroke="var(--muted)" stroke-width="1.2"/></svg>
+        <h3 data-en="Bending">Pliage</h3>
+        <p data-en="Flat length from outside dimensions, any number of bends, BA and BD per bend.">Développé à partir des cotes extérieures, autant de plis que nécessaire, BA et BD par pli.</p>
+        <span class="ex" data-en="U 50/100/50, t 3 → 188.53 mm">U 50/100/50, e 3 → 188,53 mm</span>
+      </a>
+      <a class="mod" href="app.html#cone">
+        <svg viewBox="0 0 200 76" aria-hidden="true"><path d="M100 4 L36 66 A92 92 0 0 0 164 66 Z" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2.5"/><path d="M100 4 L68 35 A46 46 0 0 0 132 35 Z" fill="var(--surface)" stroke="var(--accent)" stroke-width="2"/></svg>
+        <h3 data-en="Shell &amp; cone">Virole &amp; cône</h3>
+        <p data-en="Shell length, layout radii and sector angle for truncated or full cones.">Longueur de virole, rayons de traçage et angle du secteur pour un cône tronqué ou complet.</p>
+        <span class="ex" data-en="Ø400/Ø200, H 300 → 113.84°">Ø400/Ø200, H 300 → 113,84°</span>
+      </a>
+      <a class="mod" href="app.html#poids">
+        <svg viewBox="0 0 200 76" aria-hidden="true"><path d="M30 50 L80 26 L170 26 L120 50 Z" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/><path d="M30 50 V58 L120 58 V50 M120 58 L170 34 V26" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/></svg>
+        <h3 data-en="Weight">Poids</h3>
+        <p data-en="Rectangle, disc or ring in steel, stainless, aluminium, copper or brass.">Rectangle, disque ou couronne, en acier, inox, aluminium, cuivre ou laiton.</p>
+        <span class="ex" data-en="1000 × 500 × 5 steel → 19.63 kg">1000 × 500 × 5 acier → 19,63 kg</span>
+      </a>
+      <a class="mod" href="app.html#cintrage">
+        <svg viewBox="0 0 200 76" aria-hidden="true"><path d="M30 66 A100 100 0 0 1 170 66" fill="none" stroke="var(--accent)" stroke-width="5"/><path d="M30 66 H170" stroke="var(--muted)" stroke-width="1.2" stroke-dasharray="4 3"/><path d="M100 66 V28" stroke="var(--muted)" stroke-width="1.2"/></svg>
+        <h3 data-en="Rolling">Cintrage</h3>
+        <p data-en="Arc length on the neutral axis, chord and rise, and radius check on a rolled part.">Longueur sur la fibre neutre, corde et flèche, contrôle du rayon d'une pièce roulée.</p>
+        <span class="ex" data-en="Chord 400, rise 20 → R 1010 mm">Corde 400, flèche 20 → R 1010 mm</span>
+      </a>
+      <a class="mod" href="app.html#piquage">
+        <svg viewBox="0 0 200 76" aria-hidden="true"><path d="M20 20 C50 20 50 56 80 56 C110 56 110 20 140 20 C170 20 170 56 180 56" fill="none" stroke="var(--accent)" stroke-width="3"/><path d="M20 8 H180" stroke="var(--accent)" stroke-width="3"/><path d="M20 8 V20 M180 8 V56" stroke="var(--accent)" stroke-width="3"/></svg>
+        <h3 data-en="Branch">Piquage</h3>
+        <p data-en="Fish-mouth cut line by line and hole outline in the header, square, angled or offset.">Gueule de loup génératrice par génératrice et contour du trou, droit, incliné ou décalé.</p>
+        <span class="ex" data-en="Ø200/Ø100 at 90° → 13.40 mm deep">Ø200/Ø100 à 90° → écart 13,40 mm</span>
+      </a>
+      <a class="mod" href="app.html#coude">
+        <svg viewBox="0 0 200 76" aria-hidden="true"><path d="M70 74 V44 L100 14 H140" fill="none" stroke="var(--accent)" stroke-width="14" stroke-linejoin="miter"/><path d="M62 47 L78 41 M97 6 L103 22" stroke="var(--surface)" stroke-width="2"/></svg>
+        <h3 data-en="Segmented elbow">Coude à segments</h3>
+        <p data-en="Cut angle, inside and outside lengths and the half segment template.">Angle de coupe, longueurs intérieure et extérieure et gabarit du demi-élément.</p>
+        <span class="ex" data-en="Ø219.1, R 600, 3 pieces → 22.50°">Ø219,1, R 600, 3 pièces → 22,50°</span>
+      </a>
+      <a class="mod wide" href="app.html#pliage">
+        <svg viewBox="0 0 200 76" aria-hidden="true"><path d="M50 16 V60 H130" fill="none" stroke="var(--accent)" stroke-width="5" stroke-linejoin="round"/><text x="140" y="44" font-family="IBM Plex Mono,monospace" font-size="20" fill="var(--ink)">K 0,33</text></svg>
+        <h3 data-en="Your K-factor">Ton facteur K</h3>
+        <p data-en="Measure a test bend, get K, and keep a list of your own values per material.">Mesure un pli d'essai, obtiens K, et garde ta liste de valeurs par matière.</p>
+        <span class="ex" data-en="Blank 100, legs 52.86 / 52.87 → K 0.331">Flan 100, cotes 52,86 / 52,87 → K 0,331</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="cote-sep"><span data-en="checked against published examples">vérifié sur des exemples publiés</span></div></div>
+
+<section class="band" id="verifications">
+  <div class="wrap">
+    <h2 data-en="Numbers you can check">Des chiffres que tu peux vérifier</h2>
+    <p class="sub" data-en="Each calculator was tested against a worked example from a published source. The Formulas tab lists every formula with its link.">Chaque calcul a été testé sur un exemple chiffré tiré d'une source publiée. L'onglet Formules donne chaque formule avec son lien.</p>
+    <div class="checks">
+      <table>
+        <thead><tr><th data-en="Case">Cas</th><th data-en="Source">Source</th><th data-en="Source value">Valeur de la source</th><th>ChaudroCalc</th></tr></thead>
+        <tbody>
+          <tr><td data-en="90° bend, t 3, Ri 3, K 0.33">Pli à 90°, e 3, Ri 3, K 0,33</td><td>calculate.co.nz</td><td class="n" data-en="BA 6.27 · BD 5.73">BA 6,27 · BD 5,73</td><td class="n"><span class="ok" data-en="BA 6.27 · BD 5.73">BA 6,27 · BD 5,73</span></td></tr>
+          <tr><td data-en="Truncated cone Ø400/Ø200, H 300">Tronc de cône Ø400/Ø200, H 300</td><td>travail-industrie.com</td><td class="n" data-en="R1 632.46 · 113.84°">R1 632,46 · 113,84°</td><td class="n"><span class="ok" data-en="R1 632.46 · 113.84°">R1 632,46 · 113,84°</span></td></tr>
+          <tr><td data-en="Branch Ø200/Ø100 at 90°">Piquage Ø200/Ø100 à 90°</td><td>travail-industrie.com</td><td class="n" data-en="13.40 · hole 104.72 × 100">13,40 · trou 104,72 × 100</td><td class="n"><span class="ok" data-en="13.40 · hole 104.72 × 100">13,40 · trou 104,72 × 100</span></td></tr>
+          <tr><td data-en="Elbow Ø219.1, R 600, 90°, 3 pieces">Coude Ø219,1, R 600, 90°, 3 pièces</td><td>pipecalculators.com</td><td class="n">203,1 · 248,5 · 293,9</td><td class="n"><span class="ok" data-en="203.15 · 248.53 · 293.91">203,15 · 248,53 · 293,91</span></td></tr>
+          <tr><td data-en="Plate 1000 × 500 × 5 steel">Tôle 1000 × 500 × 5 acier</td><td>travail-industrie.com</td><td class="n" data-en="19.63 kg">19,63 kg</td><td class="n"><span class="ok" data-en="19.63 kg">19,63 kg</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note" data-en="Results are theoretical. Always confirm on scrap before cutting the final part.">Les résultats restent théoriques. Valide toujours sur une chute avant de découper la pièce définitive.</p>
+  </div>
+</section>
+
+<div class="wrap"><div class="cote-sep"><span data-en="3 ways to install">3 façons de l'installer</span></div></div>
+
+<section class="band" id="installer">
+  <div class="wrap">
+    <h2 data-en="Install it like an app">Installe-le comme une appli</h2>
+    <p class="sub" data-en="Once installed, ChaudroCalc opens from its icon and keeps working without a network, in the workshop or on site.">Une fois installé, ChaudroCalc s'ouvre depuis son icône et marche sans réseau, à l'atelier comme sur chantier.</p>
+    <div class="steps">
+      <div class="step"><h3 data-en="Android (Chrome)">Android (Chrome)</h3><ol>
+        <li data-en="Open this page in Chrome.">Ouvre cette page dans Chrome.</li>
+        <li data-en="Tap the three-dot menu.">Touche le menu à trois points.</li>
+        <li data-en="Choose “Install app” or “Add to Home screen”.">Choisis « Installer l'application » ou « Ajouter à l'écran d'accueil ».</li></ol></div>
+      <div class="step"><h3 data-en="iPhone (Safari)">iPhone (Safari)</h3><ol>
+        <li data-en="Open this page in Safari.">Ouvre cette page dans Safari.</li>
+        <li data-en="Tap Share (the square with an arrow).">Touche Partager (le carré avec une flèche).</li>
+        <li data-en="Choose “Add to Home Screen”, then Add.">Choisis « Sur l'écran d'accueil », puis Ajouter.</li></ol></div>
+      <div class="step"><h3 data-en="Computer">Ordinateur</h3><ol>
+        <li data-en="Open this page in Chrome or Edge.">Ouvre cette page dans Chrome ou Edge.</li>
+        <li data-en="Click the install icon at the right of the address bar.">Clique sur l'icône d'installation à droite de la barre d'adresse.</li>
+        <li data-en="Confirm with Install.">Confirme avec Installer.</li></ol></div>
+    </div>
+    <p class="note" data-en="Menu names can vary with the version of your phone or browser.">Les noms des menus peuvent varier selon la version de ton téléphone ou de ton navigateur.</p>
+  </div>
+</section>
+
+<div class="wrap" style="padding-block:24px 0">
+  <div class="final">
+    <h2 data-en="Your next flat pattern is three fields away.">Ton prochain développé est à trois champs d'ici.</h2>
+    <p data-en="No sign-up, nothing to download from a store. ChaudroCalc is in its test phase: try it on your real parts and tell me what to fix.">Pas d'inscription, rien à télécharger sur un store. ChaudroCalc est en phase de test : essaie-le sur tes vraies pièces et dis-moi ce qu'il faut corriger.</p>
+    <div class="ctas"><a class="btn" href="app.html" data-en="Open ChaudroCalc →">Ouvrir ChaudroCalc →</a><a class="btn ghost" href="app.html#avis" data-en="Give feedback">Donner mon avis</a></div>
+  </div>
+</div>
+</main>
+
+<footer class="wrap">
+  <span data-en="© 2026 STEGGA GROUP. All rights reserved.">© 2026 STEGGA GROUP. Tous droits réservés.</span>
+  <a href="app.html#mentions-legales" data-en="Legal notice">Mentions légales</a>
+  <a href="app.html#confidentialite" data-en="Privacy">Confidentialité</a>
+  <a href="app.html#formules" data-en="Formulas and sources">Formules et sources</a>
+  <a href="app.html#avis" data-en="Give feedback">Donner mon avis</a>
+  <span data-en="Version 4 beta (26/10/2026)">Version 4 bêta (26/10/2026)</span>
+</footer>
+
+<script>
+/* Ouvre directement l'outil quand la page est lancée depuis l'icône installée */
+try { if (window.matchMedia && matchMedia('(display-mode: standalone)').matches && !/accueil/.test(location.search)) location.replace('app.html'); } catch(e){}
+
+const store = {
+  get(k){ try { return JSON.parse(localStorage.getItem('cc:' + k)); } catch(e){ return null; } },
+  set(k, v){ try { localStorage.setItem('cc:' + k, JSON.stringify(v)); } catch(e){} }
+};
+
+/* Langue : le français est dans le HTML, l'anglais dans data-en (mêmes réglages que l'outil) */
+let LANG = store.get('lang');
+if (LANG !== 'fr' && LANG !== 'en') LANG = (navigator.language || 'fr').toLowerCase().startsWith('fr') ? 'fr' : 'en';
+const FR = new WeakMap();
+function setLang(l){
+  LANG = l; store.set('lang', l); document.documentElement.lang = l;
+  document.querySelectorAll('[data-en]').forEach(el => {
+    if (!FR.has(el)) FR.set(el, el.innerHTML);
+    el.innerHTML = l === 'en' ? el.dataset.en : FR.get(el);
+  });
+  document.querySelectorAll('[data-en-aria-label]').forEach(el => {
+    if (!el.dataset.frAria) el.dataset.frAria = el.getAttribute('aria-label') || '';
+    el.setAttribute('aria-label', l === 'en' ? el.dataset.enAriaLabel : el.dataset.frAria);
+  });
+  document.querySelectorAll('[data-lang]').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === l ? 'true' : 'false'));
+  drawFold(currentT);
+}
+document.querySelectorAll('[data-lang]').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
+
+/* Thème */
+function setTheme(t){
+  const r = document.documentElement;
+  if (t === 'light' || t === 'dark') r.setAttribute('data-theme', t); else r.removeAttribute('data-theme');
+  store.set('theme', t);
+  document.querySelectorAll('[data-theme-set]').forEach(b => b.setAttribute('aria-pressed', b.dataset.themeSet === t ? 'true' : 'false'));
+}
+document.querySelectorAll('[data-theme-set]').forEach(b => b.addEventListener('click', () => setTheme(b.dataset.themeSet)));
+(() => { const t = store.get('theme'); if (t === 'light' || t === 'dark') setTheme(t); })();
+
+/* Animation du héros : la bande développée se plie en U, avec les mêmes valeurs que l'outil */
+const S1 = 47.13, S2 = 94.27, FLAT = 188.53;
+const svg = document.getElementById('fold');
+let currentT = 1;
+const nf = (x, d) => x.toLocaleString(LANG === 'en' ? 'en-US' : 'fr-FR', {minimumFractionDigits: d, maximumFractionDigits: d});
+function drawFold(t){
+  currentT = t;
+  const th = t * Math.PI / 2, c = Math.cos(th), s = Math.sin(th);
+  const j1 = [-S2 / 2, 30], j2 = [S2 / 2, 30];
+  const p0 = [j1[0] - S1 * c, j1[1] - S1 * s], p3 = [j2[0] + S1 * c, j2[1] - S1 * s];
+  const flatOp = Math.max(0, 1 - t * 2.2), dimOp = Math.max(0, (t - 0.75) * 4);
+  const pts = [p0, j1, j2, p3].map(p => p.map(v => v.toFixed(2)).join(',')).join(' ');
+  const deg = Math.round(t * 90);
+  svg.innerHTML = `
+    <polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+    <g opacity="${flatOp}" stroke="var(--muted)" stroke-width=".8" fill="var(--muted)">
+      <line x1="${-FLAT / 2}" y1="44" x2="${FLAT / 2}" y2="44"/><line x1="${-FLAT / 2}" y1="38" x2="${-FLAT / 2}" y2="50"/><line x1="${FLAT / 2}" y1="38" x2="${FLAT / 2}" y2="50"/>
+      <text x="0" y="40" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="8" stroke="none" fill="var(--ink)">${nf(FLAT, 2)} mm</text>
+    </g>
+    <g opacity="${Math.min(1, dimOp)}" font-family="IBM Plex Mono,monospace" font-size="8" fill="var(--ink)">
+      <text x="${-S2 / 2 - 10}" y="${30 - S1 / 2}" text-anchor="end">50</text>
+      <text x="0" y="46" text-anchor="middle">100</text>
+      <text x="${S2 / 2 + 10}" y="${30 - S1 / 2}">50</text>
+    </g>
+    <text x="${-S2 / 2 + 6}" y="24" font-family="IBM Plex Mono,monospace" font-size="6.5" fill="var(--muted)" opacity="${t > 0.02 && t < 0.98 ? 1 : 0}">${deg}°</text>`;
+}
+const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (reduce) drawFold(1);
+else {
+  const ease = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+  const T = 7000; let t0 = null;
+  const loop = now => {
+    if (t0 === null) t0 = now;
+    const k = ((now - t0) % T) / T;
+    let v;
+    if (k < .14) v = 0; else if (k < .44) v = ease((k - .14) / .3); else if (k < .86) v = 1; else v = 1 - ease((k - .86) / .14);
+    drawFold(v); requestAnimationFrame(loop);
+  };
+  drawFold(1);
+  requestAnimationFrame(loop);
+}
+
+/* Installation : propose la vraie boîte d'installation quand le navigateur la fournit */
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredPrompt = e; });
+document.getElementById('install-btn').addEventListener('click', async () => {
+  if (deferredPrompt){ deferredPrompt.prompt(); try { await deferredPrompt.userChoice; } catch(e){} deferredPrompt = null; }
+  else document.getElementById('installer').scrollIntoView({behavior: reduce ? 'auto' : 'smooth'});
+});
+
+setLang(LANG);
+if (document.querySelector('link[rel="manifest"]') && 'serviceWorker' in navigator){
+  /* Mise à jour automatique : vérifie sw.js sans cache à chaque ouverture, puis recharge une seule fois
+     quand une nouvelle version prend la main (seulement si une ancienne version contrôlait déjà la page) */
+  const hadController = !!navigator.serviceWorker.controller;
+  let reloaded = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => { if (hadController && !reloaded) { reloaded = true; location.reload(); } });
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js', {updateViaCache: 'none'}).then(r => r.update()).catch(() => {});
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') navigator.serviceWorker.getRegistration().then(r => r && r.update()).catch(() => {});
+  });
+}
+</script>
+</body>
+</html>

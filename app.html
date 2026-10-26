@@ -1,0 +1,1341 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1C44C9">
+<meta name="description" content="Calculs de chaudronnerie et tôlerie hors ligne : développé de pliage, virole et cône, poids de tôle, cintrage, piquage, coude à segments et facteur K.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://chaudrocalc.netlify.app/app.html">
+<meta name="author" content="STEGGA GROUP">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ChaudroCalc">
+<meta property="og:title" content="ChaudroCalc · L'outil de calcul">
+<meta property="og:description" content="Calculs de chaudronnerie et tôlerie hors ligne : développé de pliage, virole et cône, poids de tôle, cintrage, piquage, coude à segments et facteur K.">
+<meta property="og:url" content="https://chaudrocalc.netlify.app/app.html">
+<meta property="og:image" content="https://chaudrocalc.netlify.app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-48.png" sizes="48x48" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>ChaudroCalc · L'outil de calcul</title>
+<style>
+@font-face{font-family:'Barlow Condensed';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/barlow-condensed-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Barlow Condensed';font-style:normal;font-weight:700;font-display:swap;src:url(fonts/barlow-condensed-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Sans';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/ibm-plex-sans-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Sans';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/ibm-plex-sans-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Sans';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/ibm-plex-sans-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/ibm-plex-mono-latin-500-normal.woff2) format('woff2')}
+/* Layout : barre d'onglets collante, puis grille saisie | résultat (une colonne sur téléphone) */
+:root{
+  --bg:#EDF0F3; --surface:#FFFFFF; --surface-2:#E3E8EE; --ink:#16202B; --muted:#566475;
+  --line:#C6CFD9; --accent:#1C44C9; --accent-ink:#FFFFFF; --accent-soft:#DCE4FB; --warn:#B4400E;
+  --f-display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
+  --r:6px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F151C; --surface:#17202A; --surface-2:#1F2A36; --ink:#E5EBF1; --muted:#95A3B2;
+  --line:#2C3947; --accent:#86A2FF; --accent-ink:#0A1024; --accent-soft:#1D2A4F; --warn:#FF9466; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F151C; --surface:#17202A; --surface-2:#1F2A36; --ink:#E5EBF1; --muted:#95A3B2;
+  --line:#2C3947; --accent:#86A2FF; --accent-ink:#0A1024; --accent-soft:#1D2A4F; --warn:#FF9466; color-scheme:dark}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--f-body);-webkit-text-size-adjust:100%}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.wrap{max-width:1040px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.brand{display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"logo sub prefs";align-items:center;gap:4px 12px;padding-block:12px 4px}
+.brand h1{grid-area:logo}
+.brand p{grid-area:sub}
+.prefs{grid-area:prefs;display:flex;gap:8px;align-items:center;justify-self:end}
+@media (max-width:620px){
+  .brand{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"logo prefs" "sub sub";row-gap:2px}
+  .brand h1{font-size:22px}
+  .prefs{gap:6px}
+  .prefs .seg button{padding:5px 7px;min-width:30px}
+}
+@media (max-width:440px){
+  .brand{grid-template-areas:"logo logo" "sub prefs";row-gap:8px}
+  .brand p{align-self:center}
+}
+@media (max-width:900px){
+  .tabs-scroll{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 32px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 32px),transparent)}
+  nav.tabs{padding-right:32px}
+}
+.prefs .seg button{padding:5px 9px;font-size:13px;min-width:34px}
+.brand h1{margin:0;font:700 26px/1 var(--f-display);letter-spacing:.02em;text-transform:uppercase}
+.brand h1 .wm span{color:var(--accent)}
+.brand h1{display:flex;align-items:center;gap:8px}
+.mark{width:1.15em;height:1.15em;flex:none;color:var(--accent);margin-top:-.08em}
+.brand p{margin:0;color:var(--muted);font-size:13px}
+.tabs-scroll{overflow-x:auto;scrollbar-width:none}
+.tabs-scroll::-webkit-scrollbar{display:none}
+nav.tabs{display:flex;gap:4px;min-width:max-content}
+nav.tabs button{appearance:none;border:0;background:none;color:var(--muted);font:600 17px/1 var(--f-display);text-transform:uppercase;letter-spacing:.05em;padding:12px 12px 11px;border-bottom:3px solid transparent;cursor:pointer}
+nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+nav.tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+
+main{padding-block:20px 48px}
+.beta{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;background:var(--accent-soft);border:1px solid var(--line);border-radius:var(--r);padding:10px 14px;margin-bottom:18px;font-size:14px}
+.beta b{font:700 15px var(--f-display);text-transform:uppercase;letter-spacing:.06em;color:var(--accent)}
+.beta .btns{margin-left:auto}
+.stars{display:flex;gap:6px;flex-wrap:wrap}
+.stars label{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:4px;padding:7px 10px;cursor:pointer;font-size:14px;background:var(--bg)}
+.stars input{width:auto;accent-color:var(--accent)}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:14px}
+.check input{width:auto;margin-top:3px;accent-color:var(--accent)}
+textarea{width:100%;min-width:0;font:15px/1.5 var(--f-body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:9px 10px;resize:vertical}
+textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.hp{position:absolute!important;left:-9999px!important;width:1px;height:1px;overflow:hidden}
+.ok-msg{color:var(--accent);font-weight:600;margin:0}
+section.panel{display:none}
+section.panel.on{display:block}
+.intro{max-width:62ch;color:var(--muted);margin:0 0 18px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr);gap:20px}
+@media (min-width:820px){.grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}}
+
+fieldset{border:0;margin:0;padding:0;display:grid;gap:14px;min-width:0}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:grid;gap:14px;min-width:0}
+.box h2{margin:0;font:700 19px/1.1 var(--f-display);text-transform:uppercase;letter-spacing:.04em}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px}
+label.f{display:grid;gap:4px;font-size:13px;color:var(--muted);min-width:0}
+label.f b{font-weight:500;color:var(--ink)}
+input,select{width:100%;min-width:0;font:500 16px/1.2 var(--f-mono);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:9px 10px}
+select{font-family:var(--f-body)}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+input[aria-invalid="true"]{border-color:var(--warn)}
+.unit{position:relative}
+.unit input{padding-right:40px}
+.unit i{position:absolute;right:10px;top:50%;transform:translateY(-50%);font:normal 12px var(--f-mono);color:var(--muted);pointer-events:none}
+.hint{font-size:12.5px;color:var(--muted);margin:0}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.seg button{appearance:none;border:0;background:var(--surface);color:var(--muted);font:500 14px var(--f-body);padding:8px 12px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.btn{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:500 14px var(--f-body);padding:8px 12px;border-radius:4px;cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+
+/* Liste des cotes et plis */
+.chain{display:grid;gap:8px}
+.leg,.bend{display:grid;gap:8px;align-items:center;min-width:0}
+.leg{grid-template-columns:72px minmax(0,1fr)}
+.bend{grid-template-columns:72px minmax(0,1fr) auto;padding:8px;border:1px dashed var(--line);border-radius:4px;background:var(--surface-2)}
+.leg span,.bend span{font:600 15px var(--f-display);text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+
+/* Résultat */
+.result{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px 16px;display:grid;gap:16px;min-width:0}
+@media (min-width:820px){.result{position:sticky;top:calc(env(safe-area-inset-top,0px) + 110px)}}
+.cote{display:grid;gap:6px;text-align:center}
+.cote .lbl{font:600 14px var(--f-display);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.cote .val{font:500 clamp(30px,8vw,42px)/1 var(--f-mono);font-variant-numeric:tabular-nums;color:var(--accent);word-break:break-all}
+.cote .val small{font-size:.45em;color:var(--muted);margin-left:4px}
+.cote .dim{position:relative;height:12px;margin:0 6px}
+.cote .dim::before{content:"";position:absolute;left:0;right:0;top:50%;border-top:1.5px solid var(--accent)}
+.cote .dim::after{content:"";position:absolute;left:0;right:0;top:0;bottom:0;border-left:1.5px solid var(--accent);border-right:1.5px solid var(--accent)}
+.cote .arr{position:absolute;top:50%;width:0;height:0;border:5px solid transparent;transform:translateY(-50%)}
+.cote .arr.l{left:1px;border-right:9px solid var(--accent);border-left:0}
+.cote .arr.r{right:1px;border-left:9px solid var(--accent);border-right:0}
+dl.kv{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 16px;font-size:14px}
+dl.kv dt{color:var(--muted)}
+dl.kv dd{margin:0;text-align:right;font:500 14px var(--f-mono);font-variant-numeric:tabular-nums}
+.err{color:var(--warn);font-size:14px;margin:0}
+.sketch{background:var(--surface-2);border-radius:4px;padding:8px}
+.sketch svg{display:block;width:100%;height:auto;max-height:260px}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{font:600 13px var(--f-display);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+td{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.note{font-size:12.5px;color:var(--muted);margin:0;border-top:1px solid var(--line);padding-top:10px}
+
+/* Formules */
+.refs{display:grid;gap:16px;max-width:760px}
+.refs article{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.refs h3{margin:0 0 8px;font:700 19px var(--f-display);text-transform:uppercase;letter-spacing:.04em}
+.refs code{display:block;font:500 14px/1.6 var(--f-mono);background:var(--surface-2);padding:8px 10px;border-radius:4px;margin:6px 0;overflow-x:auto;white-space:pre}
+.refs p,.refs li{font-size:14px;margin:6px 0}
+.refs ul{padding-left:18px;margin:6px 0}
+a{color:var(--accent)}
+footer{color:var(--muted);font-size:12.5px;padding-block:0 32px}
+footer.foot{display:grid;gap:4px}
+footer.foot p{margin:0}
+footer.foot a{color:var(--muted);text-decoration:underline;text-underline-offset:2px}
+footer.foot a:hover{color:var(--accent)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><h1><svg class="mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M28 26 V70 H72 V26" fill="none" stroke="currentColor" stroke-width="10" stroke-linejoin="miter"/><path d="M24 82 H76 M24 77 V87 M76 77 V87" stroke="currentColor" stroke-width="3"/></svg><span class="wm">Chaudro<span>Calc</span></span></h1><p>Calculs de tôlerie</p>
+      <div class="prefs">
+        <div class="seg" role="group" aria-label="Langue">
+          <button type="button" data-lang="fr" aria-pressed="true" lang="fr">FR</button>
+          <button type="button" data-lang="en" aria-pressed="false" lang="en">EN</button>
+        </div>
+        <div class="seg" role="group" aria-label="Thème">
+          <button type="button" data-theme-set="light" aria-pressed="false" aria-label="Thème clair" title="Thème clair">☀︎</button>
+          <button type="button" data-theme-set="auto" aria-pressed="true" aria-label="Thème du système" title="Thème du système">Auto</button>
+          <button type="button" data-theme-set="dark" aria-pressed="false" aria-label="Thème sombre" title="Thème sombre">☾</button>
+        </div>
+      </div>
+    </div>
+    <div class="tabs-scroll"><nav class="tabs" role="tablist" aria-label="Calculs">
+      <button role="tab" id="t-pliage" data-tab="pliage" aria-selected="true">Pliage</button>
+      <button role="tab" id="t-cone" data-tab="cone" aria-selected="false">Virole &amp; cône</button>
+      <button role="tab" id="t-poids" data-tab="poids" aria-selected="false">Poids</button>
+      <button role="tab" id="t-cintrage" data-tab="cintrage" aria-selected="false">Cintrage</button>
+      <button role="tab" id="t-piquage" data-tab="piquage" aria-selected="false">Piquage</button>
+      <button role="tab" id="t-coude" data-tab="coude" aria-selected="false">Coude</button>
+      <button role="tab" id="t-formules" data-tab="formules" aria-selected="false">Formules</button>
+    </nav></div>
+  </div>
+</header>
+
+<main class="wrap">
+<div class="beta" id="beta">
+  <b>Version de test</b>
+  <span>Tu testes ChaudroCalc avant sa sortie. Un calcul faux, un mot pas clair, une idée ? Dis-le-moi.</span>
+  <div class="btns"><a class="btn primary" href="#avis" data-tab="avis">Donner mon avis</a><button class="btn" type="button" id="beta-hide" aria-label="Masquer ce bandeau">✕</button></div>
+</div>
+
+<!-- PLIAGE -->
+<section class="panel on" id="p-pliage" role="tabpanel" aria-labelledby="t-pliage">
+  <p class="intro">Longueur développée d'une pièce pliée à partir des cotes extérieures. Chaque pli retire une déduction calculée avec le facteur K.</p>
+  <div class="grid">
+    <fieldset>
+      <div class="box">
+        <h2>Tôle et outil</h2>
+        <div class="row">
+          <label class="f"><b>Épaisseur e</b><span class="unit"><input id="pl-e" inputmode="decimal" value="3"><i>mm</i></span></label>
+          <label class="f"><b>Rayon intérieur Ri</b><span class="unit"><input id="pl-ri" inputmode="decimal" value="3"><i>mm</i></span></label>
+          <label class="f"><b>Facteur K</b><input id="pl-k" inputmode="decimal" value="0,33"></label>
+        </div>
+        <p class="hint">K est compris entre 0 et 0,5. Il dépend de la matière, du rapport Ri/e et de l'outillage : la valeur par défaut est un exemple à valider par un essai sur chute.</p>
+      </div>
+      <div class="box">
+        <h2>Cotes extérieures</h2>
+        <div class="chain" id="pl-chain"></div>
+        <div class="btns">
+          <button class="btn" id="pl-add" type="button">Ajouter un pli</button>
+          <button class="btn" id="pl-del" type="button">Retirer le dernier pli</button>
+        </div>
+        <p class="hint">Angle de pliage = déviation de la tôle (90° pour un angle droit). Les cotes vont jusqu'à l'intersection des faces extérieures. Le sens ne sert qu'au croquis.</p>
+      </div>
+      <div class="box">
+        <h2>Trouver K par un essai</h2>
+        <p class="hint">Plie une chute de longueur connue avec la même tôle, le même outil et le même angle, puis mesure les deux cotes extérieures. L'épaisseur et le rayon sont ceux de « Tôle et outil ».</p>
+        <div class="row">
+          <label class="f"><b>Flan avant pliage</b><span class="unit"><input id="kt-l0" inputmode="decimal" value="100"><i>mm</i></span></label>
+          <label class="f"><b>Angle plié</b><span class="unit"><input id="kt-a" inputmode="decimal" value="90"><i>°</i></span></label>
+        </div>
+        <div class="row">
+          <label class="f"><b>Cote extérieure a</b><span class="unit"><input id="kt-a1" inputmode="decimal" value="52,86"><i>mm</i></span></label>
+          <label class="f"><b>Cote extérieure b</b><span class="unit"><input id="kt-b1" inputmode="decimal" value="52,87"><i>mm</i></span></label>
+        </div>
+        <div id="kt-out" aria-live="polite"></div>
+        <div class="btns"><button class="btn primary" id="kt-use" type="button">Utiliser ce K</button></div>
+      </div>
+      <div class="box">
+        <h2>Mes facteurs K</h2>
+        <div class="row">
+          <label class="f"><b>Matière / nuance</b><input id="kl-mat" value="" placeholder="ex. S235, presse 1"></label>
+        </div>
+        <div class="btns"><button class="btn" id="kl-save" type="button">Enregistrer le K actuel</button></div>
+        <div id="kl-list"></div>
+        <p class="hint">Liste gardée dans ce navigateur, sur cet appareil seulement. Elle est aussi proposée dans l'onglet Cintrage.</p>
+      </div>
+    </fieldset>
+    <div class="result" id="pl-out" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- VIROLE & CONE -->
+<section class="panel" id="p-cone" role="tabpanel" aria-labelledby="t-cone">
+  <p class="intro">Développé d'une virole ou d'un cône (tronqué ou complet) à axes confondus, calculé sur la fibre moyenne.</p>
+  <div class="grid">
+    <fieldset>
+      <div class="box">
+        <h2>Pièce</h2>
+        <div class="seg" role="group" aria-label="Type de pièce">
+          <button type="button" data-cn="virole" aria-pressed="false">Virole</button>
+          <button type="button" data-cn="cone" aria-pressed="true">Cône</button>
+        </div>
+        <div class="row">
+          <label class="f"><b>Diamètres saisis</b>
+            <select id="cn-dt"><option value="ext" selected>Extérieurs</option><option value="moy">Moyens</option><option value="int">Intérieurs</option></select></label>
+          <label class="f"><b>Épaisseur e</b><span class="unit"><input id="cn-e" inputmode="decimal" value="4"><i>mm</i></span></label>
+        </div>
+        <div class="row">
+          <label class="f"><b id="cn-d1l">Grand Ø D1</b><span class="unit"><input id="cn-d1" inputmode="decimal" value="404"><i>mm</i></span></label>
+          <label class="f" id="cn-d2w"><b>Petit Ø D2</b><span class="unit"><input id="cn-d2" inputmode="decimal" value="204"><i>mm</i></span></label>
+          <label class="f"><b>Hauteur H</b><span class="unit"><input id="cn-h" inputmode="decimal" value="300"><i>mm</i></span></label>
+        </div>
+        <p class="hint" id="cn-hint">D2 = 0 pour un cône complet. Exemple pré-rempli : tronc de cône Ø404 / Ø204 extérieurs, H 300, tôle de 4.</p>
+      </div>
+      <div class="box">
+        <h2>Matière (pour la masse)</h2>
+        <div class="row">
+          <label class="f"><b>Matière</b><select id="cn-mat" class="matsel"></select></label>
+          <label class="f"><b>Masse volumique ρ</b><span class="unit"><input id="cn-rho" inputmode="decimal" value="7850"><i>kg/m³</i></span></label>
+        </div>
+      </div>
+    </fieldset>
+    <div class="result" id="cn-out" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- POIDS -->
+<section class="panel" id="p-poids" role="tabpanel" aria-labelledby="t-poids">
+  <p class="intro">Masse d'une tôle découpée : volume × masse volumique. Les dimensions sont en millimètres.</p>
+  <div class="grid">
+    <fieldset>
+      <div class="box">
+        <h2>Forme</h2>
+        <div class="seg" role="group" aria-label="Forme">
+          <button type="button" data-pw="rect" aria-pressed="true">Rectangle</button>
+          <button type="button" data-pw="disque" aria-pressed="false">Disque</button>
+          <button type="button" data-pw="couronne" aria-pressed="false">Couronne</button>
+        </div>
+        <div class="row" id="pw-dims">
+          <label class="f" data-for="rect"><b>Longueur L</b><span class="unit"><input id="pw-l" inputmode="decimal" value="1000"><i>mm</i></span></label>
+          <label class="f" data-for="rect"><b>Largeur l</b><span class="unit"><input id="pw-w" inputmode="decimal" value="500"><i>mm</i></span></label>
+          <label class="f" data-for="disque couronne" hidden><b>Ø extérieur</b><span class="unit"><input id="pw-de" inputmode="decimal" value="600"><i>mm</i></span></label>
+          <label class="f" data-for="couronne" hidden><b>Ø intérieur</b><span class="unit"><input id="pw-di" inputmode="decimal" value="300"><i>mm</i></span></label>
+        </div>
+        <div class="row">
+          <label class="f"><b>Épaisseur e</b><span class="unit"><input id="pw-e" inputmode="decimal" value="5"><i>mm</i></span></label>
+          <label class="f"><b>Quantité</b><input id="pw-q" inputmode="numeric" value="1"></label>
+        </div>
+      </div>
+      <div class="box">
+        <h2>Matière</h2>
+        <div class="row">
+          <label class="f"><b>Matière</b><select id="pw-mat" class="matsel"></select></label>
+          <label class="f"><b>Masse volumique ρ</b><span class="unit"><input id="pw-rho" inputmode="decimal" value="7850"><i>kg/m³</i></span></label>
+        </div>
+        <p class="hint">Valeurs usuelles des tables (voir Formules). Elles varient selon la nuance : remplace-les par celle de ton fournisseur si tu l'as.</p>
+      </div>
+    </fieldset>
+    <div class="result" id="pw-out" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- CINTRAGE -->
+<section class="panel" id="p-cintrage" role="tabpanel" aria-labelledby="t-cintrage">
+  <p class="intro">Longueur développée d'un arc cintré (tôle, fer plat, tube ou rond) et contrôle du rayon par la corde et la flèche.</p>
+  <div class="grid">
+    <fieldset>
+      <div class="box">
+        <h2>Arc cintré</h2>
+        <div class="seg" role="group" aria-label="Type de pièce">
+          <button type="button" data-ct="tole" aria-pressed="true">Tôle / plat</button>
+          <button type="button" data-ct="tube" aria-pressed="false">Tube / rond</button>
+        </div>
+        <div class="row">
+          <label class="f"><b id="ct-rl">Rayon intérieur Ri</b><span class="unit"><input id="ct-r" inputmode="decimal" value="500"><i>mm</i></span></label>
+          <label class="f"><b>Angle de l'arc</b><span class="unit"><input id="ct-a" inputmode="decimal" value="90"><i>°</i></span></label>
+        </div>
+        <div class="row" id="ct-tole">
+          <label class="f"><b>Épaisseur e</b><span class="unit"><input id="ct-e" inputmode="decimal" value="10"><i>mm</i></span></label>
+          <label class="f"><b>Facteur K</b><input id="ct-k" inputmode="decimal" value="0,5"></label>
+          <label class="f"><b>Mes K</b><select id="ct-kl"><option value="">Choisir…</option></select></label>
+        </div>
+        <p class="hint" id="ct-hint">Pour un grand rayon devant l'épaisseur, la fibre neutre se rapproche du milieu (K proche de 0,5).</p>
+      </div>
+      <div class="box">
+        <h2>Contrôle d'une pièce roulée</h2>
+        <div class="row">
+          <label class="f"><b>Corde mesurée c</b><span class="unit"><input id="ck-c" inputmode="decimal" value="400"><i>mm</i></span></label>
+          <label class="f"><b>Flèche mesurée f</b><span class="unit"><input id="ck-f" inputmode="decimal" value="20"><i>mm</i></span></label>
+        </div>
+        <p class="hint">Pose une règle de longueur c sur la face et mesure l'écart au milieu. Le rayon obtenu est celui de la face mesurée.</p>
+      </div>
+    </fieldset>
+    <div class="result" id="ct-out" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- PIQUAGE -->
+<section class="panel" id="p-piquage" role="tabpanel" aria-labelledby="t-piquage">
+  <p class="intro">Tracé d'un piquage cylindrique sur un collecteur cylindrique : longueur de chaque génératrice du piquage (gueule de loup) et contour du trou dans le collecteur. Axes droits ou inclinés, concourants ou décalés.</p>
+  <div class="grid">
+    <fieldset>
+      <div class="box">
+        <h2>Tubes</h2>
+        <div class="row">
+          <label class="f"><b>Ø ext. collecteur D</b><span class="unit"><input id="pq-D" inputmode="decimal" value="200"><i>mm</i></span></label>
+          <label class="f"><b>Ø ext. piquage d</b><span class="unit"><input id="pq-d" inputmode="decimal" value="100"><i>mm</i></span></label>
+        </div>
+        <div class="row">
+          <label class="f"><b>Base de calcul</b>
+            <select id="pq-base"><option value="ext" selected>Diamètres extérieurs</option><option value="moy">Fibres moyennes</option></select></label>
+        </div>
+        <div class="row" id="pq-ep" hidden>
+          <label class="f"><b>Épaisseur collecteur</b><span class="unit"><input id="pq-eD" inputmode="decimal" value="4"><i>mm</i></span></label>
+          <label class="f"><b>Épaisseur piquage</b><span class="unit"><input id="pq-ed" inputmode="decimal" value="3"><i>mm</i></span></label>
+        </div>
+        <p class="hint">Les sources ne retiennent pas la même base : l'une calcule sur les extérieurs, l'autre sur la fibre moyenne (voir Formules). Choisis celle de ton atelier et valide sur une chute.</p>
+      </div>
+      <div class="box">
+        <h2>Position</h2>
+        <div class="row">
+          <label class="f"><b>Angle entre axes a</b><span class="unit"><input id="pq-a" inputmode="decimal" value="90"><i>°</i></span></label>
+          <label class="f"><b>Décalage des axes</b><span class="unit"><input id="pq-e" inputmode="decimal" value="0"><i>mm</i></span></label>
+        </div>
+        <div class="row">
+          <label class="f"><b>Longueur à l'axe L</b><span class="unit"><input id="pq-L" inputmode="decimal" value="150"><i>mm</i></span></label>
+          <label class="f"><b>Nombre de génératrices</b>
+            <select id="pq-n"><option>8</option><option selected>12</option><option>16</option><option>24</option><option>36</option></select></label>
+        </div>
+        <p class="hint">L : distance mesurée sur l'axe du piquage, entre l'axe du collecteur et la coupe droite d'extrémité. Angle de 30 à 90° (90° pour un piquage droit). Décalage 0 pour des axes concourants.</p>
+      </div>
+    </fieldset>
+    <div class="result" id="pq-out" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- COUDE -->
+<section class="panel" id="p-coude" role="tabpanel" aria-labelledby="t-coude">
+  <p class="intro">Coude à segments (en tranches) : deux demi-éléments aux extrémités et des éléments entiers au milieu. L'outil donne l'angle de coupe, les longueurs de chaque génératrice et le gabarit.</p>
+  <div class="grid">
+    <fieldset>
+      <div class="box">
+        <h2>Tube</h2>
+        <div class="row">
+          <label class="f"><b>Ø extérieur d</b><span class="unit"><input id="cd-d" inputmode="decimal" value="219,1"><i>mm</i></span></label>
+          <label class="f"><b>Base de calcul</b>
+            <select id="cd-base"><option value="ext" selected>Diamètre extérieur</option><option value="moy">Fibre moyenne</option></select></label>
+          <label class="f" id="cd-epw" hidden><b>Épaisseur</b><span class="unit"><input id="cd-ep" inputmode="decimal" value="6"><i>mm</i></span></label>
+        </div>
+      </div>
+      <div class="box">
+        <h2>Coude</h2>
+        <div class="row">
+          <label class="f"><b>Angle du coude</b><span class="unit"><input id="cd-phi" inputmode="decimal" value="90"><i>°</i></span></label>
+          <label class="f"><b>Rayon à l'axe R</b><span class="unit"><input id="cd-R" inputmode="decimal" value="600"><i>mm</i></span></label>
+        </div>
+        <div class="row">
+          <label class="f"><b>Nombre de pièces</b>
+            <select id="cd-N"><option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select></label>
+          <label class="f"><b>Génératrices</b>
+            <select id="cd-n"><option>8</option><option selected>12</option><option>16</option><option>24</option></select></label>
+          <label class="f"><b>Droit aux bouts</b><span class="unit"><input id="cd-ld" inputmode="decimal" value="0"><i>mm</i></span></label>
+        </div>
+        <p class="hint">Nombre de pièces : les deux demi-éléments d'extrémité comptent chacun pour une pièce (3 pièces = 2 demis + 1 entier). « Droit aux bouts » ajoute une longueur droite à chaque demi-élément.</p>
+      </div>
+    </fieldset>
+    <div class="result" id="cd-out" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- FORMULES -->
+<section class="panel" id="p-formules" role="tabpanel" aria-labelledby="t-formules">
+  <p class="intro">Les formules utilisées par chaque onglet, avec leurs sources. Les résultats sont théoriques : valide toujours sur une chute avant de découper la pièce définitive.</p>
+  <div class="refs">
+    <article>
+      <h3>Pliage</h3>
+      <code>BA = (π/180) × A × (Ri + K × e)
+OSSB = (Ri + e) × tan(A/2)
+BD = 2 × OSSB − BA
+Développé = Σ cotes extérieures − Σ BD</code>
+      <p>BA : longueur de la fibre neutre dans le pli. OSSB : retrait extérieur. BD : déduction de pli. A : angle de pliage en degrés.</p>
+      <ul>
+        <li>BA et définition de K : <a href="https://www.calculate.co.nz/bend-allowance-calculator.php" target="_blank" rel="noopener">calculate.co.nz</a>, <a href="https://www.durmapress.com/pt/sheet-metal-bending-bend-allowance-calculation-guide/" target="_blank" rel="noopener">Durmapress</a></li>
+        <li>BD = 2(R + e)·tan(θ/2) − BA : <a href="https://www.firgelliauto.com/blogs/engineering-calculators/k-factor-calculator-sheet-metal" target="_blank" rel="noopener">Firgelli Automations</a></li>
+        <li>K ne dépasse pas 0,5 : <a href="https://machinemfg.com/k-factor-calculator" target="_blank" rel="noopener">MachineMFG</a></li>
+      </ul>
+    </article>
+    <article>
+      <h3>Virole et cône</h3>
+      <code>Virole : L = π × Dm
+Cône : g = √(H² + ((D1 − D2)/2)²)
+R1 = g × D1 / (D1 − D2)    R2 = R1 − g
+Angle du secteur = 180 × D1 / R1   (degrés)
+Corde du secteur = 2 × R1 × sin(angle/2)
+Surface latérale = π × (D1 + D2)/2 × g</code>
+      <p>Dm = Dext − e = Dint + e. Valable pour un cône droit à axes confondus ; un cône excentré se trace par triangulation.</p>
+      <ul>
+        <li>Virole et cône : <a href="https://travail-industrie.com/outils/chaudronnerie/developpe-cone-virole" target="_blank" rel="noopener">travail-industrie.com</a></li>
+        <li>Surface latérale du tronc de cône π(R + r)g : <a href="https://macalculatriceenligne.com/mathematiques/comment-calculer-aire-cone/" target="_blank" rel="noopener">macalculatriceenligne.com</a></li>
+        <li>Corde 2r·sin(θ/2) : <a href="https://calculover.com/fr/math-science/geometry/circle-segment/" target="_blank" rel="noopener">Calculover</a></li>
+      </ul>
+    </article>
+    <article>
+      <h3>Poids</h3>
+      <code>m = e × L × l × ρ   (dimensions en m, ρ en kg/m³)
+Masse au m² = e(mm) × ρ / 1000</code>
+      <ul>
+        <li>Formule de masse d'une tôle : <a href="https://bnseep.eduscol.education.fr/ressources/examens/sujets/14/400/2540600/E2/U21_DTC.pdf" target="_blank" rel="noopener">Eduscol, sujet BAC Pro U21</a> (ce document donne 7810 kg/m³ pour l'acier)</li>
+        <li>Acier 7850, inox 304/316 8000, aluminium 2700 : <a href="https://travail-industrie.com/outils/calculateur-poids-metaux" target="_blank" rel="noopener">travail-industrie.com</a>, <a href="https://miniwebtool.com/fr/calculateur-de-poids-d-acier/" target="_blank" rel="noopener">MiniWebtool</a></li>
+        <li>Cuivre 8940, laiton 70/30 8530 : <a href="https://www.engineeringtoolbox.com/metal-alloys-densities-d_50.html" target="_blank" rel="noopener">The Engineering ToolBox</a></li>
+      </ul>
+    </article>
+    <article>
+      <h3>Cintrage</h3>
+      <code>Tôle / plat : L = (π/180) × A × (Ri + K × e)
+Tube / rond : L = (π/180) × A × Raxe
+Corde = 2R × sin(A/2)     Flèche = R × (1 − cos(A/2))
+Rayon depuis corde et flèche : R = f/2 + c²/(8f)</code>
+      <ul>
+        <li>Longueur de fibre neutre : mêmes sources que le pliage. Fibre neutre proche du milieu pour les grands rayons : <a href="https://excelcalcs.com/calcs/repository/Machines/Miscellaneous/Bend-Allowance" target="_blank" rel="noopener">ExcelCalcs</a></li>
+        <li>Corde, flèche et rayon : <a href="https://calculover.com/fr/math-science/geometry/circle-segment/" target="_blank" rel="noopener">Calculover</a></li>
+      </ul>
+      <p>Le retour élastique n'est pas calculé : il dépend de la machine et de la nuance et se règle à l'essai.</p>
+    </article>
+    <article>
+      <h3>Piquage</h3>
+      <code>Position sur le piquage : t de 0 à 360°
+s(t) = (√(R² − (e + r·cos t)²) − r·sin t·cos a) / sin a
+Génératrice du piquage = L − s(t)
+Abscisse sur le développé = r × t (t en radians)
+Largeur du développé = 2π × r
+Trou, arc sur le collecteur = R × asin((e + r·cos t) / R)
+Trou, cote le long du collecteur = s·cos a − r·sin t·sin a</code>
+      <p>R, r : rayons du collecteur et du piquage. a : angle entre les axes. e : décalage des axes. s(t) : distance, sur l'axe du piquage, entre l'axe du collecteur et le point d'intersection. t = 0 et 180° : génératrices de flanc ; t = 90 et 270° : génératrices dans le plan des deux axes.</p>
+      <ul>
+        <li>Formule de s(t), 12 génératrices, exemple Ø200 / Ø100 (écart 13,40 mm, trou 104,72 × 100 mm) : <a href="https://travail-industrie.com/outils/chaudronnerie/tracage-piquage" target="_blank" rel="noopener">travail-industrie.com, traçage de piquage</a> (calcul sur diamètres extérieurs)</li>
+        <li>Développement sur la fibre neutre (diamètre moyen) : <a href="https://travail-industrie.com/nos-formations/formation-chaudronnier-metier-tracage-formage/module/2/chapitre/2" target="_blank" rel="noopener">travail-industrie.com, formation chaudronnier, module 2</a></li>
+      </ul>
+      <p>Les coordonnées du trou découlent de la même géométrie : je les ai dérivées et vérifiées sur l'exemple de la source, mais je n'ai pas trouvé de source qui les écrive telles quelles. Le chanfrein et le jeu de soudure ne sont pas pris en compte.</p>
+    </article>
+    <article>
+      <h3>Coude à segments</h3>
+      <code>N pièces = 2 demi-éléments + (N − 2) éléments entiers
+Soudures = N − 1
+Angle de coupe θ = Φ / (2 × (N − 1))
+Déviation à chaque soudure = 2θ
+Demi-élément : y(φ) = tan θ × (R − r·cos φ)   (φ = 0 côté intérieur)
+Élément entier : 2 × y(φ)
+Largeur du gabarit = π × d</code>
+      <p>Φ : angle du coude. R : rayon de cintrage à l'axe. r, d : rayon et diamètre du tube. Côté intérieur (intrados) : tan θ × (R − r). Côté extérieur (extrados) : tan θ × (R + r).</p>
+      <ul>
+        <li>θ = Φ / (2(N − 1)), longueurs intérieure et extérieure, exemple Ø100, R 100, 3 pièces à 90° (demi : 20,7 / 62,1 mm ; entier : 41,4 / 124,3 mm) : <a href="https://www.weldfabworld.com/miter-bend-calculator/" target="_blank" rel="noopener">Welding Fabrication World</a></li>
+        <li>Ordonnées Y = tan α × (Rm − r·cos(jω)) sur diamètre extérieur, exemple DN200 (Ø219,1, R 600, 90°) : <a href="https://pipecalculators.com/mitered-elbow-layout.html" target="_blank" rel="noopener">pipecalculators.com</a></li>
+        <li>Largeur du développé πD prise sur la fibre neutre, tracé à partir d'un demi-élément : <a href="https://www.maxicours.com/se/cours/developpement-des-coudes/" target="_blank" rel="noopener">Maxicours, développement des coudes</a></li>
+      </ul>
+      <p>Les tableaux de Welding Fabrication World ne correspondent pas à ses propres formules : l'outil applique les formules, qui retombent sur l'exemple de pipecalculators.com.</p>
+    </article>
+    <article>
+      <h3>K mesuré par un essai</h3>
+      <code>BD = a + b − L0
+BA = 2 × (Ri + e) × tan(A/2) − BD
+K = (BA / (A en radians) − Ri) / e</code>
+      <p>L0 : longueur du flan avant pliage. a, b : cotes extérieures mesurées après pliage. C'est la formule du pliage retournée : mêmes sources que l'onglet Pliage. Plus la mesure est précise, plus le K l'est : mesure au pied à coulisse et fais plusieurs essais.</p>
+    </article>
+  </div>
+</section>
+
+<!-- AVIS -->
+<section class="panel" id="p-avis" aria-labelledby="h-avis">
+  <p class="intro">Ton retour sert à corriger les erreurs et à choisir les prochains calculs. Il est envoyé à STEGGA GROUP, l'éditeur de l'outil.</p>
+  <div class="grid">
+    <form class="box" id="avis-form" name="avis" method="POST" data-netlify="true" netlify-honeypot="site-web" novalidate>
+      <h2 id="h-avis">Donner mon avis</h2>
+      <input type="hidden" name="form-name" value="avis">
+      <p class="hp"><label>Ne pas remplir <input name="site-web" tabindex="-1" autocomplete="off"></label></p>
+      <fieldset>
+        <div class="f"><b>L'outil t'est-il utile ?</b>
+          <div class="stars" role="radiogroup" aria-label="Note de 1 à 5">
+            <label><input type="radio" name="note" value="1" id="nt1"> 1</label><label><input type="radio" name="note" value="2" id="nt2"> 2</label><label><input type="radio" name="note" value="3" id="nt3"> 3</label><label><input type="radio" name="note" value="4" id="nt4"> 4</label><label><input type="radio" name="note" value="5" id="nt5"> 5</label>
+          </div>
+          <span class="hint">1 = pas du tout, 5 = indispensable.</span>
+        </div>
+        <div class="row">
+          <label class="f"><b>Onglet concerné</b>
+            <select id="av-onglet" name="onglet">
+              <option value="general">Général</option><option value="pliage">Pliage</option><option value="cone">Virole &amp; cône</option><option value="poids">Poids</option><option value="cintrage">Cintrage</option><option value="piquage">Piquage</option><option value="coude">Coude</option><option value="facteur-k">Facteur K</option><option value="accueil">Page d'accueil</option>
+            </select></label>
+          <label class="f"><b>Type de retour</b>
+            <select id="av-type" name="type">
+              <option value="idee">Idée ou demande</option><option value="erreur-calcul">Erreur de calcul</option><option value="bug">Bug d'affichage</option><option value="texte">Texte pas clair</option><option value="autre">Autre</option>
+            </select></label>
+        </div>
+        <label class="f"><b>Ton message</b>
+          <textarea id="av-msg" name="message" rows="5" required placeholder="Ex. : sur le piquage Ø168 / Ø114, la génératrice 4 me donne 2 mm de moins que mon tracé à l'atelier."></textarea></label>
+        <div class="row">
+          <label class="f"><b>Prénom ou pseudo (facultatif)</b><input id="av-nom" name="nom" autocomplete="nickname"></label>
+          <label class="f"><b>Contact pour te répondre (facultatif)</b><input id="av-contact" name="contact" placeholder="E-mail ou WhatsApp"></label>
+        </div>
+        <label class="check"><input type="checkbox" id="av-ok" name="consentement" value="oui" required>
+          <span>J'accepte que ces informations soient envoyées à STEGGA GROUP pour améliorer ChaudroCalc, comme expliqué dans la <a href="#confidentialite" data-tab="confidentialite">politique de confidentialité</a>.</span></label>
+        <input type="hidden" name="version" id="av-version" value="">
+        <input type="hidden" name="langue" id="av-langue" value="">
+        <div class="btns"><button class="btn primary" type="submit" id="av-send">Envoyer mon avis</button></div>
+        <div id="av-out" aria-live="polite"></div>
+      </fieldset>
+    </form>
+    <div class="result">
+      <h2 style="margin:0;font:700 19px var(--f-display);text-transform:uppercase;letter-spacing:.04em">Ce qui aide le plus</h2>
+      <p class="note" style="border:0;padding:0;font-size:14px">Pour une erreur de calcul, donne les valeurs saisies, le résultat de l'outil et celui que tu attendais. Une capture d'écran n'est pas possible ici : décris simplement ce que tu vois.</p>
+      <p class="note" style="border:0;padding:0;font-size:14px">Sans réseau, ton message est gardé sur ton appareil. Il part tout seul dès que la connexion revient, tant que l'outil est ouvert.</p>
+    </div>
+  </div>
+</section>
+
+<!-- MENTIONS LÉGALES -->
+<section class="panel" id="p-mentions-legales" aria-labelledby="h-ml">
+  <div class="refs">
+    <article>
+      <h3 id="h-ml">Mentions légales</h3>
+      <p><b>Éditeur.</b> ChaudroCalc est édité par STEGGA GROUP.</p>
+      <p><b>Hébergeur.</b> Netlify, Inc., 101 2nd Street, San Francisco, CA 94105, États-Unis (<a href="https://www.netlify.com/legal/terms-of-use/" target="_blank" rel="noopener">conditions d'utilisation de Netlify</a>).</p>
+      <p><b>Propriété intellectuelle.</b> © 2026 STEGGA GROUP. Tous droits réservés. Le code, l'interface, les textes et les icônes de ChaudroCalc ne peuvent être copiés, modifiés ou redistribués sans autorisation écrite de STEGGA GROUP. Les formules de géométrie et de tôlerie utilisées relèvent des connaissances techniques courantes ; les documents cités dans l'onglet Formules appartiennent à leurs auteurs.</p>
+      <p><b>Responsabilité.</b> Les résultats sont des calculs théoriques fournis à titre indicatif. Ils ne tiennent pas compte de tous les paramètres d'atelier (outillage, nuance, retour élastique, chanfreins, jeux de soudure). L'utilisateur doit les vérifier, par exemple par un essai sur chute, avant toute découpe ou fabrication. STEGGA GROUP ne peut être tenu responsable d'une erreur de fabrication, d'une perte de matière ou d'un dommage résultant de l'utilisation de l'outil.</p>
+      <p><b>Liens externes.</b> Les liens vers d'autres sites sont donnés pour permettre de vérifier les sources. STEGGA GROUP n'a pas de contrôle sur leur contenu.</p>
+      <p class="hint">Dernière mise à jour : 26 octobre 2026.</p>
+    </article>
+  </div>
+</section>
+
+<!-- CONFIDENTIALITÉ -->
+<section class="panel" id="p-confidentialite" aria-labelledby="h-conf">
+  <div class="refs">
+    <article>
+      <h3 id="h-conf">Politique de confidentialité</h3>
+      <p><b>Ce que l'éditeur collecte.</b> Rien pour utiliser l'outil. ChaudroCalc ne demande ni compte, ni nom, ni adresse e-mail. Il n'utilise pas de cookies, pas d'outil de mesure d'audience et pas de publicité.</p>
+      <p><b>Si tu donnes ton avis.</b> Le formulaire « Donner mon avis » envoie seulement ce que tu y écris : la note, l'onglet, le type de retour, ton message, et, si tu les remplis, ton prénom ou pseudo et un contact. La version de l'outil et la langue affichée sont ajoutées pour comprendre le contexte. Rien n'est envoyé sans que tu coches la case d'accord. Ces informations sont reçues par Netlify, qui les conserve pour le compte de STEGGA GROUP. Elles servent uniquement à corriger et améliorer l'outil, et à te répondre si tu as laissé un contact. Elles ne sont ni vendues ni partagées, et sont supprimées au plus tard 12 mois après réception.</p>
+      <p><b>Ce qui reste sur ton appareil.</b> Pour te faire gagner du temps, l'outil garde dans le stockage local de ton navigateur tes dernières saisies, l'onglet ouvert et la liste « Mes facteurs K ». Ces données ne quittent jamais ton appareil : l'éditeur n'y a pas accès. Une copie de l'application est aussi gardée en cache pour fonctionner hors ligne.</p>
+      <p><b>L'hébergeur.</b> Pour afficher le site, Netlify reçoit, comme tout hébergeur, des données techniques de connexion (adresse IP, type de navigateur, page demandée). Netlify indique traiter ces données pour le compte de ses clients, en tant que sous-traitant (<a href="https://www.netlify.com/privacy/" target="_blank" rel="noopener">déclaration de confidentialité de Netlify</a>). Les serveurs de Netlify peuvent être situés hors du Cameroun.</p>
+      <p><b>Polices de caractères.</b> Dans la version installée, les polices sont servies par le site lui-même : aucun service tiers n'est appelé à l'ouverture.</p>
+      <p><b>Cadre légal.</b> Au Cameroun, la loi n° 2024/017 du 23 décembre 2024 relative à la protection des données à caractère personnel est en vigueur depuis le 23 juin 2026. Elle prévoit notamment des droits d'accès, de rectification, d'effacement et d'opposition. Pour les données gardées sur ton appareil, ces droits s'exercent directement avec le bouton ci-dessous. Pour un avis envoyé, demande sa consultation, sa correction ou sa suppression par un nouvel avis, en reprenant le même prénom ou pseudo.</p>
+      <div class="btns">
+        <button class="btn" type="button" id="wipe-ask">Effacer mes données sur cet appareil</button>
+        <button class="btn primary" type="button" id="wipe-yes" hidden>Confirmer l'effacement</button>
+        <button class="btn" type="button" id="wipe-no" hidden>Annuler</button>
+      </div>
+      <p class="hint" id="wipe-msg" aria-live="polite">Efface tes saisies et ta liste de facteurs K. L'application reste installée.</p>
+      <p class="hint">Dernière mise à jour : 26 octobre 2026.</p>
+    </article>
+  </div>
+</section>
+</main>
+<footer class="wrap foot">
+  <p>Résultats théoriques. Vérifie sur chute avant la découpe définitive.</p>
+  <p>© 2026 STEGGA GROUP. Tous droits réservés. · <a href="#mentions-legales" data-tab="mentions-legales">Mentions légales</a> · <a href="#confidentialite" data-tab="confidentialite">Confidentialité</a> · <a href="./?accueil" class="home-link">Accueil</a> · <a href="#avis" data-tab="avis">Donner mon avis</a> · <span id="app-version">Version 4 bêta (26/10/2026)</span></p>
+</footer>
+
+<script>
+/* ===== Langue FR / EN : la page est écrite en français, l'anglais est appliqué par traduction des textes ===== */
+const I18N_EN = {
+"Calculs de tôlerie":"Sheet metal calculations","Calculs":"Calculations","Pliage":"Bending","Virole & cône":"Shell & cone","Poids":"Weight","Cintrage":"Rolling","Piquage":"Branch","Coude":"Elbow","Formules":"Formulas",
+"Langue":"Language","Thème":"Theme","Auto":"Auto","Thème clair":"Light theme","Thème sombre":"Dark theme","Thème du système":"System theme",
+"Longueur développée d'une pièce pliée à partir des cotes extérieures. Chaque pli retire une déduction calculée avec le facteur K.":"Flat length of a bent part from its outside dimensions. Each bend subtracts a deduction calculated with the K-factor.",
+"Tôle et outil":"Sheet and tooling","Épaisseur e":"Thickness t","Rayon intérieur Ri":"Inside radius Ri","Facteur K":"K-factor",
+"K est compris entre 0 et 0,5. Il dépend de la matière, du rapport Ri/e et de l'outillage : la valeur par défaut est un exemple à valider par un essai sur chute.":"K lies between 0 and 0.5. It depends on the material, the Ri/t ratio and the tooling: the default value is an example to confirm with a test bend on scrap.",
+"Cotes extérieures":"Outside dimensions","Ajouter un pli":"Add a bend","Retirer le dernier pli":"Remove last bend",
+"Angle de pliage = déviation de la tôle (90° pour un angle droit). Les cotes vont jusqu'à l'intersection des faces extérieures. Le sens ne sert qu'au croquis.":"Bend angle = how far the sheet turns (90° for a right angle). Dimensions run to the intersection of the outside faces. Direction is only used for the sketch.",
+"Trouver K par un essai":"Find K with a test bend",
+"Plie une chute de longueur connue avec la même tôle, le même outil et le même angle, puis mesure les deux cotes extérieures. L'épaisseur et le rayon sont ceux de « Tôle et outil ».":"Bend a scrap piece of known length with the same sheet, tooling and angle, then measure both outside dimensions. Thickness and radius are taken from “Sheet and tooling”.",
+"Flan avant pliage":"Blank before bending","Angle plié":"Bend angle","Cote extérieure a":"Outside dimension a","Cote extérieure b":"Outside dimension b",
+"Déduction mesurée BD":"Measured deduction BD","BA correspondante":"Matching BA","K mesuré":"Measured K","Utiliser ce K":"Use this K",
+"Mes facteurs K":"My K-factors","Matière / nuance":"Material / grade","ex. S235, presse 1":"e.g. S235, press 1","Enregistrer le K actuel":"Save current K",
+"Aucun K enregistré pour l'instant.":"No K saved yet.",
+"Liste gardée dans ce navigateur, sur cet appareil seulement. Elle est aussi proposée dans l'onglet Cintrage.":"This list is kept in this browser, on this device only. It is also offered in the Rolling tab.",
+"Longueur développée":"Flat length","Somme des cotes extérieures":"Sum of outside dimensions","Somme des déductions":"Sum of deductions","Rayon de fibre neutre":"Neutral axis radius",
+"Pli":"Bend","Angle":"Angle","Croquis du profil plié":"Sketch of the bent profile",
+"BA : longueur de fibre neutre dans le pli. BD : déduction appliquée aux cotes extérieures.":"BA: neutral axis length in the bend. BD: deduction applied to the outside dimensions.",
+"Développé d'une virole ou d'un cône (tronqué ou complet) à axes confondus, calculé sur la fibre moyenne.":"Flat pattern of a cylindrical shell or a cone (truncated or full) with coaxial ends, calculated on the mean diameter.",
+"Pièce":"Part","Type de pièce":"Part type","Virole":"Shell","Cône":"Cone","Diamètres saisis":"Diameters entered","Extérieurs":"Outside","Moyens":"Mean","Intérieurs":"Inside",
+"Grand Ø D1":"Large Ø D1","Petit Ø D2":"Small Ø D2","Hauteur H":"Height H","Diamètre D":"Diameter D",
+"D2 = 0 pour un cône complet. Exemple pré-rempli : tronc de cône Ø404 / Ø204 extérieurs, H 300, tôle de 4.":"D2 = 0 for a full cone. Pre-filled example: truncated cone Ø404 / Ø204 outside, H 300, 4 mm plate.",
+"Matière (pour la masse)":"Material (for the mass)","Matière":"Material","Acier (S235, S355)":"Steel (S235, S355)","Inox 304 / 316":"Stainless 304 / 316","Aluminium":"Aluminium","Cuivre":"Copper","Laiton 70/30":"Brass 70/30","Autre (saisir ρ)":"Other (enter ρ)","Masse volumique ρ":"Density ρ",
+"Grand rayon de traçage R1":"Large layout radius R1","Petit rayon R2":"Small radius R2","Angle du secteur":"Sector angle","Corde du secteur (sur R1)":"Sector chord (on R1)","Génératrice g":"Slant height g","Diamètres moyens":"Mean diameters",
+"Contrôle : arc sur R1 = π × D1":"Check: arc on R1 = π × D1","Masse du développé (net)":"Flat pattern mass (net)","Croquis du développé du cône":"Sketch of the cone flat pattern",
+"Cône droit à axes confondus. La masse ne compte pas les chutes du flan rectangulaire.":"Right cone with coaxial ends. The mass does not include offcuts from the rectangular blank.",
+"Diamètre moyen Dm":"Mean diameter Dm","Largeur de tôle (hauteur)":"Plate width (height)","Flan":"Blank","Masse du flan":"Blank mass",
+"Longueur prise sur la fibre moyenne. Le jeu de soudure et les surlongueurs de roulage ne sont pas compris.":"Length taken on the mean diameter. Weld gap and rolling allowances are not included.",
+"Masse d'une tôle découpée : volume × masse volumique. Les dimensions sont en millimètres.":"Mass of a cut plate: volume × density. Dimensions are in millimetres.",
+"Forme":"Shape","Rectangle":"Rectangle","Disque":"Disc","Couronne":"Ring","Longueur L":"Length L","Largeur l":"Width W","Ø extérieur":"Outside Ø","Ø intérieur":"Inside Ø","Quantité":"Quantity",
+"Valeurs usuelles des tables (voir Formules). Elles varient selon la nuance : remplace-les par celle de ton fournisseur si tu l'as.":"Usual table values (see Formulas). They vary with the grade: replace them with your supplier's value if you have it.",
+"Masse unitaire":"Unit mass","Surface":"Area","Masse au m² (épaisseur e)":"Mass per m² (thickness t)","Masse totale":"Total mass","Masse nette de la pièce, sans les chutes de découpe.":"Net mass of the part, without cutting offcuts.",
+"Longueur développée d'un arc cintré (tôle, fer plat, tube ou rond) et contrôle du rayon par la corde et la flèche.":"Flat length of a rolled arc (plate, flat bar, tube or round bar) and radius check from chord and rise.",
+"Arc cintré":"Rolled arc","Tôle / plat":"Plate / flat","Tube / rond":"Tube / round","Angle de l'arc":"Arc angle","Mes K":"My K","Choisir…":"Choose…",
+"Pour un grand rayon devant l'épaisseur, la fibre neutre se rapproche du milieu (K proche de 0,5).":"For a radius large compared with the thickness, the neutral axis moves towards the middle (K close to 0.5).",
+"Contrôle d'une pièce roulée":"Checking a rolled part","Corde mesurée c":"Measured chord c","Flèche mesurée f":"Measured rise h",
+"Pose une règle de longueur c sur la face et mesure l'écart au milieu. Le rayon obtenu est celui de la face mesurée.":"Lay a straightedge of length c on the face and measure the gap at the middle. The result is the radius of the measured face.",
+"Rayon extérieur":"Outside radius","Corde face intérieure":"Inside face chord","Flèche face intérieure":"Inside face rise","Corde face extérieure":"Outside face chord","Flèche face extérieure":"Outside face rise","Rayon mesuré":"Measured radius",
+"Le retour élastique n'est pas pris en compte : il se règle à l'essai sur la machine.":"Springback is not included: set it by trial on the machine.",
+"Rayon à l'axe du tube":"Centreline radius","Longueur développée (axe)":"Flat length (centreline)","Corde à l'axe":"Centreline chord","Flèche à l'axe":"Centreline rise",
+"Tracé d'un piquage cylindrique sur un collecteur cylindrique : longueur de chaque génératrice du piquage (gueule de loup) et contour du trou dans le collecteur. Axes droits ou inclinés, concourants ou décalés.":"Layout of a cylindrical branch on a cylindrical header: length of each branch line (fish-mouth cut) and outline of the hole in the header. Square or angled axes, intersecting or offset.",
+"Tubes":"Pipes","Ø ext. collecteur D":"Header outside Ø D","Ø ext. piquage d":"Branch outside Ø d","Base de calcul":"Calculation basis","Diamètres extérieurs":"Outside diameters","Fibres moyennes":"Mean diameters",
+"Épaisseur collecteur":"Header thickness","Épaisseur piquage":"Branch thickness",
+"Les sources ne retiennent pas la même base : l'une calcule sur les extérieurs, l'autre sur la fibre moyenne (voir Formules). Choisis celle de ton atelier et valide sur une chute.":"The sources do not use the same basis: one calculates on outside diameters, the other on the mean diameter (see Formulas). Choose your shop's practice and confirm on scrap.",
+"Position":"Position","Angle entre axes a":"Angle between axes a","Décalage des axes":"Axis offset","Longueur à l'axe L":"Length to axis L","Nombre de génératrices":"Number of lines",
+"L : distance mesurée sur l'axe du piquage, entre l'axe du collecteur et la coupe droite d'extrémité. Angle de 30 à 90° (90° pour un piquage droit). Décalage 0 pour des axes concourants.":"L: distance measured along the branch axis, from the header axis to the square end cut. Angle from 30 to 90° (90° for a square branch). Offset 0 for intersecting axes.",
+"Largeur du développé (2πr)":"Pattern width (2πr)","Rayons de calcul R / r":"Calculation radii R / r","Génératrice la plus longue":"Longest line","Génératrice la plus courte":"Shortest line","Écart (profondeur de la découpe)":"Difference (cut depth)",
+"Trou : développé sur le collecteur":"Hole: developed on the header","Trou : longueur le long du collecteur":"Hole: length along the header",
+"Génér.":"Line","Angle t":"Angle t","Abscisse":"Position","Longueur":"Length","Développé du piquage : coupe droite en haut, gueule de loup en bas":"Branch pattern: square cut at the top, fish-mouth at the bottom",
+"Reporte les abscisses sur la ligne de coupe droite, puis la longueur de chaque génératrice. Génératrice 1 (t = 0°) : sur le flanc du piquage.":"Mark the positions along the square cut line, then the length of each line. Line 1 (t = 0°): on the side of the branch.",
+"Trou dans le collecteur":"Hole in the header","Point":"Point","Arc sur collecteur":"Arc on header","Le long de l'axe":"Along the axis","Contour du trou développé sur le collecteur":"Outline of the hole developed on the header",
+"Cotes du trou mesurées depuis le point où l'axe du piquage coupe l'axe du collecteur, ramené sur la surface. Chanfrein et jeu de soudure non compris.":"Hole dimensions measured from the point where the branch axis meets the header axis, projected onto the surface. Bevel and weld gap not included.",
+"Coude à segments (en tranches) : deux demi-éléments aux extrémités et des éléments entiers au milieu. L'outil donne l'angle de coupe, les longueurs de chaque génératrice et le gabarit.":"Segmented (mitred) elbow: two half segments at the ends and full segments in between. The tool gives the cut angle, the length of each line and the template.",
+"Tube":"Pipe","Ø extérieur d":"Outside Ø d","Diamètre extérieur":"Outside diameter","Fibre moyenne":"Mean diameter","Épaisseur":"Thickness","Angle du coude":"Elbow angle","Rayon à l'axe R":"Centreline radius R","Nombre de pièces":"Number of pieces","Génératrices":"Lines","Droit aux bouts":"Straight at ends",
+"Nombre de pièces : les deux demi-éléments d'extrémité comptent chacun pour une pièce (3 pièces = 2 demis + 1 entier). « Droit aux bouts » ajoute une longueur droite à chaque demi-élément.":"Number of pieces: each of the two end half segments counts as one piece (3 pieces = 2 halves + 1 full). “Straight at ends” adds a straight length to each half segment.",
+"Angle de coupe par soudure":"Cut angle per weld","Pièces":"Pieces","Soudures":"Welds","Déviation à chaque soudure":"Turn at each weld","Largeur du gabarit (π × d)":"Template width (π × d)",
+"Demi-élément : intérieur / extérieur":"Half segment: inside / outside","Élément entier : intérieur / extérieur":"Full segment: inside / outside","Longueur sur l'axe (arc R × Φ)":"Centreline length (arc R × Φ)",
+"Angle φ":"Angle φ","Demi-élément":"Half segment","Élément entier":"Full segment","Vue de côté du coude à segments":"Side view of the segmented elbow","Gabarit d'un demi-élément":"Half segment template",
+"Génératrice 1 (φ = 0°) : côté intérieur du coude. Le gabarit montre un demi-élément ; un élément entier se trace en reportant deux fois la longueur. Chanfrein et jeu de soudure non compris.":"Line 1 (φ = 0°): inside of the elbow. The template shows a half segment; mark a full segment by doubling each length. Bevel and weld gap not included.",
+"Les formules utilisées par chaque onglet, avec leurs sources. Les résultats sont théoriques : valide toujours sur une chute avant de découper la pièce définitive.":"The formulas used by each tab, with their sources. Results are theoretical: always confirm on scrap before cutting the final part.",
+"BA = (π/180) × A × (Ri + K × e)\nOSSB = (Ri + e) × tan(A/2)\nBD = 2 × OSSB − BA\nDéveloppé = Σ cotes extérieures − Σ BD":"BA = (π/180) × A × (Ri + K × t)\nOSSB = (Ri + t) × tan(A/2)\nBD = 2 × OSSB − BA\nFlat length = Σ outside dimensions − Σ BD",
+"BA : longueur de la fibre neutre dans le pli. OSSB : retrait extérieur. BD : déduction de pli. A : angle de pliage en degrés.":"BA: neutral axis length in the bend. OSSB: outside setback. BD: bend deduction. A: bend angle in degrees.",
+"BA et définition de K :":"BA and definition of K:","BD = 2(R + e)·tan(θ/2) − BA :":"BD = 2(R + t)·tan(θ/2) − BA:","K ne dépasse pas 0,5 :":"K does not exceed 0.5:",
+"Virole et cône":"Shell and cone",
+"Virole : L = π × Dm\nCône : g = √(H² + ((D1 − D2)/2)²)\nR1 = g × D1 / (D1 − D2)    R2 = R1 − g\nAngle du secteur = 180 × D1 / R1   (degrés)\nCorde du secteur = 2 × R1 × sin(angle/2)\nSurface latérale = π × (D1 + D2)/2 × g":"Shell: L = π × Dm\nCone: g = √(H² + ((D1 − D2)/2)²)\nR1 = g × D1 / (D1 − D2)    R2 = R1 − g\nSector angle = 180 × D1 / R1   (degrees)\nSector chord = 2 × R1 × sin(angle/2)\nLateral area = π × (D1 + D2)/2 × g",
+"Dm = Dext − e = Dint + e. Valable pour un cône droit à axes confondus ; un cône excentré se trace par triangulation.":"Dm = Dout − t = Din + t. Valid for a right cone with coaxial ends; an offset cone is laid out by triangulation.",
+"Virole et cône :":"Shell and cone:","Surface latérale du tronc de cône π(R + r)g :":"Lateral area of a truncated cone π(R + r)g:","Corde 2r·sin(θ/2) :":"Chord 2r·sin(θ/2):",
+"m = e × L × l × ρ   (dimensions en m, ρ en kg/m³)\nMasse au m² = e(mm) × ρ / 1000":"m = t × L × W × ρ   (dimensions in m, ρ in kg/m³)\nMass per m² = t(mm) × ρ / 1000",
+"Formule de masse d'une tôle :":"Plate mass formula:","Eduscol, sujet BAC Pro U21":"Eduscol, BAC Pro U21 exam paper","(ce document donne 7810 kg/m³ pour l'acier)":"(this document gives 7810 kg/m³ for steel)",
+"Acier 7850, inox 304/316 8000, aluminium 2700 :":"Steel 7850, stainless 304/316 8000, aluminium 2700:","Cuivre 8940, laiton 70/30 8530 :":"Copper 8940, brass 70/30 8530:",
+"Tôle / plat : L = (π/180) × A × (Ri + K × e)\nTube / rond : L = (π/180) × A × Raxe\nCorde = 2R × sin(A/2)     Flèche = R × (1 − cos(A/2))\nRayon depuis corde et flèche : R = f/2 + c²/(8f)":"Plate / flat: L = (π/180) × A × (Ri + K × t)\nTube / round: L = (π/180) × A × Rcl\nChord = 2R × sin(A/2)     Rise = R × (1 − cos(A/2))\nRadius from chord and rise: R = h/2 + c²/(8h)",
+"Longueur de fibre neutre : mêmes sources que le pliage. Fibre neutre proche du milieu pour les grands rayons :":"Neutral axis length: same sources as bending. Neutral axis near the middle for large radii:","Corde, flèche et rayon :":"Chord, rise and radius:",
+"Le retour élastique n'est pas calculé : il dépend de la machine et de la nuance et se règle à l'essai.":"Springback is not calculated: it depends on the machine and the grade, and is set by trial.",
+"Position sur le piquage : t de 0 à 360°\ns(t) = (√(R² − (e + r·cos t)²) − r·sin t·cos a) / sin a\nGénératrice du piquage = L − s(t)\nAbscisse sur le développé = r × t (t en radians)\nLargeur du développé = 2π × r\nTrou, arc sur le collecteur = R × asin((e + r·cos t) / R)\nTrou, cote le long du collecteur = s·cos a − r·sin t·sin a":"Position on the branch: t from 0 to 360°\ns(t) = (√(R² − (e + r·cos t)²) − r·sin t·cos a) / sin a\nBranch line = L − s(t)\nPosition on the pattern = r × t (t in radians)\nPattern width = 2π × r\nHole, arc on the header = R × asin((e + r·cos t) / R)\nHole, dimension along the header = s·cos a − r·sin t·sin a",
+"R, r : rayons du collecteur et du piquage. a : angle entre les axes. e : décalage des axes. s(t) : distance, sur l'axe du piquage, entre l'axe du collecteur et le point d'intersection. t = 0 et 180° : génératrices de flanc ; t = 90 et 270° : génératrices dans le plan des deux axes.":"R, r: header and branch radii. a: angle between the axes. e: axis offset. s(t): distance along the branch axis from the header axis to the intersection point. t = 0 and 180°: side lines; t = 90 and 270°: lines in the plane of both axes.",
+"Formule de s(t), 12 génératrices, exemple Ø200 / Ø100 (écart 13,40 mm, trou 104,72 × 100 mm) :":"Formula for s(t), 12 lines, example Ø200 / Ø100 (difference 13.40 mm, hole 104.72 × 100 mm):",
+"travail-industrie.com, traçage de piquage":"travail-industrie.com, branch layout","(calcul sur diamètres extérieurs)":"(calculated on outside diameters)","Développement sur la fibre neutre (diamètre moyen) :":"Development on the neutral axis (mean diameter):","travail-industrie.com, formation chaudronnier, module 2":"travail-industrie.com, boilermaker course, module 2",
+"Les coordonnées du trou découlent de la même géométrie : je les ai dérivées et vérifiées sur l'exemple de la source, mais je n'ai pas trouvé de source qui les écrive telles quelles. Le chanfrein et le jeu de soudure ne sont pas pris en compte.":"The hole coordinates follow from the same geometry: they were derived and checked against the source example, but no source was found that states them as written. Bevel and weld gap are not included.",
+"Coude à segments":"Segmented elbow",
+"N pièces = 2 demi-éléments + (N − 2) éléments entiers\nSoudures = N − 1\nAngle de coupe θ = Φ / (2 × (N − 1))\nDéviation à chaque soudure = 2θ\nDemi-élément : y(φ) = tan θ × (R − r·cos φ)   (φ = 0 côté intérieur)\nÉlément entier : 2 × y(φ)\nLargeur du gabarit = π × d":"N pieces = 2 half segments + (N − 2) full segments\nWelds = N − 1\nCut angle θ = Φ / (2 × (N − 1))\nTurn at each weld = 2θ\nHalf segment: y(φ) = tan θ × (R − r·cos φ)   (φ = 0 on the inside)\nFull segment: 2 × y(φ)\nTemplate width = π × d",
+"Φ : angle du coude. R : rayon de cintrage à l'axe. r, d : rayon et diamètre du tube. Côté intérieur (intrados) : tan θ × (R − r). Côté extérieur (extrados) : tan θ × (R + r).":"Φ: elbow angle. R: centreline bend radius. r, d: pipe radius and diameter. Inside (throat): tan θ × (R − r). Outside (heel): tan θ × (R + r).",
+"θ = Φ / (2(N − 1)), longueurs intérieure et extérieure, exemple Ø100, R 100, 3 pièces à 90° (demi : 20,7 / 62,1 mm ; entier : 41,4 / 124,3 mm) :":"θ = Φ / (2(N − 1)), inside and outside lengths, example Ø100, R 100, 3 pieces at 90° (half: 20.7 / 62.1 mm; full: 41.4 / 124.3 mm):",
+"Ordonnées Y = tan α × (Rm − r·cos(jω)) sur diamètre extérieur, exemple DN200 (Ø219,1, R 600, 90°) :":"Ordinates Y = tan α × (Rm − r·cos(jω)) on the outside diameter, example DN200 (Ø219.1, R 600, 90°):",
+"Largeur du développé πD prise sur la fibre neutre, tracé à partir d'un demi-élément :":"Pattern width πD taken on the neutral axis, layout from a half segment:","Maxicours, développement des coudes":"Maxicours, elbow development",
+"Les tableaux de Welding Fabrication World ne correspondent pas à ses propres formules : l'outil applique les formules, qui retombent sur l'exemple de pipecalculators.com.":"Welding Fabrication World's tables do not match its own formulas: the tool applies the formulas, which match the pipecalculators.com example.",
+"K mesuré par un essai":"K measured by a test bend",
+"BD = a + b − L0\nBA = 2 × (Ri + e) × tan(A/2) − BD\nK = (BA / (A en radians) − Ri) / e":"BD = a + b − L0\nBA = 2 × (Ri + t) × tan(A/2) − BD\nK = (BA / (A in radians) − Ri) / t",
+"L0 : longueur du flan avant pliage. a, b : cotes extérieures mesurées après pliage. C'est la formule du pliage retournée : mêmes sources que l'onglet Pliage. Plus la mesure est précise, plus le K l'est : mesure au pied à coulisse et fais plusieurs essais.":"L0: blank length before bending. a, b: outside dimensions measured after bending. This is the bending formula reversed: same sources as the Bending tab. The more precise the measurement, the more precise K: use a caliper and make several tests.",
+"Mentions légales":"Legal notice","Éditeur.":"Publisher.","ChaudroCalc est édité par STEGGA GROUP.":"ChaudroCalc is published by STEGGA GROUP.","Hébergeur.":"Host.",
+"Netlify, Inc., 101 2nd Street, San Francisco, CA 94105, États-Unis (":"Netlify, Inc., 101 2nd Street, San Francisco, CA 94105, United States (","conditions d'utilisation de Netlify":"Netlify terms of use",
+"Propriété intellectuelle.":"Intellectual property.",
+"© 2026 STEGGA GROUP. Tous droits réservés. Le code, l'interface, les textes et les icônes de ChaudroCalc ne peuvent être copiés, modifiés ou redistribués sans autorisation écrite de STEGGA GROUP. Les formules de géométrie et de tôlerie utilisées relèvent des connaissances techniques courantes ; les documents cités dans l'onglet Formules appartiennent à leurs auteurs.":"© 2026 STEGGA GROUP. All rights reserved. ChaudroCalc's code, interface, texts and icons may not be copied, modified or redistributed without written permission from STEGGA GROUP. The geometry and sheet metal formulas used are common technical knowledge; the documents cited in the Formulas tab belong to their authors.",
+"Responsabilité.":"Liability.",
+"Les résultats sont des calculs théoriques fournis à titre indicatif. Ils ne tiennent pas compte de tous les paramètres d'atelier (outillage, nuance, retour élastique, chanfreins, jeux de soudure). L'utilisateur doit les vérifier, par exemple par un essai sur chute, avant toute découpe ou fabrication. STEGGA GROUP ne peut être tenu responsable d'une erreur de fabrication, d'une perte de matière ou d'un dommage résultant de l'utilisation de l'outil.":"Results are theoretical calculations provided for guidance only. They do not account for every shop parameter (tooling, grade, springback, bevels, weld gaps). Users must check them, for example with a test on scrap, before any cutting or fabrication. STEGGA GROUP cannot be held liable for any fabrication error, material loss or damage resulting from use of the tool.",
+"Liens externes.":"External links.","Les liens vers d'autres sites sont donnés pour permettre de vérifier les sources. STEGGA GROUP n'a pas de contrôle sur leur contenu.":"Links to other sites are provided so you can check the sources. STEGGA GROUP has no control over their content.",
+"Dernière mise à jour : 26 octobre 2026.":"Last updated: 26 October 2026.","Politique de confidentialité":"Privacy policy","Ce que l'éditeur collecte.":"What the publisher collects.",
+"Ce qui reste sur ton appareil.":"What stays on your device.",
+"Pour te faire gagner du temps, l'outil garde dans le stockage local de ton navigateur tes dernières saisies, l'onglet ouvert et la liste « Mes facteurs K ». Ces données ne quittent jamais ton appareil : l'éditeur n'y a pas accès. Une copie de l'application est aussi gardée en cache pour fonctionner hors ligne.":"To save you time, the tool keeps your latest entries, the open tab and your “My K-factors” list in your browser's local storage. This data never leaves your device: the publisher has no access to it. A copy of the app is also cached so it works offline.",
+"L'hébergeur.":"The host.",
+"Pour afficher le site, Netlify reçoit, comme tout hébergeur, des données techniques de connexion (adresse IP, type de navigateur, page demandée). Netlify indique traiter ces données pour le compte de ses clients, en tant que sous-traitant (":"To serve the site, Netlify receives technical connection data, as any host does (IP address, browser type, requested page). Netlify states that it processes this data on behalf of its customers, as a processor (",
+"déclaration de confidentialité de Netlify":"Netlify privacy statement","). Les serveurs de Netlify peuvent être situés hors du Cameroun.":"). Netlify's servers may be located outside Cameroon.",
+"Polices de caractères.":"Fonts.","Dans la version installée, les polices sont servies par le site lui-même : aucun service tiers n'est appelé à l'ouverture.":"In the installed version, fonts are served by the site itself: no third-party service is contacted when it opens.",
+"Cadre légal.":"Legal framework.",
+"Au Cameroun, la loi n° 2024/017 du 23 décembre 2024 relative à la protection des données à caractère personnel est en vigueur depuis le 23 juin 2026. Elle prévoit notamment des droits d'accès, de rectification, d'effacement et d'opposition. Comme l'éditeur ne collecte aucune donnée te concernant, ces droits s'exercent directement sur ton appareil avec le bouton ci-dessous.":"In Cameroon, Law No. 2024/017 of 23 December 2024 on the protection of personal data has been in force since 23 June 2026. It provides, among others, rights of access, rectification, erasure and objection. As the publisher collects no data about you, you exercise these rights directly on your device with the button below.",
+"Effacer mes données sur cet appareil":"Erase my data on this device","Confirmer l'effacement":"Confirm erase","Annuler":"Cancel",
+"Efface tes saisies et ta liste de facteurs K. L'application reste installée.":"Erases your entries and your K-factor list. The app stays installed.",
+"Tes saisies et ta liste de facteurs K vont être effacées de cet appareil.":"Your entries and K-factor list will be erased from this device.","Rien n'a été effacé.":"Nothing was erased.","Données effacées. La page se recharge.":"Data erased. Reloading the page.",
+"Résultats théoriques. Vérifie sur chute avant la découpe définitive.":"Theoretical results. Check on scrap before the final cut.","© 2026 STEGGA GROUP. Tous droits réservés. ·":"© 2026 STEGGA GROUP. All rights reserved. ·","Confidentialité":"Privacy","Accueil":"Home",
+"Utiliser":"Use",
+"Version de test":"Test version","Version 4 bêta (26/10/2026)":"Version 4 beta (26/10/2026)","Tu testes ChaudroCalc avant sa sortie. Un calcul faux, un mot pas clair, une idée ? Dis-le-moi.":"You are testing ChaudroCalc before its release. A wrong result, an unclear word, an idea? Tell me.",
+"Donner mon avis":"Give feedback","Masquer ce bandeau":"Hide this banner",
+"Ton retour sert à corriger les erreurs et à choisir les prochains calculs. Il est envoyé à STEGGA GROUP, l'éditeur de l'outil.":"Your feedback is used to fix errors and choose the next calculators. It is sent to STEGGA GROUP, the tool's publisher.",
+"Ne pas remplir":"Do not fill in","L'outil t'est-il utile ?":"Is the tool useful to you?","Note de 1 à 5":"Rating from 1 to 5","1 = pas du tout, 5 = indispensable.":"1 = not at all, 5 = essential.",
+"Onglet concerné":"Tab concerned","Général":"General","Facteur K":"K-factor","Page d'accueil":"Home page","Type de retour":"Feedback type",
+"Idée ou demande":"Idea or request","Erreur de calcul":"Calculation error","Bug d'affichage":"Display bug","Texte pas clair":"Unclear text","Autre":"Other",
+"Ton message":"Your message","Ex. : sur le piquage Ø168 / Ø114, la génératrice 4 me donne 2 mm de moins que mon tracé à l'atelier.":"E.g. on the Ø168 / Ø114 branch, line 4 is 2 mm shorter than my layout in the shop.",
+"Prénom ou pseudo (facultatif)":"First name or nickname (optional)","Contact pour te répondre (facultatif)":"Contact for a reply (optional)","E-mail ou WhatsApp":"Email or WhatsApp",
+"J'accepte que ces informations soient envoyées à STEGGA GROUP pour améliorer ChaudroCalc, comme expliqué dans la":"I agree that this information is sent to STEGGA GROUP to improve ChaudroCalc, as explained in the",
+"politique de confidentialité":"privacy policy","Envoyer mon avis":"Send feedback","Ce qui aide le plus":"What helps most",
+"Pour une erreur de calcul, donne les valeurs saisies, le résultat de l'outil et celui que tu attendais. Une capture d'écran n'est pas possible ici : décris simplement ce que tu vois.":"For a calculation error, give the values you entered, the tool's result and the one you expected. Screenshots cannot be attached here: just describe what you see.",
+"Sans réseau, ton message est gardé sur ton appareil. Il part tout seul dès que la connexion revient, tant que l'outil est ouvert.":"Without a network, your message is kept on your device. It is sent automatically as soon as the connection returns, while the tool is open.",
+"Écris ton message avant d'envoyer.":"Write your message before sending.","Coche la case d'accord pour pouvoir envoyer ton avis.":"Tick the consent box to send your feedback.",
+"Pas de réseau : ton avis est gardé sur cet appareil et partira dès que la connexion revient.":"No network: your feedback is kept on this device and will be sent when the connection returns.",
+"Merci ! Ton avis a bien été envoyé.":"Thank you! Your feedback has been sent.","L'envoi a échoué. Vérifie ta connexion et réessaie.":"Sending failed. Check your connection and try again.",
+"Ton avis en attente vient d'être envoyé. Merci !":"Your pending feedback has just been sent. Thank you!",
+"Rien pour utiliser l'outil. ChaudroCalc ne demande ni compte, ni nom, ni adresse e-mail. Il n'utilise pas de cookies, pas d'outil de mesure d'audience et pas de publicité.":"Nothing to use the tool. ChaudroCalc asks for no account, name or email address. It uses no cookies, no analytics and no advertising.",
+"Si tu donnes ton avis.":"If you give feedback.",
+"Le formulaire « Donner mon avis » envoie seulement ce que tu y écris : la note, l'onglet, le type de retour, ton message, et, si tu les remplis, ton prénom ou pseudo et un contact. La version de l'outil et la langue affichée sont ajoutées pour comprendre le contexte. Rien n'est envoyé sans que tu coches la case d'accord. Ces informations sont reçues par Netlify, qui les conserve pour le compte de STEGGA GROUP. Elles servent uniquement à corriger et améliorer l'outil, et à te répondre si tu as laissé un contact. Elles ne sont ni vendues ni partagées, et sont supprimées au plus tard 12 mois après réception.":"The “Give feedback” form sends only what you write in it: the rating, the tab, the feedback type, your message and, if you fill them in, your first name or nickname and a contact. The tool version and display language are added to understand the context. Nothing is sent unless you tick the consent box. This information is received by Netlify, which stores it on behalf of STEGGA GROUP. It is used only to fix and improve the tool, and to reply to you if you left a contact. It is never sold or shared, and is deleted no later than 12 months after receipt.",
+"Au Cameroun, la loi n° 2024/017 du 23 décembre 2024 relative à la protection des données à caractère personnel est en vigueur depuis le 23 juin 2026. Elle prévoit notamment des droits d'accès, de rectification, d'effacement et d'opposition. Pour les données gardées sur ton appareil, ces droits s'exercent directement avec le bouton ci-dessous. Pour un avis envoyé, demande sa consultation, sa correction ou sa suppression par un nouvel avis, en reprenant le même prénom ou pseudo.":"In Cameroon, Law No. 2024/017 of 23 December 2024 on the protection of personal data has been in force since 23 June 2026. It provides, among others, rights of access, rectification, erasure and objection. For data kept on your device, you exercise these rights directly with the button below. For feedback you sent, ask to see, correct or delete it by sending new feedback with the same first name or nickname.","Supprimer":"Delete","Sans nom":"Unnamed",
+/* Messages d'erreur */
+"Vérifie e (> 0), Ri (≥ 0) et K (entre 0 et 0,5).":"Check t (> 0), Ri (≥ 0) and K (between 0 and 0.5).",
+"Chaque cote doit être positive et chaque angle compris entre 0 et 180°.":"Each dimension must be positive and each angle between 0 and 180°.",
+"Vérifie les valeurs : elles doivent être positives.":"Check the values: they must be positive.",
+"Le diamètre moyen est nul ou négatif : vérifie le diamètre et l'épaisseur.":"The mean diameter is zero or negative: check diameter and thickness.",
+"Le petit diamètre doit être positif ou nul.":"The small diameter must be zero or positive.","Le grand diamètre doit être supérieur au petit.":"The large diameter must be greater than the small one.",
+"Vérifie les dimensions (positives, Ø intérieur plus petit que Ø extérieur) et la quantité (≥ 1).":"Check the dimensions (positive, inside Ø smaller than outside Ø) and the quantity (≥ 1).",
+"Vérifie le rayon (> 0) et l'angle (entre 0 et 360°).":"Check the radius (> 0) and the angle (between 0 and 360°).","Vérifie e (> 0) et K (entre 0 et 0,5).":"Check t (> 0) and K (between 0 and 0.5).",
+"Contrôle : corde et flèche positives, flèche au plus égale à la moitié de la corde.":"Check: chord and rise must be positive, rise at most half the chord.",
+"Vérifie les valeurs : diamètres et L positifs, angle entre 30 et 90°.":"Check the values: diameters and L positive, angle between 30 and 90°.",
+"Un rayon de calcul est nul ou négatif : vérifie diamètres et épaisseurs.":"A calculation radius is zero or negative: check diameters and thicknesses.",
+"Vérifie les valeurs : diamètre positif, angle entre 0 et 180°, rayon et longueur droite positifs ou nuls.":"Check the values: positive diameter, angle between 0 and 180°, radius and straight length zero or positive.",
+"Le rayon de calcul est nul ou négatif : vérifie diamètre et épaisseur.":"The calculation radius is zero or negative: check diameter and thickness.",
+"Renseigne le flan, l'angle (0 à 179°), les deux cotes, et e / Ri dans « Tôle et outil ».":"Enter the blank, the angle (0 to 179°), both dimensions, and t / Ri in “Sheet and tooling”.",
+"K hors de 0 à 0,5 : vérifie les mesures (cotes extérieures, flan exact) et que e et Ri correspondent à l'essai.":"K outside 0 to 0.5: check the measurements (outside dimensions, exact blank) and that t and Ri match the test.",
+"K, e ou Ri invalide : corrige « Tôle et outil » avant d'enregistrer.":"Invalid K, t or Ri: fix “Sheet and tooling” before saving."
+};
+const I18N_PATTERNS = [
+  [/^Cote (\d+)$/, 'Leg $1'], [/^Pli (\d+)$/, 'Bend $1'], [/^Angle du pli (\d+)$/, 'Angle of bend $1'], [/^Sens du pli (\d+)$/, 'Direction of bend $1'],
+  [/^(\d+) \(2 demi-éléments\)$/, '$1 (2 half segments)'], [/^(\d+) \(2 demi-éléments \+ 1 entier\)$/, '$1 (2 half segments + 1 full)'],
+  [/^(\d+) \(2 demi-éléments \+ (\d+) entiers\)$/, '$1 (2 half segments + $2 full)'], [/^Sans nom( · .*)$/, 'Unnamed$1'],
+  [/^Le piquage déborde du collecteur : il faut \|décalage\| \+ r ≤ R \(ici (.+) > (.+) mm\)\.$/, 'The branch overhangs the header: |offset| + r ≤ R is required (here $1 > $2 mm).'],
+  [/^L est trop court : la plus courte génératrice serait de (.+) mm\. Augmente L\.$/, 'L is too short: the shortest line would be $1 mm. Increase L.'],
+  [/^Rayon trop petit : avec (\d+) pièces, R doit être au moins égal au rayon du tube \((.+) mm\), sinon les éléments entiers ont une longueur négative côté intérieur\.$/, 'Radius too small: with $1 pieces, R must be at least the pipe radius ($2 mm), otherwise full segments have a negative inside length.'],
+  [/^Le côté intérieur du demi-élément serait de (.+) mm : augmente R ou la longueur droite aux bouts\.$/, 'The inside of the half segment would be $1 mm: increase R or the straight length at the ends.']
+];
+const I18N_ATTRS = ['placeholder', 'aria-label', 'title'];
+let LANG = 'fr';
+try {
+  const saved = JSON.parse(localStorage.getItem('cc:lang'));
+  LANG = saved === 'en' || saved === 'fr' ? saved : ((navigator.language || 'fr').toLowerCase().startsWith('fr') ? 'fr' : 'en');
+} catch(e){ LANG = (navigator.language || 'fr').toLowerCase().startsWith('fr') ? 'fr' : 'en'; }
+function trFR(fr){
+  if (I18N_EN[fr] !== undefined) return I18N_EN[fr];
+  for (const [re, en] of I18N_PATTERNS) if (re.test(fr)) return fr.replace(re, en);
+  return null;
+}
+const I18N_ORIG = new WeakMap();
+function trNode(n){
+  if (n.nodeType === 3){
+    const orig = I18N_ORIG.has(n) ? I18N_ORIG.get(n) : n.data;
+    const key = orig.trim(); if (!key) return;
+    if (LANG === 'en'){
+      const en = trFR(key);
+      if (en === null){ I18N_ORIG.delete(n); return; }
+      I18N_ORIG.set(n, orig);
+      const out = orig.replace(key, en);
+      if (n.data !== out) n.data = out;
+    } else if (I18N_ORIG.has(n)){ n.data = orig; I18N_ORIG.delete(n); }
+  } else if (n.nodeType === 1){
+    if (n.tagName === 'SCRIPT' || n.tagName === 'STYLE') return;
+    for (const a of I18N_ATTRS){
+      if (!n.hasAttribute(a)) continue;
+      const k = 'data-fr-' + a, orig = n.getAttribute(k) ?? n.getAttribute(a);
+      if (LANG === 'en'){ const en = trFR(orig.trim()); if (en !== null){ n.setAttribute(k, orig); if (n.getAttribute(a) !== en) n.setAttribute(a, en); } }
+      else if (n.hasAttribute(k)){ n.setAttribute(a, orig); n.removeAttribute(k); }
+    }
+    n.childNodes.forEach(trNode);
+  }
+}
+
+/* ===== Calculs purs ===== */
+const C = {
+  rad: d => d * Math.PI / 180,
+  bendAllowance(A, ri, k, e){ return C.rad(A) * (ri + k * e); },
+  bendDeduction(A, ri, k, e){ return 2 * (ri + e) * Math.tan(C.rad(A) / 2) - C.bendAllowance(A, ri, k, e); },
+  flat(legs, angles, ri, k, e){
+    const bends = angles.map(A => ({A, BA: C.bendAllowance(A, ri, k, e), BD: C.bendDeduction(A, ri, k, e)}));
+    const sumLegs = legs.reduce((s, x) => s + x, 0);
+    const sumBD = bends.reduce((s, b) => s + b.BD, 0);
+    return {bends, sumLegs, sumBD, L: sumLegs - sumBD};
+  },
+  meanD(d, type, e){ return type === 'ext' ? d - e : type === 'int' ? d + e : d; },
+  cone(D1, D2, H){
+    const g = Math.sqrt(H * H + ((D1 - D2) / 2) ** 2);
+    const R1 = g * D1 / (D1 - D2), R2 = R1 - g;
+    const ang = 180 * D1 / R1;
+    return {g, R1, R2, ang, chord: 2 * R1 * Math.sin(C.rad(ang) / 2), arc1: Math.PI * D1, arc2: Math.PI * D2,
+      area: Math.PI * (D1 + D2) / 2 * g};
+  },
+  arc(R, A){ return {L: C.rad(A) * R, chord: 2 * R * Math.sin(C.rad(A) / 2), sag: R * (1 - Math.cos(C.rad(A) / 2))}; },
+  radiusFromChord(c, f){ return f / 2 + c * c / (8 * f); },
+  /* Piquage : R collecteur, r piquage, a angle (°), e décalage, L longueur à l'axe, n génératrices */
+  piquagePoint(R, r, a, e, L, tDeg){
+    const t = C.rad(tDeg), A = C.rad(a), y = e + r * Math.cos(t);
+    const s = (Math.sqrt(R * R - y * y) - r * Math.sin(t) * Math.cos(A)) / Math.sin(A);
+    return {t: tDeg, s, gen: L - s, abs: r * t, arcHole: R * Math.asin(y / R), xHole: s * Math.cos(A) - r * Math.sin(t) * Math.sin(A)};
+  },
+  piquage(R, r, a, e, L, n){
+    const pts = [];
+    for (let i = 0; i < n; i++) pts.push(C.piquagePoint(R, r, a, e, L, 360 * i / n));
+    return {pts, width: 2 * Math.PI * r};
+  }
+};
+
+/* ===== Outils d'interface ===== */
+const $ = id => document.getElementById(id);
+const num = v => { const n = parseFloat(String(v).replace(/\s/g, '').replace(',', '.')); return Number.isFinite(n) ? n : NaN; };
+const fmt = (x, d = 2) => Number.isFinite(x) ? x.toLocaleString(LANG === 'en' ? 'en-US' : 'fr-FR', {minimumFractionDigits: d, maximumFractionDigits: d}) : '–';
+const store = {
+  get(k){ try { return JSON.parse(localStorage.getItem('cc:' + k)); } catch(e){ return null; } },
+  set(k, v){ try { localStorage.setItem('cc:' + k, JSON.stringify(v)); } catch(e){} }
+};
+function val(id, {min = -Infinity, gt = false, max = Infinity} = {}){
+  const el = $(id), n = num(el.value);
+  const ok = Number.isFinite(n) && (gt ? n > min : n >= min) && n <= max;
+  el.setAttribute('aria-invalid', ok ? 'false' : 'true');
+  return ok ? n : NaN;
+}
+function cote(label, value, unit, d = 2){
+  return `<div class="cote"><span class="lbl">${label}</span><span class="val">${fmt(value, d)}<small>${unit}</small></span><div class="dim"><span class="arr l"></span><span class="arr r"></span></div></div>`;
+}
+const kv = rows => `<dl class="kv">${rows.map(([a, b]) => `<dt>${a}</dt><dd>${b}</dd>`).join('')}</dl>`;
+const err = msg => `<p class="err">${msg}</p>`;
+
+/* Matières : masses volumiques usuelles en kg/m³ (sources dans l'onglet Formules) */
+const MATS = [
+  ['acier', 'Acier (S235, S355)', 7850], ['inox', 'Inox 304 / 316', 8000], ['alu', 'Aluminium', 2700],
+  ['cuivre', 'Cuivre', 8940], ['laiton', 'Laiton 70/30', 8530], ['autre', 'Autre (saisir ρ)', null]
+];
+document.querySelectorAll('.matsel').forEach(sel => {
+  sel.innerHTML = MATS.map(m => `<option value="${m[0]}">${m[1]}</option>`).join('');
+});
+function bindMat(selId, rhoId, cb){
+  $(selId).addEventListener('change', () => {
+    const m = MATS.find(x => x[0] === $(selId).value);
+    if (m && m[2] !== null) $(rhoId).value = m[2];
+    else $(rhoId).focus();
+    cb();
+  });
+  $(rhoId).addEventListener('input', () => {
+    const m = MATS.find(x => x[2] === num($(rhoId).value));
+    $(selId).value = m ? m[0] : 'autre';
+  });
+}
+
+/* ===== Onglets ===== */
+const TABS = ['pliage', 'cone', 'poids', 'cintrage', 'piquage', 'coude', 'formules'];
+const PAGES = ['mentions-legales', 'confidentialite', 'avis'];
+function showTab(t){
+  if (!TABS.includes(t) && !PAGES.includes(t)) t = 'pliage';
+  document.querySelectorAll('nav.tabs button').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === t ? 'true' : 'false'));
+  document.querySelectorAll('section.panel').forEach(s => s.classList.toggle('on', s.id === 'p-' + t));
+  if (TABS.includes(t)) store.set('tab', t);
+}
+document.querySelectorAll('nav.tabs button').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
+document.querySelectorAll('footer a[data-tab], .beta a[data-tab], #avis-form a[data-tab]').forEach(a => a.addEventListener('click', ev => { ev.preventDefault(); showTab(a.dataset.tab); window.scrollTo(0, 0); }));
+showTab((location.hash || '').slice(1) || store.get('tab') || 'pliage');
+
+/* ===== Avis : envoi vers Netlify Forms, gardé sur l'appareil sans réseau ===== */
+(() => {
+  const form = $('avis-form'), out = $('av-out');
+  try { if (localStorage.getItem('cc:beta-hide')) $('beta').hidden = true; } catch(e){}
+  $('beta-hide').addEventListener('click', () => { $('beta').hidden = true; try { localStorage.setItem('cc:beta-hide', '1'); } catch(e){} });
+  const T = fr => (LANG === 'en' && trFR(fr) !== null) ? trFR(fr) : fr;
+  const say = (fr, ok) => { out.innerHTML = `<p class="${ok ? 'ok-msg' : 'err'}"></p>`; out.firstChild.textContent = T(fr); };
+  const body = () => { $('av-version').value = ($('app-version').textContent || '').trim(); $('av-langue').value = LANG; return new URLSearchParams(new FormData(form)).toString(); };
+  /* Sur Netlify, l'avis part vers le site lui-même. Sur un miroir (GitHub Pages), il part vers le formulaire Netlify :
+     la réponse n'est alors pas lisible (mode no-cors), l'envoi est considéré comme fait si le réseau a répondu. */
+  const ON_NETLIFY = /netlify\.app$/.test(location.hostname);
+  const post = data => ON_NETLIFY
+    ? fetch('/', {method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: data}).then(r => { if (!r.ok) throw new Error(r.status); })
+    : fetch('https://chaudrocalc.netlify.app/', {method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: data}).then(() => {});
+  const flush = () => {
+    let q = []; try { q = JSON.parse(localStorage.getItem('cc:avis-attente')) || []; } catch(e){}
+    if (!q.length || !navigator.onLine) return;
+    const next = q.shift();
+    post(next).then(() => { try { localStorage.setItem('cc:avis-attente', JSON.stringify(q)); } catch(e){} say('Ton avis en attente vient d\'être envoyé. Merci !', true); flush(); }).catch(() => {});
+  };
+  window.addEventListener('online', flush); flush();
+  form.addEventListener('submit', ev => {
+    ev.preventDefault();
+    if (!$('av-msg').value.trim()) { $('av-msg').setAttribute('aria-invalid', 'true'); return say('Écris ton message avant d\'envoyer.'); }
+    $('av-msg').setAttribute('aria-invalid', 'false');
+    if (!$('av-ok').checked) return say('Coche la case d\'accord pour pouvoir envoyer ton avis.');
+    const data = body(); $('av-send').disabled = true;
+    const done = () => { form.reset(); $('av-send').disabled = false; };
+    if (!navigator.onLine) {
+      try { const q = JSON.parse(localStorage.getItem('cc:avis-attente')) || []; q.push(data); localStorage.setItem('cc:avis-attente', JSON.stringify(q)); } catch(e){}
+      done(); return say('Pas de réseau : ton avis est gardé sur cet appareil et partira dès que la connexion revient.', true);
+    }
+    post(data).then(() => { done(); say('Merci ! Ton avis a bien été envoyé.', true); })
+      .catch(() => { $('av-send').disabled = false; say('L\'envoi a échoué. Vérifie ta connexion et réessaie.'); });
+  });
+})();
+
+/* Effacement des données locales (en deux temps, sans boîte de dialogue) */
+$('wipe-ask').addEventListener('click', () => { $('wipe-ask').hidden = true; $('wipe-yes').hidden = false; $('wipe-no').hidden = false; $('wipe-msg').textContent = 'Tes saisies et ta liste de facteurs K vont être effacées de cet appareil.'; });
+$('wipe-no').addEventListener('click', () => { $('wipe-ask').hidden = false; $('wipe-yes').hidden = true; $('wipe-no').hidden = true; $('wipe-msg').textContent = 'Rien n\'a été effacé.'; });
+$('wipe-yes').addEventListener('click', () => {
+  try { Object.keys(localStorage).filter(k => k.startsWith('cc:')).forEach(k => localStorage.removeItem(k)); } catch(e){}
+  $('wipe-msg').textContent = 'Données effacées. La page se recharge.';
+  setTimeout(() => { location.hash = ''; location.reload(); }, 600);
+});
+
+/* ===== PLIAGE ===== */
+let pl = store.get('pl') || {legs: [50, 100, 50], bends: [{a: 90, s: 1}, {a: 90, s: 1}]};
+function plRenderChain(){
+  const c = $('pl-chain'); let h = '';
+  pl.legs.forEach((L, i) => {
+    h += `<div class="leg"><span>Cote ${i + 1}</span><span class="unit"><input id="pl-leg-${i}" inputmode="decimal" value="${String(L).replace('.', ',')}" aria-label="Cote ${i + 1}"><i>mm</i></span></div>`;
+    if (i < pl.bends.length){
+      const b = pl.bends[i];
+      h += `<div class="bend"><span>Pli ${i + 1}</span><span class="unit"><input id="pl-a-${i}" inputmode="decimal" value="${String(b.a).replace('.', ',')}" aria-label="Angle du pli ${i + 1}"><i>°</i></span>
+      <select id="pl-s-${i}" aria-label="Sens du pli ${i + 1}" style="width:auto"><option value="1"${b.s > 0 ? ' selected' : ''}>↺</option><option value="-1"${b.s < 0 ? ' selected' : ''}>↻</option></select></div>`;
+    }
+  });
+  c.innerHTML = h;
+  c.querySelectorAll('input,select').forEach(el => el.addEventListener('input', plCalc));
+  $('pl-del').disabled = pl.bends.length === 0;
+}
+function plSketch(legs, bends){
+  let x = 0, y = 0, dir = 0; const pts = [[0, 0]];
+  legs.forEach((L, i) => {
+    x += L * Math.cos(dir); y += L * Math.sin(dir); pts.push([x, y]);
+    if (i < bends.length) dir += bends[i].s * C.rad(bends[i].a);
+  });
+  const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
+  const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+  const w = Math.max(maxX - minX, 1), hgt = Math.max(maxY - minY, 1), pad = Math.max(w, hgt) * 0.08;
+  const vb = `${minX - pad} ${-maxY - pad} ${w + 2 * pad} ${hgt + 2 * pad}`;
+  const sw = Math.max(w, hgt) / 90;
+  const path = pts.map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(2)} ${(-p[1]).toFixed(2)}`).join(' ');
+  return `<div class="sketch"><svg viewBox="${vb}" role="img" aria-label="Croquis du profil plié"><path d="${path}" fill="none" stroke="var(--accent)" stroke-width="${sw}" stroke-linejoin="round" stroke-linecap="round"/>${pts.map(p => `<circle cx="${p[0]}" cy="${-p[1]}" r="${sw * 1.4}" fill="var(--ink)"/>`).join('')}</svg></div>`;
+}
+function plCalc(){
+  const e = val('pl-e', {min: 0, gt: true}), ri = val('pl-ri', {min: 0}), k = val('pl-k', {min: 0, max: 0.5});
+  pl.legs = pl.legs.map((_, i) => num($('pl-leg-' + i).value));
+  pl.bends = pl.bends.map((_, i) => ({a: num($('pl-a-' + i).value), s: Number($('pl-s-' + i).value)}));
+  pl.legs.forEach((L, i) => $('pl-leg-' + i).setAttribute('aria-invalid', L > 0 ? 'false' : 'true'));
+  pl.bends.forEach((b, i) => $('pl-a-' + i).setAttribute('aria-invalid', b.a > 0 && b.a < 180 ? 'false' : 'true'));
+  store.set('pl', pl); store.set('pl-p', [$('pl-e').value, $('pl-ri').value, $('pl-k').value]);
+  const out = $('pl-out');
+  if ([e, ri, k].some(Number.isNaN)) return out.innerHTML = err('Vérifie e (> 0), Ri (≥ 0) et K (entre 0 et 0,5).');
+  if (pl.legs.some(L => !(L > 0)) || pl.bends.some(b => !(b.a > 0 && b.a < 180))) return out.innerHTML = err('Chaque cote doit être positive et chaque angle compris entre 0 et 180°.');
+  const r = C.flat(pl.legs, pl.bends.map(b => b.a), ri, k, e);
+  let tbl = '';
+  if (r.bends.length){
+    tbl = `<div class="tbl"><table><thead><tr><th>Pli</th><th>Angle</th><th>BA</th><th>BD</th></tr></thead><tbody>${r.bends.map((b, i) => `<tr><td>${i + 1}</td><td>${fmt(b.A, 1)}°</td><td>${fmt(b.BA)}</td><td>${fmt(b.BD)}</td></tr>`).join('')}</tbody></table></div>`;
+  }
+  out.innerHTML = cote('Longueur développée', r.L, 'mm') +
+    kv([['Somme des cotes extérieures', fmt(r.sumLegs) + ' mm'], ['Somme des déductions', fmt(r.sumBD) + ' mm'], ['Rayon de fibre neutre', fmt(ri + k * e) + ' mm']]) +
+    tbl + plSketch(pl.legs, pl.bends) +
+    `<p class="note">BA : longueur de fibre neutre dans le pli. BD : déduction appliquée aux cotes extérieures.</p>`;
+}
+$('pl-add').addEventListener('click', () => { pl.bends.push({a: 90, s: 1}); pl.legs.push(50); plRenderChain(); plCalc(); });
+$('pl-del').addEventListener('click', () => { if (pl.bends.length){ pl.bends.pop(); pl.legs.pop(); plRenderChain(); plCalc(); } });
+(() => { const p = store.get('pl-p'); if (p){ $('pl-e').value = p[0]; $('pl-ri').value = p[1]; $('pl-k').value = p[2]; } })();
+['pl-e', 'pl-ri', 'pl-k'].forEach(id => $(id).addEventListener('input', plCalc));
+plRenderChain(); plCalc();
+
+/* ===== VIROLE & CONE ===== */
+let cnMode = store.get('cn-mode') || 'cone';
+function cnSketch(r){
+  const R1 = r.R1, R2 = r.R2, a = C.rad(r.ang), a0 = -Math.PI / 2 - a / 2, a1 = a0 + a;
+  const p = (R, t) => [R * Math.cos(t), R * Math.sin(t)];
+  const large = a > Math.PI ? 1 : 0;
+  const [x1, y1] = p(R1, a0), [x2, y2] = p(R1, a1), [x3, y3] = p(R2, a1), [x4, y4] = p(R2, a0);
+  const pts = [[0, 0], [x1, y1], [x2, y2]];
+  for (let i = 0; i <= 32; i++) pts.push(p(R1, a0 + a * i / 32));
+  const xs = pts.map(q => q[0]), ys = pts.map(q => q[1]);
+  const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+  const pad = R1 * 0.06, sw = R1 / 110;
+  const d = `M${x1} ${y1} A${R1} ${R1} 0 ${large} 1 ${x2} ${y2} L${x3} ${y3} ` + (R2 > 0 ? `A${R2} ${R2} 0 ${large} 0 ${x4} ${y4}` : '') + ' Z';
+  return `<div class="sketch"><svg viewBox="${minX - pad} ${minY - pad} ${maxX - minX + 2 * pad} ${maxY - minY + 2 * pad}" role="img" aria-label="Croquis du développé du cône">
+    <path d="${d}" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="${sw}"/>
+    <line x1="0" y1="0" x2="${x1}" y2="${y1}" stroke="var(--muted)" stroke-width="${sw * 0.6}" stroke-dasharray="${sw * 4} ${sw * 3}"/>
+    <line x1="0" y1="0" x2="${x2}" y2="${y2}" stroke="var(--muted)" stroke-width="${sw * 0.6}" stroke-dasharray="${sw * 4} ${sw * 3}"/>
+    <circle cx="0" cy="0" r="${sw * 2}" fill="var(--ink)"/></svg></div>`;
+}
+function cnCalc(){
+  document.querySelectorAll('[data-cn]').forEach(b => b.setAttribute('aria-pressed', b.dataset.cn === cnMode ? 'true' : 'false'));
+  const virole = cnMode === 'virole';
+  $('cn-d2w').hidden = virole;
+  $('cn-d1l').textContent = virole ? 'Diamètre D' : 'Grand Ø D1';
+  $('cn-hint').hidden = virole;
+  ['cn-dt', 'cn-e', 'cn-d1', 'cn-d2', 'cn-h', 'cn-rho'].forEach(id => store.set(id, $(id).value));
+  store.set('cn-mode', cnMode); store.set('cn-mat', $('cn-mat').value);
+  const e = val('cn-e', {min: 0, gt: true}), d1 = val('cn-d1', {min: 0, gt: true}), h = val('cn-h', {min: 0, gt: true}), rho = val('cn-rho', {min: 0, gt: true});
+  const t = $('cn-dt').value, out = $('cn-out');
+  if ([e, d1, h, rho].some(Number.isNaN)) return out.innerHTML = err('Vérifie les valeurs : elles doivent être positives.');
+  const D1 = C.meanD(d1, t, e);
+  if (!(D1 > 0)) return out.innerHTML = err("Le diamètre moyen est nul ou négatif : vérifie le diamètre et l'épaisseur.");
+  if (virole){
+    const L = Math.PI * D1, m = L * h * e * 1e-9 * rho;
+    return out.innerHTML = cote('Longueur développée', L, 'mm') +
+      kv([['Diamètre moyen Dm', fmt(D1) + ' mm'], ['Largeur de tôle (hauteur)', fmt(h) + ' mm'], ['Flan', `${fmt(L, 1)} × ${fmt(h, 1)} mm`], ['Masse du flan', fmt(m) + ' kg']]) +
+      `<p class="note">Longueur prise sur la fibre moyenne. Le jeu de soudure et les surlongueurs de roulage ne sont pas compris.</p>`;
+  }
+  const d2 = val('cn-d2', {min: 0});
+  if (Number.isNaN(d2)) return out.innerHTML = err('Le petit diamètre doit être positif ou nul.');
+  const D2 = d2 === 0 ? 0 : C.meanD(d2, t, e);
+  if (!(D2 >= 0) || !(D1 > D2)) return out.innerHTML = err('Le grand diamètre doit être supérieur au petit.');
+  const r = C.cone(D1, D2, h), m = r.area * e * 1e-9 * rho;
+  out.innerHTML = cote('Grand rayon de traçage R1', r.R1, 'mm') +
+    kv([['Petit rayon R2', fmt(r.R2) + ' mm'], ['Angle du secteur', fmt(r.ang) + '°'], ['Corde du secteur (sur R1)', fmt(r.chord) + ' mm'],
+        ['Génératrice g', fmt(r.g) + ' mm'], ['Diamètres moyens', `${fmt(D1, 1)} / ${fmt(D2, 1)} mm`],
+        ['Contrôle : arc sur R1 = π × D1', fmt(r.arc1) + ' mm'], ['Masse du développé (net)', fmt(m) + ' kg']]) +
+    cnSketch(r) + `<p class="note">Cône droit à axes confondus. La masse ne compte pas les chutes du flan rectangulaire.</p>`;
+}
+document.querySelectorAll('[data-cn]').forEach(b => b.addEventListener('click', () => { cnMode = b.dataset.cn; cnCalc(); }));
+['cn-dt', 'cn-e', 'cn-d1', 'cn-d2', 'cn-h', 'cn-rho'].forEach(id => { const v = store.get(id); if (v !== null && v !== undefined) $(id).value = v; $(id).addEventListener('input', cnCalc); });
+(() => { const m = store.get('cn-mat'); if (m) $('cn-mat').value = m; })();
+bindMat('cn-mat', 'cn-rho', cnCalc);
+cnCalc();
+
+/* ===== POIDS ===== */
+let pwMode = store.get('pw-mode') || 'rect';
+function pwCalc(){
+  document.querySelectorAll('[data-pw]').forEach(b => b.setAttribute('aria-pressed', b.dataset.pw === pwMode ? 'true' : 'false'));
+  document.querySelectorAll('#pw-dims [data-for]').forEach(l => l.hidden = !l.dataset.for.split(' ').includes(pwMode));
+  ['pw-l', 'pw-w', 'pw-de', 'pw-di', 'pw-e', 'pw-q', 'pw-rho'].forEach(id => store.set(id, $(id).value));
+  store.set('pw-mode', pwMode); store.set('pw-mat', $('pw-mat').value);
+  const e = val('pw-e', {min: 0, gt: true}), rho = val('pw-rho', {min: 0, gt: true}), q = val('pw-q', {min: 1}), out = $('pw-out');
+  let area, dims;
+  if (pwMode === 'rect'){
+    const L = val('pw-l', {min: 0, gt: true}), w = val('pw-w', {min: 0, gt: true});
+    area = L * w; dims = `${fmt(L, 0)} × ${fmt(w, 0)} × ${fmt(e, 1)} mm`;
+  } else {
+    const de = val('pw-de', {min: 0, gt: true});
+    let di = 0;
+    if (pwMode === 'couronne'){ di = val('pw-di', {min: 0, gt: true}); if (!(di < de)) { $('pw-di').setAttribute('aria-invalid', 'true'); di = NaN; } }
+    area = Math.PI / 4 * (de * de - di * di);
+    dims = pwMode === 'disque' ? `Ø${fmt(de, 0)} × ${fmt(e, 1)} mm` : `Ø${fmt(de, 0)} / Ø${fmt(di, 0)} × ${fmt(e, 1)} mm`;
+  }
+  if ([e, rho, q, area].some(Number.isNaN)) return out.innerHTML = err('Vérifie les dimensions (positives, Ø intérieur plus petit que Ø extérieur) et la quantité (≥ 1).');
+  const qty = Math.round(q), m = area * e * 1e-9 * rho;
+  out.innerHTML = cote('Masse unitaire', m, 'kg') +
+    kv([['Pièce', dims], ['Surface', fmt(area / 1e6, 4) + ' m²'], ['Masse au m² (épaisseur e)', fmt(e * rho / 1000) + ' kg/m²'],
+        ['Quantité', String(qty)], ['Masse totale', fmt(m * qty) + ' kg']]) +
+    `<p class="note">Masse nette de la pièce, sans les chutes de découpe.</p>`;
+}
+document.querySelectorAll('[data-pw]').forEach(b => b.addEventListener('click', () => { pwMode = b.dataset.pw; pwCalc(); }));
+['pw-l', 'pw-w', 'pw-de', 'pw-di', 'pw-e', 'pw-q', 'pw-rho'].forEach(id => { const v = store.get(id); if (v !== null && v !== undefined) $(id).value = v; $(id).addEventListener('input', pwCalc); });
+(() => { const m = store.get('pw-mat'); if (m) $('pw-mat').value = m; })();
+bindMat('pw-mat', 'pw-rho', pwCalc);
+pwCalc();
+
+/* ===== CINTRAGE ===== */
+let ctMode = store.get('ct-mode') || 'tole';
+function ctCalc(){
+  document.querySelectorAll('[data-ct]').forEach(b => b.setAttribute('aria-pressed', b.dataset.ct === ctMode ? 'true' : 'false'));
+  const tole = ctMode === 'tole';
+  $('ct-tole').hidden = !tole; $('ct-hint').hidden = !tole;
+  $('ct-rl').textContent = tole ? 'Rayon intérieur Ri' : "Rayon à l'axe du tube";
+  ['ct-r', 'ct-a', 'ct-e', 'ct-k', 'ck-c', 'ck-f'].forEach(id => store.set(id, $(id).value));
+  store.set('ct-mode', ctMode);
+  const R = val('ct-r', {min: 0, gt: true}), A = val('ct-a', {min: 0, gt: true, max: 360}), out = $('ct-out');
+  let html = '';
+  if ([R, A].some(Number.isNaN)) html += err("Vérifie le rayon (> 0) et l'angle (entre 0 et 360°).");
+  else if (tole){
+    const e = val('ct-e', {min: 0, gt: true}), k = val('ct-k', {min: 0, max: 0.5});
+    if ([e, k].some(Number.isNaN)) html += err('Vérifie e (> 0) et K (entre 0 et 0,5).');
+    else {
+      const Rn = R + k * e, n = C.arc(Rn, A), inn = C.arc(R, A), ext = C.arc(R + e, A);
+      html += cote('Longueur développée', n.L, 'mm') +
+        kv([['Rayon de fibre neutre', fmt(Rn) + ' mm'], ['Rayon extérieur', fmt(R + e) + ' mm'],
+            ['Corde face intérieure', fmt(inn.chord) + ' mm'], ['Flèche face intérieure', fmt(inn.sag) + ' mm'],
+            ['Corde face extérieure', fmt(ext.chord) + ' mm'], ['Flèche face extérieure', fmt(ext.sag) + ' mm']]);
+    }
+  } else {
+    const a = C.arc(R, A);
+    html += cote("Longueur développée (axe)", a.L, 'mm') + kv([["Corde à l'axe", fmt(a.chord) + ' mm'], ["Flèche à l'axe", fmt(a.sag) + ' mm']]);
+  }
+  const c = val('ck-c', {min: 0, gt: true}), f = val('ck-f', {min: 0, gt: true});
+  if ([c, f].some(Number.isNaN) || !(f <= c / 2)) html += err('Contrôle : corde et flèche positives, flèche au plus égale à la moitié de la corde.');
+  else html += `<div style="border-top:1px solid var(--line);padding-top:14px">${cote('Rayon mesuré', C.radiusFromChord(c, f), 'mm')}</div>`;
+  out.innerHTML = html + `<p class="note">Le retour élastique n'est pas pris en compte : il se règle à l'essai sur la machine.</p>`;
+}
+document.querySelectorAll('[data-ct]').forEach(b => b.addEventListener('click', () => { ctMode = b.dataset.ct; ctCalc(); }));
+['ct-r', 'ct-a', 'ct-e', 'ct-k', 'ck-c', 'ck-f'].forEach(id => { const v = store.get(id); if (v !== null && v !== undefined) $(id).value = v; $(id).addEventListener('input', ctCalc); });
+ctCalc();
+
+/* ===== PIQUAGE ===== */
+const PQ = ['pq-D', 'pq-d', 'pq-base', 'pq-eD', 'pq-ed', 'pq-a', 'pq-e', 'pq-L', 'pq-n'];
+function pqBand(R, r, a, e, L, res){
+  const W = res.width, curve = [];
+  for (let i = 0; i <= 180; i++) { const p = C.piquagePoint(R, r, a, e, L, 2 * i); curve.push([p.abs, p.gen]); }
+  const H = Math.max(...curve.map(c => c[1])), pad = Math.max(W, H) * 0.05, sw = Math.max(W, H) / 220;
+  const d = `M0 0 L${W} 0 ` + curve.slice().reverse().map(c => `L${c[0].toFixed(2)} ${c[1].toFixed(2)}`).join(' ') + ' Z';
+  const ticks = res.pts.map(p => `<line x1="${p.abs}" y1="0" x2="${p.abs}" y2="${p.gen}" stroke="var(--muted)" stroke-width="${sw * 0.7}" stroke-dasharray="${sw * 3} ${sw * 2}"/>`).join('');
+  return `<div class="sketch"><svg viewBox="${-pad} ${-pad} ${W + 2 * pad} ${H + 2 * pad}" role="img" aria-label="Développé du piquage : coupe droite en haut, gueule de loup en bas">
+    <path d="${d}" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="${sw}" stroke-linejoin="round"/>${ticks}</svg></div>`;
+}
+function pqHole(R, r, a, e, L){
+  const c = [];
+  for (let i = 0; i <= 180; i++) { const p = C.piquagePoint(R, r, a, e, L, 2 * i); c.push([p.arcHole, p.xHole]); }
+  const xs = c.map(q => q[0]), ys = c.map(q => q[1]);
+  const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+  const w = maxX - minX, h = maxY - minY, pad = Math.max(w, h) * 0.12, sw = Math.max(w, h) / 120;
+  const d = c.map((q, i) => `${i ? 'L' : 'M'}${q[0].toFixed(2)} ${(-q[1]).toFixed(2)}`).join(' ') + ' Z';
+  return `<div class="sketch"><svg viewBox="${minX - pad} ${-maxY - pad} ${w + 2 * pad} ${h + 2 * pad}" role="img" aria-label="Contour du trou développé sur le collecteur">
+    <line x1="${minX - pad}" y1="0" x2="${maxX + pad}" y2="0" stroke="var(--muted)" stroke-width="${sw * 0.5}" stroke-dasharray="${sw * 3} ${sw * 2}"/>
+    <line x1="0" y1="${-maxY - pad}" x2="0" y2="${-minY + pad}" stroke="var(--muted)" stroke-width="${sw * 0.5}" stroke-dasharray="${sw * 3} ${sw * 2}"/>
+    <path d="${d}" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="${sw}"/></svg></div>`;
+}
+function pqCalc(){
+  const moy = $('pq-base').value === 'moy';
+  $('pq-ep').hidden = !moy;
+  PQ.forEach(id => store.set(id, $(id).value));
+  const out = $('pq-out');
+  const D = val('pq-D', {min: 0, gt: true}), dd = val('pq-d', {min: 0, gt: true});
+  const eD = moy ? val('pq-eD', {min: 0}) : 0, ed = moy ? val('pq-ed', {min: 0}) : 0;
+  const a = val('pq-a', {min: 30, max: 90}), e = val('pq-e'), L = val('pq-L', {min: 0, gt: true}), n = Number($('pq-n').value);
+  if ([D, dd, eD, ed, a, e, L].some(Number.isNaN)) return out.innerHTML = err("Vérifie les valeurs : diamètres et L positifs, angle entre 30 et 90°.");
+  const R = (D - eD) / 2, r = (dd - ed) / 2;
+  if (!(R > 0 && r > 0)) return out.innerHTML = err("Un rayon de calcul est nul ou négatif : vérifie diamètres et épaisseurs.");
+  if (Math.abs(e) + r > R + 1e-9) return out.innerHTML = err(`Le piquage déborde du collecteur : il faut |décalage| + r ≤ R (ici ${fmt(Math.abs(e) + r)} > ${fmt(R)} mm).`);
+  const res = C.piquage(R, r, a, e, L, n);
+  const gens = res.pts.map(p => p.gen), gmin = Math.min(...gens), gmax = Math.max(...gens);
+  if (!(gmin > 0)) return out.innerHTML = err(`L est trop court : la plus courte génératrice serait de ${fmt(gmin)} mm. Augmente L.`);
+  const arcs = res.pts.map(p => p.arcHole), xh = res.pts.map(p => p.xHole);
+  const rows = res.pts.map((p, i) => `<tr><td>${i + 1}</td><td>${fmt(p.t, 1)}°</td><td>${fmt(p.abs)}</td><td>${fmt(p.gen)}</td></tr>`).join('');
+  const rowsH = res.pts.map((p, i) => `<tr><td>${i + 1}</td><td>${fmt(p.arcHole)}</td><td>${fmt(p.xHole)}</td></tr>`).join('');
+  out.innerHTML = cote('Largeur du développé (2πr)', res.width, 'mm') +
+    kv([['Rayons de calcul R / r', `${fmt(R)} / ${fmt(r)} mm`], ['Génératrice la plus longue', fmt(gmax) + ' mm'], ['Génératrice la plus courte', fmt(gmin) + ' mm'],
+        ['Écart (profondeur de la découpe)', fmt(gmax - gmin) + ' mm'],
+        ['Trou : développé sur le collecteur', `${fmt(Math.max(...arcs) - Math.min(...arcs))} mm`], ['Trou : longueur le long du collecteur', `${fmt(Math.max(...xh) - Math.min(...xh))} mm`]]) +
+    `<div class="tbl"><table><thead><tr><th>Génér.</th><th>Angle t</th><th>Abscisse</th><th>Longueur</th></tr></thead><tbody>${rows}</tbody></table></div>` +
+    pqBand(R, r, a, e, L, res) +
+    `<p class="note">Reporte les abscisses sur la ligne de coupe droite, puis la longueur de chaque génératrice. Génératrice 1 (t = 0°) : sur le flanc du piquage.</p>` +
+    `<h2 style="margin:0;font:700 17px var(--f-display);text-transform:uppercase;letter-spacing:.04em">Trou dans le collecteur</h2>` +
+    `<div class="tbl"><table><thead><tr><th>Point</th><th>Arc sur collecteur</th><th>Le long de l'axe</th></tr></thead><tbody>${rowsH}</tbody></table></div>` +
+    pqHole(R, r, a, e, L) +
+    `<p class="note">Cotes du trou mesurées depuis le point où l'axe du piquage coupe l'axe du collecteur, ramené sur la surface. Chanfrein et jeu de soudure non compris.</p>`;
+}
+PQ.forEach(id => { const v = store.get(id); if (v !== null && v !== undefined) $(id).value = v; $(id).addEventListener('input', pqCalc); });
+pqCalc();
+
+/* ===== COUDE À SEGMENTS ===== */
+const CD = ['cd-d', 'cd-base', 'cd-ep', 'cd-phi', 'cd-R', 'cd-N', 'cd-n', 'cd-ld'];
+function cdSide(R, r, th, N, ld){
+  /* Vue de côté : ligne d'axe, demi-éléments aux bouts, coupes en onglet */
+  const T = R * Math.tan(th), lens = [];
+  for (let i = 0; i < N; i++) lens.push(i === 0 || i === N - 1 ? T + ld : 2 * T);
+  let p = [0, 0], dir = 0; const quads = [], axis = [[0, 0]];
+  const nrm = a => [-Math.sin(a), Math.cos(a)];
+  let startL = [p[0] + r * nrm(0)[0], p[1] + r * nrm(0)[1]], startR = [p[0] - r * nrm(0)[0], p[1] - r * nrm(0)[1]];
+  for (let i = 0; i < N; i++){
+    const q = [p[0] + lens[i] * Math.cos(dir), p[1] + lens[i] * Math.sin(dir)];
+    let endL, endR;
+    if (i < N - 1){ const a = dir + th, k = r / Math.cos(th), n = nrm(a); endL = [q[0] + k * n[0], q[1] + k * n[1]]; endR = [q[0] - k * n[0], q[1] - k * n[1]]; }
+    else { const n = nrm(dir); endL = [q[0] + r * n[0], q[1] + r * n[1]]; endR = [q[0] - r * n[0], q[1] - r * n[1]]; }
+    quads.push([startL, endL, endR, startR]); axis.push(q);
+    p = q; dir += 2 * th; startL = endL; startR = endR;
+  }
+  const all = quads.flat(), xs = all.map(v => v[0]), ys = all.map(v => v[1]);
+  const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+  const w = maxX - minX, h = maxY - minY, pad = Math.max(w, h) * 0.06, sw = Math.max(w, h) / 160;
+  const poly = q => q.map(v => `${v[0].toFixed(2)},${(-v[1]).toFixed(2)}`).join(' ');
+  return `<div class="sketch"><svg viewBox="${minX - pad} ${-maxY - pad} ${w + 2 * pad} ${h + 2 * pad}" role="img" aria-label="Vue de côté du coude à segments">
+    ${quads.map((q, i) => `<polygon points="${poly(q)}" fill="${i % 2 ? 'var(--surface)' : 'var(--accent-soft)'}" stroke="var(--accent)" stroke-width="${sw}" stroke-linejoin="round"/>`).join('')}
+    <polyline points="${poly(axis)}" fill="none" stroke="var(--muted)" stroke-width="${sw * 0.6}" stroke-dasharray="${sw * 4} ${sw * 3}"/></svg></div>`;
+}
+function cdTemplate(r, th, R, ld){
+  /* Gabarit d'un demi-élément : base droite en bas, courbe de coupe en haut */
+  const W = 2 * Math.PI * r, c = [];
+  for (let i = 0; i <= 180; i++){ const ph = 2 * Math.PI * i / 180; c.push([r * ph, ld + Math.tan(th) * (R - r * Math.cos(ph))]); }
+  const H = Math.max(...c.map(v => v[1])), pad = Math.max(W, H) * 0.05, sw = Math.max(W, H) / 220;
+  const d = `M0 0 ` + c.map(v => `L${v[0].toFixed(2)} ${(-v[1]).toFixed(2)}`).join(' ') + ` L${W} 0 Z`;
+  return `<div class="sketch"><svg viewBox="${-pad} ${-H - pad} ${W + 2 * pad} ${H + 2 * pad}" role="img" aria-label="Gabarit d'un demi-élément">
+    <path d="${d}" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="${sw}" stroke-linejoin="round"/></svg></div>`;
+}
+function cdCalc(){
+  const moy = $('cd-base').value === 'moy';
+  $('cd-epw').hidden = !moy;
+  CD.forEach(id => store.set(id, $(id).value));
+  const out = $('cd-out');
+  const d = val('cd-d', {min: 0, gt: true}), ep = moy ? val('cd-ep', {min: 0}) : 0;
+  const phi = val('cd-phi', {min: 0, gt: true, max: 180}), R = val('cd-R', {min: 0}), ld = val('cd-ld', {min: 0});
+  const N = Number($('cd-N').value), n = Number($('cd-n').value);
+  if ([d, ep, phi, R, ld].some(Number.isNaN)) return out.innerHTML = err("Vérifie les valeurs : diamètre positif, angle entre 0 et 180°, rayon et longueur droite positifs ou nuls.");
+  const r = (d - ep) / 2;
+  if (!(r > 0)) return out.innerHTML = err("Le rayon de calcul est nul ou négatif : vérifie diamètre et épaisseur.");
+  const th = C.rad(phi / (2 * (N - 1))), tn = Math.tan(th);
+  const halfIn = ld + tn * (R - r), halfOut = ld + tn * (R + r);
+  if (N > 2 && R < r) return out.innerHTML = err(`Rayon trop petit : avec ${N} pièces, R doit être au moins égal au rayon du tube (${fmt(r)} mm), sinon les éléments entiers ont une longueur négative côté intérieur.`);
+  if (halfIn < 0) return out.innerHTML = err(`Le côté intérieur du demi-élément serait de ${fmt(halfIn)} mm : augmente R ou la longueur droite aux bouts.`);
+  const rows = [];
+  for (let j = 0; j < n; j++){
+    const ph = 2 * Math.PI * j / n, y = tn * (R - r * Math.cos(ph));
+    rows.push(`<tr><td>${j + 1}</td><td>${fmt(360 * j / n, 1)}°</td><td>${fmt(r * ph)}</td><td>${fmt(ld + y)}</td><td>${N > 2 ? fmt(2 * y) : '–'}</td></tr>`);
+  }
+  out.innerHTML = cote('Angle de coupe par soudure', phi / (2 * (N - 1)), '°') +
+    kv([['Pièces', `${N} (2 demi-éléments${N > 2 ? ` + ${N - 2} entier${N > 3 ? 's' : ''}` : ''})`], ['Soudures', String(N - 1)],
+        ['Déviation à chaque soudure', fmt(2 * phi / (2 * (N - 1))) + '°'], ['Largeur du gabarit (π × d)', fmt(2 * Math.PI * r) + ' mm'],
+        ['Demi-élément : intérieur / extérieur', `${fmt(halfIn)} / ${fmt(halfOut)} mm`],
+        ...(N > 2 ? [['Élément entier : intérieur / extérieur', `${fmt(2 * tn * (R - r))} / ${fmt(2 * tn * (R + r))} mm`]] : []),
+        ['Longueur sur l\'axe (arc R × Φ)', fmt(C.rad(phi) * R) + ' mm']]) +
+    `<div class="tbl"><table><thead><tr><th>Génér.</th><th>Angle <span style="text-transform:none">φ</span></th><th>Abscisse</th><th>Demi-élément</th><th>Élément entier</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>` +
+    cdSide(R, r, th, N, ld) + cdTemplate(r, th, R, ld) +
+    `<p class="note">Génératrice 1 (φ = 0°) : côté intérieur du coude. Le gabarit montre un demi-élément ; un élément entier se trace en reportant deux fois la longueur. Chanfrein et jeu de soudure non compris.</p>`;
+}
+CD.forEach(id => { const v = store.get(id); if (v !== null && v !== undefined) $(id).value = v; $(id).addEventListener('input', cdCalc); });
+cdCalc();
+
+/* ===== FACTEUR K : essai et bibliothèque ===== */
+let kLib = store.get('klib') || [];
+let kMeasured = NaN;
+function ktCalc(){
+  const e = num($('pl-e').value), ri = num($('pl-ri').value);
+  const L0 = val('kt-l0', {min: 0, gt: true}), A = val('kt-a', {min: 0, gt: true, max: 179}), a = val('kt-a1', {min: 0, gt: true}), b = val('kt-b1', {min: 0, gt: true});
+  ['kt-l0', 'kt-a', 'kt-a1', 'kt-b1'].forEach(id => store.set(id, $(id).value));
+  const o = $('kt-out'); kMeasured = NaN; $('kt-use').disabled = true;
+  if ([L0, A, a, b].some(Number.isNaN) || !(e > 0) || !(ri >= 0)) return o.innerHTML = err("Renseigne le flan, l'angle (0 à 179°), les deux cotes, et e / Ri dans « Tôle et outil ».");
+  const BD = a + b - L0, BA = 2 * (ri + e) * Math.tan(C.rad(A) / 2) - BD, K = (BA / C.rad(A) - ri) / e;
+  kMeasured = K;
+  const ok = K >= 0 && K <= 0.5;
+  $('kt-use').disabled = !ok;
+  o.innerHTML = kv([['Déduction mesurée BD', fmt(BD) + ' mm'], ['BA correspondante', fmt(BA) + ' mm'], ['K mesuré', fmt(K, 3)]]) +
+    (ok ? '' : err("K hors de 0 à 0,5 : vérifie les mesures (cotes extérieures, flan exact) et que e et Ri correspondent à l'essai."));
+}
+function klRender(){
+  const list = $('kl-list');
+  list.innerHTML = kLib.length ? `<div class="tbl"><table><thead><tr><th>Matière</th><th>e</th><th>Ri</th><th>K</th><th></th></tr></thead><tbody>${
+    kLib.map((k, i) => `<tr><td>${k.mat.replace(/[<>&]/g, '')}</td><td>${fmt(k.e, 1)}</td><td>${fmt(k.ri, 1)}</td><td>${fmt(k.k, 3)}</td><td><span class="btns" style="justify-content:flex-end;flex-wrap:nowrap"><button class="btn" type="button" data-kuse="${i}">Utiliser</button><button class="btn" type="button" data-kdel="${i}" aria-label="Supprimer">✕</button></span></td></tr>`).join('')
+  }</tbody></table></div>` : '<p class="hint">Aucun K enregistré pour l\'instant.</p>';
+  const sel = $('ct-kl');
+  sel.innerHTML = '<option value="">Choisir…</option>' + kLib.map((k, i) => `<option value="${i}">${k.mat.replace(/[<>&]/g, '')} · e ${fmt(k.e, 1)} · K ${fmt(k.k, 3)}</option>`).join('');
+}
+$('kt-use').addEventListener('click', () => { if (Number.isFinite(kMeasured)) { $('pl-k').value = fmt(kMeasured, 3); plCalc(); } });
+$('kl-save').addEventListener('click', () => {
+  const k = num($('pl-k').value), e = num($('pl-e').value), ri = num($('pl-ri').value), mat = $('kl-mat').value.trim() || 'Sans nom';
+  if (!(k >= 0 && k <= 0.5 && e > 0 && ri >= 0)) { $('kl-list').insertAdjacentHTML('afterbegin', err('K, e ou Ri invalide : corrige « Tôle et outil » avant d\'enregistrer.')); return; }
+  kLib.push({mat, e, ri, k}); store.set('klib', kLib); $('kl-mat').value = ''; klRender();
+});
+$('kl-list').addEventListener('click', ev => {
+  const u = ev.target.closest('[data-kuse]'), d = ev.target.closest('[data-kdel]');
+  if (u){ const k = kLib[+u.dataset.kuse]; $('pl-k').value = fmt(k.k, 3); $('pl-e').value = fmt(k.e, 1); $('pl-ri').value = fmt(k.ri, 1); plCalc(); ktCalc(); }
+  if (d){ kLib.splice(+d.dataset.kdel, 1); store.set('klib', kLib); klRender(); }
+});
+$('ct-kl').addEventListener('change', () => {
+  const i = $('ct-kl').value; if (i === '') return;
+  const k = kLib[+i]; $('ct-k').value = fmt(k.k, 3); if (ctMode === 'tole') $('ct-e').value = fmt(k.e, 1); ctCalc();
+});
+['kt-l0', 'kt-a', 'kt-a1', 'kt-b1'].forEach(id => { const v = store.get(id); if (v !== null && v !== undefined) $(id).value = v; $(id).addEventListener('input', ktCalc); });
+['pl-e', 'pl-ri'].forEach(id => $(id).addEventListener('input', ktCalc));
+klRender(); ktCalc();
+
+/* ===== Préférences : langue et thème ===== */
+function recalcAll(){ plCalc(); cnCalc(); pwCalc(); ctCalc(); pqCalc(); cdCalc(); ktCalc(); klRender(); }
+function setLang(l){
+  LANG = l; store.set('lang', l);
+  document.documentElement.lang = l;
+  document.querySelectorAll('[data-lang]').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === l ? 'true' : 'false'));
+  recalcAll(); trNode(document.body);
+}
+function setTheme(t){
+  const r = document.documentElement;
+  if (t === 'light' || t === 'dark') r.setAttribute('data-theme', t); else r.removeAttribute('data-theme');
+  store.set('theme', t);
+  document.querySelectorAll('[data-theme-set]').forEach(b => b.setAttribute('aria-pressed', b.dataset.themeSet === t ? 'true' : 'false'));
+  const m = document.querySelector('meta[name="theme-color"]');
+  if (m){ const dark = t === 'dark' || (t === 'auto' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches); m.setAttribute('content', dark ? '#17202A' : '#1C44C9'); }
+}
+document.querySelectorAll('[data-lang]').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
+document.querySelectorAll('[data-theme-set]').forEach(b => b.addEventListener('click', () => setTheme(b.dataset.themeSet)));
+(() => { const t = store.get('theme'); if (t === 'light' || t === 'dark') setTheme(t); else document.querySelectorAll('[data-theme-set]').forEach(b => b.setAttribute('aria-pressed', b.dataset.themeSet === 'auto' ? 'true' : 'false')); })();
+/* Les résultats recalculés sont traduits dès qu'ils s'affichent */
+new MutationObserver(muts => { if (LANG !== 'en') return; muts.forEach(m => { if (m.type === 'childList') m.addedNodes.forEach(trNode); else if (m.type === 'characterData') trNode(m.target); }); })
+  .observe(document.body, {childList: true, subtree: true, characterData: true});
+setLang(LANG);
+
+/* ===== PWA : enregistré seulement dans la version installable (manifest présent) ===== */
+if (document.querySelector('link[rel="manifest"]') && 'serviceWorker' in navigator){
+  /* Mise à jour automatique : vérifie sw.js sans cache à chaque ouverture, puis recharge une seule fois
+     quand une nouvelle version prend la main (seulement si une ancienne version contrôlait déjà la page) */
+  const hadController = !!navigator.serviceWorker.controller;
+  let reloaded = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => { if (hadController && !reloaded) { reloaded = true; location.reload(); } });
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js', {updateViaCache: 'none'}).then(r => r.update()).catch(() => {});
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') navigator.serviceWorker.getRegistration().then(r => r && r.update()).catch(() => {});
+  });
+}
+</script>
+</body>
+</html>

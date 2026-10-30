@@ -574,14 +574,15 @@ K = (BA / (A en radians) − Ri) / e</code>
           <span>J'accepte que ces informations soient envoyées à STEGGA GROUP pour améliorer ChaudroCalc, comme expliqué dans la <a href="#confidentialite" data-tab="confidentialite">politique de confidentialité</a>.</span></label>
         <input type="hidden" name="version" id="av-version" value="">
         <input type="hidden" name="langue" id="av-langue" value="">
-        <div class="btns"><button class="btn primary" type="submit" id="av-send">Envoyer mon avis</button></div>
+        <div class="btns"><button class="btn primary" type="button" id="av-wa">Envoyer par WhatsApp</button><button class="btn" type="submit" id="av-send">Envoyer via le site</button></div>
+        <p class="hint" id="av-wa-hint">WhatsApp s'ouvre avec ton avis déjà écrit : il ne te reste qu'à appuyer sur Envoyer. Ça marche quel que soit ton opérateur.</p>
         <div id="av-out" aria-live="polite"></div>
       </fieldset>
     </form>
     <div class="result">
       <h2 style="margin:0;font:700 19px var(--f-display);text-transform:uppercase;letter-spacing:.04em">Ce qui aide le plus</h2>
       <p class="note" style="border:0;padding:0;font-size:14px">Pour une erreur de calcul, donne les valeurs saisies, le résultat de l'outil et celui que tu attendais. Une capture d'écran n'est pas possible ici : décris simplement ce que tu vois.</p>
-      <p class="note" style="border:0;padding:0;font-size:14px">Sans réseau, ton message est gardé sur ton appareil. Il part tout seul dès que la connexion revient, tant que l'outil est ouvert.</p>
+      <p class="note" style="border:0;padding:0;font-size:14px">Si « Envoyer via le site » échoue chez ton opérateur, utilise WhatsApp.</p>
     </div>
   </div>
 </section>
@@ -607,7 +608,8 @@ K = (BA / (A en radians) − Ri) / e</code>
     <article>
       <h3 id="h-conf">Politique de confidentialité</h3>
       <p><b>Ce que l'éditeur collecte.</b> Rien pour utiliser l'outil. ChaudroCalc ne demande ni compte, ni nom, ni adresse e-mail. Il n'utilise pas de cookies, pas d'outil de mesure d'audience et pas de publicité.</p>
-      <p><b>Si tu donnes ton avis.</b> Le formulaire « Donner mon avis » envoie seulement ce que tu y écris : la note, l'onglet, le type de retour, ton message, et, si tu les remplis, ton prénom ou pseudo et un contact. La version de l'outil et la langue affichée sont ajoutées pour comprendre le contexte. Rien n'est envoyé sans que tu coches la case d'accord. Ces informations sont reçues par Netlify, qui les conserve pour le compte de STEGGA GROUP. Elles servent uniquement à corriger et améliorer l'outil, et à te répondre si tu as laissé un contact. Elles ne sont ni vendues ni partagées, et sont supprimées au plus tard 12 mois après réception.</p>
+      <p><b>Si tu donnes ton avis par WhatsApp.</b> Le bouton « Envoyer par WhatsApp » ouvre WhatsApp avec ton avis déjà écrit, adressé au numéro de STEGGA GROUP. Rien ne part tant que tu n'appuies pas toi-même sur Envoyer dans WhatsApp. Le message passe alors par WhatsApp, dont les règles de confidentialité s'appliquent, et STEGGA GROUP voit ton numéro. Il sert uniquement à améliorer l'outil et à te répondre.</p>
+      <p><b>Si tu donnes ton avis par le site.</b> Le formulaire « Donner mon avis » envoie seulement ce que tu y écris : la note, l'onglet, le type de retour, ton message, et, si tu les remplis, ton prénom ou pseudo et un contact. La version de l'outil et la langue affichée sont ajoutées pour comprendre le contexte. Rien n'est envoyé sans que tu coches la case d'accord. Ces informations sont reçues par Netlify, qui les conserve pour le compte de STEGGA GROUP. Elles servent uniquement à corriger et améliorer l'outil, et à te répondre si tu as laissé un contact. Elles ne sont ni vendues ni partagées, et sont supprimées au plus tard 12 mois après réception.</p>
       <p><b>Ce qui reste sur ton appareil.</b> Pour te faire gagner du temps, l'outil garde dans le stockage local de ton navigateur tes dernières saisies, l'onglet ouvert et la liste « Mes facteurs K ». Ces données ne quittent jamais ton appareil : l'éditeur n'y a pas accès. Une copie de l'application est aussi gardée en cache pour fonctionner hors ligne.</p>
       <p><b>L'hébergeur.</b> Pour afficher le site, Netlify reçoit, comme tout hébergeur, des données techniques de connexion (adresse IP, type de navigateur, page demandée). Netlify indique traiter ces données pour le compte de ses clients, en tant que sous-traitant (<a href="https://www.netlify.com/privacy/" target="_blank" rel="noopener">déclaration de confidentialité de Netlify</a>). Les serveurs de Netlify peuvent être situés hors du Cameroun.</p>
       <p><b>Polices de caractères.</b> Dans la version installée, les polices sont servies par le site lui-même : aucun service tiers n'est appelé à l'ouverture.</p>
@@ -748,7 +750,13 @@ const I18N_EN = {
 "Ton message":"Your message","Ex. : sur le piquage Ø168 / Ø114, la génératrice 4 me donne 2 mm de moins que mon tracé à l'atelier.":"E.g. on the Ø168 / Ø114 branch, line 4 is 2 mm shorter than my layout in the shop.",
 "Prénom ou pseudo (facultatif)":"First name or nickname (optional)","Contact pour te répondre (facultatif)":"Contact for a reply (optional)","E-mail ou WhatsApp":"Email or WhatsApp",
 "J'accepte que ces informations soient envoyées à STEGGA GROUP pour améliorer ChaudroCalc, comme expliqué dans la":"I agree that this information is sent to STEGGA GROUP to improve ChaudroCalc, as explained in the",
-"politique de confidentialité":"privacy policy","Envoyer mon avis":"Send feedback","Ce qui aide le plus":"What helps most",
+"politique de confidentialité":"privacy policy","Envoyer mon avis":"Send feedback","Envoyer par WhatsApp":"Send via WhatsApp","Envoyer via le site":"Send via the site",
+"WhatsApp s'ouvre avec ton avis déjà écrit : il ne te reste qu'à appuyer sur Envoyer. Ça marche quel que soit ton opérateur.":"WhatsApp opens with your feedback already written: just tap Send. It works whatever your mobile network.",
+"Si « Envoyer via le site » échoue chez ton opérateur, utilise WhatsApp.":"If “Send via the site” fails on your network, use WhatsApp.",
+"WhatsApp s'ouvre : appuie sur Envoyer dans WhatsApp pour transmettre ton avis.":"WhatsApp is opening: tap Send in WhatsApp to deliver your feedback.",
+"L'envoi a échoué. Vérifie ta connexion, ou utilise « Envoyer par WhatsApp ».":"Sending failed. Check your connection, or use “Send via WhatsApp”.",
+"Si tu donnes ton avis par WhatsApp.":"If you give feedback via WhatsApp.","Si tu donnes ton avis par le site.":"If you give feedback via the site.",
+"Le bouton « Envoyer par WhatsApp » ouvre WhatsApp avec ton avis déjà écrit, adressé au numéro de STEGGA GROUP. Rien ne part tant que tu n'appuies pas toi-même sur Envoyer dans WhatsApp. Le message passe alors par WhatsApp, dont les règles de confidentialité s'appliquent, et STEGGA GROUP voit ton numéro. Il sert uniquement à améliorer l'outil et à te répondre.":"The “Send via WhatsApp” button opens WhatsApp with your feedback already written, addressed to STEGGA GROUP's number. Nothing is sent until you tap Send in WhatsApp yourself. The message then goes through WhatsApp, whose privacy rules apply, and STEGGA GROUP sees your number. It is used only to improve the tool and to reply to you.","Ce qui aide le plus":"What helps most",
 "Pour une erreur de calcul, donne les valeurs saisies, le résultat de l'outil et celui que tu attendais. Une capture d'écran n'est pas possible ici : décris simplement ce que tu vois.":"For a calculation error, give the values you entered, the tool's result and the one you expected. Screenshots cannot be attached here: just describe what you see.",
 "Sans réseau, ton message est gardé sur ton appareil. Il part tout seul dès que la connexion revient, tant que l'outil est ouvert.":"Without a network, your message is kept on your device. It is sent automatically as soon as the connection returns, while the tool is open.",
 "Écris ton message avant d'envoyer.":"Write your message before sending.","Coche la case d'accord pour pouvoir envoyer ton avis.":"Tick the consent box to send your feedback.",
@@ -916,12 +924,23 @@ showTab((location.hash || '').slice(1) || store.get('tab') || 'pliage');
   const T = fr => (LANG === 'en' && trFR(fr) !== null) ? trFR(fr) : fr;
   const say = (fr, ok) => { out.innerHTML = `<p class="${ok ? 'ok-msg' : 'err'}"></p>`; out.firstChild.textContent = T(fr); };
   const body = () => { $('av-version').value = ($('app-version').textContent || '').trim(); $('av-langue').value = LANG; return new URLSearchParams(new FormData(form)).toString(); };
-  /* Sur Netlify, l'avis part vers le site lui-même. Sur un miroir (GitHub Pages), il part vers le formulaire Netlify :
-     la réponse n'est alors pas lisible (mode no-cors), l'envoi est considéré comme fait si le réseau a répondu. */
+  /* L'envoi par le site ne marche que sur Netlify (le formulaire y est hébergé).
+     Sur la copie GitHub, seul WhatsApp est proposé : plus de faux « Merci ». */
   const ON_NETLIFY = /netlify\.app$/.test(location.hostname);
-  const post = data => ON_NETLIFY
-    ? fetch('/', {method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: data}).then(r => { if (!r.ok) throw new Error(r.status); })
-    : fetch('https://chaudrocalc.netlify.app/', {method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: data}).then(() => {});
+  const WA_NUMBER = '237620204617'; /* numéro au format international, chiffres seuls, ex. 2376XXXXXXXX */
+  if (!ON_NETLIFY) $('av-send').hidden = true;
+  const post = data => fetch('/', {method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: data}).then(r => { if (!r.ok) throw new Error(r.status); });
+  const optText = sel => { const o = sel.options[sel.selectedIndex]; return o ? o.textContent.trim() : ''; };
+  $('av-wa').addEventListener('click', () => {
+    if (!$('av-msg').value.trim()) { $('av-msg').setAttribute('aria-invalid', 'true'); return say('Écris ton message avant d\'envoyer.'); }
+    $('av-msg').setAttribute('aria-invalid', 'false');
+    const note = (form.querySelector('input[name="note"]:checked') || {}).value;
+    const lines = ['Avis ChaudroCalc', note ? `Note : ${note}/5` : '', `Onglet : ${optText($('av-onglet'))}`, `Type : ${optText($('av-type'))}`, '',
+      $('av-msg').value.trim(), '', $('av-nom').value.trim() ? `De : ${$('av-nom').value.trim()}` : '', ($('app-version').textContent || '').trim()].filter((l, i, a) => l !== '' || (a[i - 1] && a[i - 1] !== ''));
+    const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(lines.join('\n').trim())}`;
+    say('WhatsApp s\'ouvre : appuie sur Envoyer dans WhatsApp pour transmettre ton avis.', true);
+    location.href = url;
+  });
   const flush = () => {
     let q = []; try { q = JSON.parse(localStorage.getItem('cc:avis-attente')) || []; } catch(e){}
     if (!q.length || !navigator.onLine) return;
@@ -933,6 +952,7 @@ showTab((location.hash || '').slice(1) || store.get('tab') || 'pliage');
     ev.preventDefault();
     if (!$('av-msg').value.trim()) { $('av-msg').setAttribute('aria-invalid', 'true'); return say('Écris ton message avant d\'envoyer.'); }
     $('av-msg').setAttribute('aria-invalid', 'false');
+    if (!ON_NETLIFY) return $('av-wa').click();
     if (!$('av-ok').checked) return say('Coche la case d\'accord pour pouvoir envoyer ton avis.');
     const data = body(); $('av-send').disabled = true;
     const done = () => { form.reset(); $('av-send').disabled = false; };
@@ -941,7 +961,7 @@ showTab((location.hash || '').slice(1) || store.get('tab') || 'pliage');
       done(); return say('Pas de réseau : ton avis est gardé sur cet appareil et partira dès que la connexion revient.', true);
     }
     post(data).then(() => { done(); say('Merci ! Ton avis a bien été envoyé.', true); })
-      .catch(() => { $('av-send').disabled = false; say('L\'envoi a échoué. Vérifie ta connexion et réessaie.'); });
+      .catch(() => { $('av-send').disabled = false; say('L\'envoi a échoué. Vérifie ta connexion, ou utilise « Envoyer par WhatsApp ».'); });
   });
 })();
 

@@ -627,7 +627,7 @@ K = (BA / (A en radians) − Ri) / e</code>
 </main>
 <footer class="wrap foot">
   <p>Résultats théoriques. Vérifie sur chute avant la découpe définitive.</p>
-  <p>© 2026 STEGGA GROUP. Tous droits réservés. · <a href="#mentions-legales" data-tab="mentions-legales">Mentions légales</a> · <a href="#confidentialite" data-tab="confidentialite">Confidentialité</a> · <a href="./?accueil" class="home-link">Accueil</a> · <a href="#avis" data-tab="avis">Donner mon avis</a> · <span id="app-version">Version 4 bêta (26/10/2026)</span></p>
+  <p>© 2026 STEGGA GROUP. Tous droits réservés. · <a href="#mentions-legales" data-tab="mentions-legales">Mentions légales</a> · <a href="#confidentialite" data-tab="confidentialite">Confidentialité</a> · <a href="./?accueil" class="home-link">Accueil</a> · <a href="#avis" data-tab="avis">Donner mon avis</a> · <span id="app-version">Version 4.1 bêta (30/10/2026)</span></p>
 </footer>
 
 <script>
@@ -741,7 +741,7 @@ const I18N_EN = {
 "Tes saisies et ta liste de facteurs K vont être effacées de cet appareil.":"Your entries and K-factor list will be erased from this device.","Rien n'a été effacé.":"Nothing was erased.","Données effacées. La page se recharge.":"Data erased. Reloading the page.",
 "Résultats théoriques. Vérifie sur chute avant la découpe définitive.":"Theoretical results. Check on scrap before the final cut.","© 2026 STEGGA GROUP. Tous droits réservés. ·":"© 2026 STEGGA GROUP. All rights reserved. ·","Confidentialité":"Privacy","Accueil":"Home",
 "Utiliser":"Use",
-"Version de test":"Test version","Version 4 bêta (26/10/2026)":"Version 4 beta (26/10/2026)","Tu testes ChaudroCalc avant sa sortie. Un calcul faux, un mot pas clair, une idée ? Dis-le-moi.":"You are testing ChaudroCalc before its release. A wrong result, an unclear word, an idea? Tell me.",
+"Version de test":"Test version","Version 4.1 bêta (30/10/2026)":"Version 4.1 beta (30/10/2026)","Tu testes ChaudroCalc avant sa sortie. Un calcul faux, un mot pas clair, une idée ? Dis-le-moi.":"You are testing ChaudroCalc before its release. A wrong result, an unclear word, an idea? Tell me.",
 "Donner mon avis":"Give feedback","Masquer ce bandeau":"Hide this banner",
 "Ton retour sert à corriger les erreurs et à choisir les prochains calculs. Il est envoyé à STEGGA GROUP, l'éditeur de l'outil.":"Your feedback is used to fix errors and choose the next calculators. It is sent to STEGGA GROUP, the tool's publisher.",
 "Ne pas remplir":"Do not fill in","L'outil t'est-il utile ?":"Is the tool useful to you?","Note de 1 à 5":"Rating from 1 to 5","1 = pas du tout, 5 = indispensable.":"1 = not at all, 5 = essential.",
@@ -930,13 +930,16 @@ showTab((location.hash || '').slice(1) || store.get('tab') || 'pliage');
   const WA_NUMBER = '237620204617'; /* numéro au format international, chiffres seuls, ex. 2376XXXXXXXX */
   if (!ON_NETLIFY) $('av-send').hidden = true;
   const post = data => fetch('/', {method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: data}).then(r => { if (!r.ok) throw new Error(r.status); });
-  const optText = sel => { const o = sel.options[sel.selectedIndex]; return o ? o.textContent.trim() : ''; };
+  /* Libellés toujours en français dans le message reçu, quelle que soit la langue affichée */
+  const FR_ONGLET = {general: 'Général', pliage: 'Pliage', cone: 'Virole & cône', poids: 'Poids', cintrage: 'Cintrage', piquage: 'Piquage', coude: 'Coude', 'facteur-k': 'Facteur K', accueil: "Page d'accueil"};
+  const FR_TYPE = {idee: 'Idée ou demande', 'erreur-calcul': 'Erreur de calcul', bug: "Bug d'affichage", texte: 'Texte pas clair', autre: 'Autre'};
+  const VERSION_FR = () => (I18N_ORIG.get($('app-version').firstChild) || $('app-version').textContent || '').trim();
   $('av-wa').addEventListener('click', () => {
     if (!$('av-msg').value.trim()) { $('av-msg').setAttribute('aria-invalid', 'true'); return say('Écris ton message avant d\'envoyer.'); }
     $('av-msg').setAttribute('aria-invalid', 'false');
     const note = (form.querySelector('input[name="note"]:checked') || {}).value;
-    const lines = ['Avis ChaudroCalc', note ? `Note : ${note}/5` : '', `Onglet : ${optText($('av-onglet'))}`, `Type : ${optText($('av-type'))}`, '',
-      $('av-msg').value.trim(), '', $('av-nom').value.trim() ? `De : ${$('av-nom').value.trim()}` : '', ($('app-version').textContent || '').trim()].filter((l, i, a) => l !== '' || (a[i - 1] && a[i - 1] !== ''));
+    const lines = ['Avis ChaudroCalc', note ? `Note : ${note}/5` : '', `Onglet : ${FR_ONGLET[$('av-onglet').value] || $('av-onglet').value}`, `Type : ${FR_TYPE[$('av-type').value] || $('av-type').value}`, '',
+      $('av-msg').value.trim(), '', $('av-nom').value.trim() ? `De : ${$('av-nom').value.trim()}` : '', VERSION_FR(), `Langue du testeur : ${LANG === 'en' ? 'anglais' : 'français'}`].filter((l, i, a) => l !== '' || (a[i - 1] && a[i - 1] !== ''));
     const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(lines.join('\n').trim())}`;
     say('WhatsApp s\'ouvre : appuie sur Envoyer dans WhatsApp pour transmettre ton avis.', true);
     location.href = url;

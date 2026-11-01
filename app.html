@@ -762,7 +762,7 @@ K = (BA / (A en radians) − Ri) / e</code>
 </main>
 <footer class="wrap foot">
   <p>Résultats théoriques. Vérifie sur chute avant la découpe définitive.</p>
-  <p>© 2026 STEGGA GROUP. Tous droits réservés. · <a href="#mentions-legales" data-tab="mentions-legales">Mentions légales</a> · <a href="#confidentialite" data-tab="confidentialite">Confidentialité</a> · <a href="./?accueil" class="home-link">Accueil</a> · <a href="#avis" data-tab="avis">Donner mon avis</a> · <span id="app-version">Version 4.2.2 bêta (01/11/2026)</span></p>
+  <p>© 2026 STEGGA GROUP. Tous droits réservés. · <a href="#mentions-legales" data-tab="mentions-legales">Mentions légales</a> · <a href="#confidentialite" data-tab="confidentialite">Confidentialité</a> · <a href="./?accueil" class="home-link">Accueil</a> · <a href="#avis" data-tab="avis">Donner mon avis</a> · <span id="app-version">Version 4.2.3 bêta (01/11/2026)</span></p>
 </footer>
 
 <script>
@@ -896,7 +896,7 @@ const I18N_EN = {
 "Dans la fenêtre d'impression, choisis « Enregistrer au format PDF » pour obtenir le fichier à envoyer.":"In the print window, choose “Save as PDF” to get the file to send.",
 "Valable jusqu'au":"Valid until","P.U. (FCFA)":"Unit price (FCFA)","Montant (FCFA)":"Amount (FCFA)","Prix nets, TVA non applicable.":"Net prices, VAT not applicable.",
 "Pour l'entreprise":"For the business","Bon pour accord : date et signature du client":"Approved: client's date and signature","Date":"Date","Devis indicatif établi avec ChaudroCalc.":"Indicative quote prepared with ChaudroCalc.",
-"Version de test":"Test version","Version 4.2.2 bêta (01/11/2026)":"Version 4.2.2 beta (01/11/2026)","Tu testes ChaudroCalc avant sa sortie. Un calcul faux, un mot pas clair, une idée ? Dis-le-moi.":"You are testing ChaudroCalc before its release. A wrong result, an unclear word, an idea? Tell me.",
+"Version de test":"Test version","Version 4.2.3 bêta (01/11/2026)":"Version 4.2.3 beta (01/11/2026)","Tu testes ChaudroCalc avant sa sortie. Un calcul faux, un mot pas clair, une idée ? Dis-le-moi.":"You are testing ChaudroCalc before its release. A wrong result, an unclear word, an idea? Tell me.",
 "Donner mon avis":"Give feedback","Masquer ce bandeau":"Hide this banner",
 "Ton retour sert à corriger les erreurs et à choisir les prochains calculs. Il est envoyé à STEGGA GROUP, l'éditeur de l'outil.":"Your feedback is used to fix errors and choose the next calculators. It is sent to STEGGA GROUP, the tool's publisher.",
 "Ne pas remplir":"Do not fill in","L'outil t'est-il utile ?":"Is the tool useful to you?","Note de 1 à 5":"Rating from 1 to 5","1 = pas du tout, 5 = indispensable.":"1 = not at all, 5 = essential.",
@@ -1021,10 +1021,23 @@ const C = {
 const $ = id => document.getElementById(id);
 const num = v => { const n = parseFloat(String(v).replace(/\s/g, '').replace(',', '.')); return Number.isFinite(n) ? n : NaN; };
 const fmt = (x, d = 2) => Number.isFinite(x) ? x.toLocaleString(LANG === 'en' ? 'en-US' : 'fr-FR', {minimumFractionDigits: d, maximumFractionDigits: d}) : '–';
-const store = {
-  get(k){ try { return JSON.parse(localStorage.getItem('cc:' + k)); } catch(e){ return null; } },
-  set(k, v){ try { localStorage.setItem('cc:' + k, JSON.stringify(v)); } catch(e){} }
-};
+/* Stockage local : les écritures sont groupées. Pendant la saisie, chaque frappe ne fait plus 5 à 10 écritures
+   synchrones sur le disque ; les valeurs en attente partent 300 ms après la dernière frappe, ou tout de suite
+   quand l'appli passe en arrière-plan ou se ferme. Les lectures voient toujours la dernière valeur. */
+const store = (() => {
+  const pending = new Map(); let timer = 0;
+  const flush = () => { clearTimeout(timer); timer = 0; pending.forEach((v, k) => { try { localStorage.setItem('cc:' + k, v); } catch(e){} }); pending.clear(); };
+  addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(); });
+  addEventListener('pagehide', flush);
+  return {
+    get(k){ try { return JSON.parse(pending.has(k) ? pending.get(k) : localStorage.getItem('cc:' + k)); } catch(e){ return null; } },
+    set(k, v){ pending.set(k, JSON.stringify(v)); if (!timer) timer = setTimeout(flush, 300); },
+    flush, discard(){ clearTimeout(timer); timer = 0; pending.clear(); }
+  };
+})();
+/* Un seul calcul par image affichée : taper « 1500 » vite donnait 4 calculs et 4 rendus complets, il n'en reste qu'un.
+   Le résultat final est identique. */
+const perFrame = fn => { let id = 0; const run = () => { id = 0; fn(); }; return () => { if (!id) id = requestAnimationFrame(run); }; };
 function val(id, {min = -Infinity, gt = false, max = Infinity} = {}){
   const el = $(id), n = num(el.value);
   const ok = Number.isFinite(n) && (gt ? n > min : n >= min) && n <= max;
@@ -1065,6 +1078,7 @@ function showTab(t){
   if (!TABS.includes(t) && !PAGES.includes(t)) t = 'pliage';
   document.querySelectorAll('nav.tabs button').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === t ? 'true' : 'false'));
   document.querySelectorAll('section.panel').forEach(s => s.classList.toggle('on', s.id === 'p-' + t));
+  if (typeof stale !== 'undefined' && stale.has(t)) { stale.delete(t); RENDER[t](); }
   if (TABS.includes(t)) store.set('tab', t);
 }
 document.querySelectorAll('nav.tabs button').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
@@ -1127,6 +1141,7 @@ showTab((location.hash || '').slice(1) || store.get('tab') || 'pliage');
 $('wipe-ask').addEventListener('click', () => { $('wipe-ask').hidden = true; $('wipe-yes').hidden = false; $('wipe-no').hidden = false; $('wipe-msg').textContent = 'Tes saisies et ta liste de facteurs K vont être effacées de cet appareil.'; });
 $('wipe-no').addEventListener('click', () => { $('wipe-ask').hidden = false; $('wipe-yes').hidden = true; $('wipe-no').hidden = true; $('wipe-msg').textContent = 'Rien n\'a été effacé.'; });
 $('wipe-yes').addEventListener('click', () => {
+  store.discard();
   try { Object.keys(localStorage).filter(k => k.startsWith('cc:')).forEach(k => localStorage.removeItem(k)); } catch(e){}
   $('wipe-msg').textContent = 'Données effacées. La page se recharge.';
   setTimeout(() => { location.hash = ''; location.reload(); }, 600);
@@ -1145,7 +1160,7 @@ function plRenderChain(){
     }
   });
   c.innerHTML = h;
-  c.querySelectorAll('input,select').forEach(el => el.addEventListener('input', plCalc));
+  c.querySelectorAll('input,select').forEach(el => el.addEventListener('input', plCalcF));
   $('pl-del').disabled = pl.bends.length === 0;
 }
 function plSketch(legs, bends){
@@ -1162,6 +1177,7 @@ function plSketch(legs, bends){
   const path = pts.map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(2)} ${(-p[1]).toFixed(2)}`).join(' ');
   return `<div class="sketch"><svg viewBox="${vb}" role="img" aria-label="Croquis du profil plié"><path d="${path}" fill="none" stroke="var(--accent)" stroke-width="${sw}" stroke-linejoin="round" stroke-linecap="round"/>${pts.map(p => `<circle cx="${p[0]}" cy="${-p[1]}" r="${sw * 1.4}" fill="var(--ink)"/>`).join('')}</svg></div>`;
 }
+const plCalcF = perFrame(() => plCalc());
 function plCalc(){
   const e = val('pl-e', {min: 0, gt: true}), ri = val('pl-ri', {min: 0}), k = val('pl-k', {min: 0, max: 0.5});
   pl.legs = pl.legs.map((_, i) => num($('pl-leg-' + i).value));
@@ -1185,7 +1201,7 @@ function plCalc(){
 $('pl-add').addEventListener('click', () => { pl.bends.push({a: 90, s: 1}); pl.legs.push(50); plRenderChain(); plCalc(); });
 $('pl-del').addEventListener('click', () => { if (pl.bends.length){ pl.bends.pop(); pl.legs.pop(); plRenderChain(); plCalc(); } });
 (() => { const p = store.get('pl-p'); if (p){ $('pl-e').value = p[0]; $('pl-ri').value = p[1]; $('pl-k').value = p[2]; } })();
-['pl-e', 'pl-ri', 'pl-k'].forEach(id => $(id).addEventListener('input', plCalc));
+['pl-e', 'pl-ri', 'pl-k'].forEach(id => $(id).addEventListener('input', plCalcF));
 plRenderChain(); plCalc();
 
 /* ===== VIROLE & CONE ===== */
@@ -1207,6 +1223,7 @@ function cnSketch(r){
     <line x1="0" y1="0" x2="${x2}" y2="${y2}" stroke="var(--muted)" stroke-width="${sw * 0.6}" stroke-dasharray="${sw * 4} ${sw * 3}"/>
     <circle cx="0" cy="0" r="${sw * 2}" fill="var(--ink)"/></svg></div>`;
 }
+const cnCalcF = perFrame(() => cnCalc());
 function cnCalc(){
   document.querySelectorAll('[data-cn]').forEach(b => b.setAttribute('aria-pressed', b.dataset.cn === cnMode ? 'true' : 'false'));
   const virole = cnMode === 'virole';
@@ -1240,13 +1257,14 @@ function cnCalc(){
   (window.__dvPending = window.__dvPending || {}).cone = {des: `${matLabel('cn-mat')} cône Ø${fmt(d1, 0)} / Ø${fmt(d2, 0)} × H${fmt(h, 0)} × ${fmt(e, 1)} mm`, q: (Math.round(m * 100) / 100).toString().replace('.', ','), u: 'kg', p: ''};
 }
 document.querySelectorAll('[data-cn]').forEach(b => b.addEventListener('click', () => { cnMode = b.dataset.cn; cnCalc(); }));
-['cn-dt', 'cn-e', 'cn-d1', 'cn-d2', 'cn-h', 'cn-rho'].forEach(id => { const v = store.get(id); if (v !== null && v !== undefined) $(id).value = v; $(id).addEventListener('input', cnCalc); });
+['cn-dt', 'cn-e', 'cn-d1', 'cn-d2', 'cn-h', 'cn-rho'].forEach(id => { const v = store.get(id); if (v !== null && v !== undefined) $(id).value = v; $(id).addEventListener('input', cnCalcF); });
 (() => { const m = store.get('cn-mat'); if (m) $('cn-mat').value = m; })();
 bindMat('cn-mat', 'cn-rho', cnCalc);
 cnCalc();
 
 /* ===== POIDS ===== */
 let pwMode = store.get('pw-mode') || 'rect';
+const pwCalcF = perFrame(() => pwCalc());
 function pwCalc(){
   document.querySelectorAll('[data-pw]').forEach(b => b.setAttribute('aria-pressed', b.dataset.pw === pwMode ? 'true' : 'false'));
   document.querySelectorAll('#pw-dims [data-for]').forEach(l => l.hidden = !l.dataset.for.split(' ').includes(pwMode));
@@ -1273,13 +1291,14 @@ function pwCalc(){
   (window.__dvPending = window.__dvPending || {}).poids = {des: `${matLabel('pw-mat')} ${dims}${qty > 1 ? ' (×' + qty + ')' : ''}`, q: (Math.round(m * qty * 100) / 100).toString().replace('.', ','), u: 'kg', p: ''};
 }
 document.querySelectorAll('[data-pw]').forEach(b => b.addEventListener('click', () => { pwMode = b.dataset.pw; pwCalc(); }));
-['pw-l', 'pw-w', 'pw-de', 'pw-di', 'pw-e', 'pw-q', 'pw-rho'].forEach(id => { const v = store.get(id); if (v !== null && v !== undefined) $(id).value = v; $(id).addEventListener('input', pwCalc); });
+['pw-l', 'pw-w', 'pw-de', 'pw-di', 'pw-e', 'pw-q', 'pw-rho'].forEach(id => { const v = store.get(id); if (v !== null && v !== undefined) $(id).value = v; $(id).addEventListener('input', pwCalcF); });
 (() => { const m = store.get('pw-mat'); if (m) $('pw-mat').value = m; })();
 bindMat('pw-mat', 'pw-rho', pwCalc);
 pwCalc();
 
 /* ===== CINTRAGE ===== */
 let ctMode = store.get('ct-mode') || 'tole';
+const ctCalcF = perFrame(() => ctCalc());
 function ctCalc(){
   document.querySelectorAll('[data-ct]').forEach(b => b.setAttribute('aria-pressed', b.dataset.ct === ctMode ? 'true' : 'false'));
   const tole = ctMode === 'tole';
@@ -1310,7 +1329,7 @@ function ctCalc(){
   out.innerHTML = html + `<p class="note">Le retour élastique n'est pas pris en compte : il se règle à l'essai sur la machine.</p>`;
 }
 document.querySelectorAll('[data-ct]').forEach(b => b.addEventListener('click', () => { ctMode = b.dataset.ct; ctCalc(); }));
-['ct-r', 'ct-a', 'ct-e', 'ct-k', 'ck-c', 'ck-f'].forEach(id => { const v = store.get(id); if (v !== null && v !== undefined) $(id).value = v; $(id).addEventListener('input', ctCalc); });
+['ct-r', 'ct-a', 'ct-e', 'ct-k', 'ck-c', 'ck-f'].forEach(id => { const v = store.get(id); if (v !== null && v !== undefined) $(id).value = v; $(id).addEventListener('input', ctCalcF); });
 ctCalc();
 
 /* ===== PIQUAGE ===== */
@@ -1336,6 +1355,7 @@ function pqHole(R, r, a, e, L){
     <line x1="0" y1="${-maxY - pad}" x2="0" y2="${-minY + pad}" stroke="var(--muted)" stroke-width="${sw * 0.5}" stroke-dasharray="${sw * 3} ${sw * 2}"/>
     <path d="${d}" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="${sw}"/></svg></div>`;
 }
+const pqCalcF = perFrame(() => pqCalc());
 function pqCalc(){
   const moy = $('pq-base').value === 'moy';
   $('pq-ep').hidden = !moy;
@@ -1366,7 +1386,7 @@ function pqCalc(){
     pqHole(R, r, a, e, L) +
     `<p class="note">Cotes du trou mesurées depuis le point où l'axe du piquage coupe l'axe du collecteur, ramené sur la surface. Chanfrein et jeu de soudure non compris.</p>`;
 }
-PQ.forEach(id => { const v = store.get(id); if (v !== null && v !== undefined) $(id).value = v; $(id).addEventListener('input', pqCalc); });
+PQ.forEach(id => { const v = store.get(id); if (v !== null && v !== undefined) $(id).value = v; $(id).addEventListener('input', pqCalcF); });
 pqCalc();
 
 /* ===== COUDE À SEGMENTS ===== */
@@ -1403,6 +1423,7 @@ function cdTemplate(r, th, R, ld){
   return `<div class="sketch"><svg viewBox="${-pad} ${-H - pad} ${W + 2 * pad} ${H + 2 * pad}" role="img" aria-label="Gabarit d'un demi-élément">
     <path d="${d}" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="${sw}" stroke-linejoin="round"/></svg></div>`;
 }
+const cdCalcF = perFrame(() => cdCalc());
 function cdCalc(){
   const moy = $('cd-base').value === 'moy';
   $('cd-epw').hidden = !moy;
@@ -1433,12 +1454,13 @@ function cdCalc(){
     cdSide(R, r, th, N, ld) + cdTemplate(r, th, R, ld) +
     `<p class="note">Génératrice 1 (φ = 0°) : côté intérieur du coude. Le gabarit montre un demi-élément ; un élément entier se trace en reportant deux fois la longueur. Chanfrein et jeu de soudure non compris.</p>`;
 }
-CD.forEach(id => { const v = store.get(id); if (v !== null && v !== undefined) $(id).value = v; $(id).addEventListener('input', cdCalc); });
+CD.forEach(id => { const v = store.get(id); if (v !== null && v !== undefined) $(id).value = v; $(id).addEventListener('input', cdCalcF); });
 cdCalc();
 
 /* ===== FACTEUR K : essai et bibliothèque ===== */
 let kLib = store.get('klib') || [];
 let kMeasured = NaN;
+const ktCalcF = perFrame(() => ktCalc());
 function ktCalc(){
   const e = num($('pl-e').value), ri = num($('pl-ri').value);
   const L0 = val('kt-l0', {min: 0, gt: true}), A = val('kt-a', {min: 0, gt: true, max: 179}), a = val('kt-a1', {min: 0, gt: true}), b = val('kt-b1', {min: 0, gt: true});
@@ -1475,8 +1497,8 @@ $('ct-kl').addEventListener('change', () => {
   const i = $('ct-kl').value; if (i === '') return;
   const k = kLib[+i]; $('ct-k').value = fmt(k.k, 3); if (ctMode === 'tole') $('ct-e').value = fmt(k.e, 1); ctCalc();
 });
-['kt-l0', 'kt-a', 'kt-a1', 'kt-b1'].forEach(id => { const v = store.get(id); if (v !== null && v !== undefined) $(id).value = v; $(id).addEventListener('input', ktCalc); });
-['pl-e', 'pl-ri'].forEach(id => $(id).addEventListener('input', ktCalc));
+['kt-l0', 'kt-a', 'kt-a1', 'kt-b1'].forEach(id => { const v = store.get(id); if (v !== null && v !== undefined) $(id).value = v; $(id).addEventListener('input', ktCalcF); });
+['pl-e', 'pl-ri'].forEach(id => $(id).addEventListener('input', ktCalcF));
 klRender(); ktCalc();
 
 /* ===== DEVIS ===== */
@@ -1587,6 +1609,7 @@ function dvText(t){
   L.push('', T('Devis indicatif établi avec ChaudroCalc.'));
   return L.join('\n');
 }
+const dvCalcF = perFrame(() => dvCalc());
 function dvCalc(){
   dvSave();
   const t = dvTotals(), out = $('dv-out');
@@ -1612,7 +1635,7 @@ function dvFillFields(){
   $('dv-num').value = devis.num; $('dv-valid').value = devis.valid; $('dv-delai').value = devis.delai; $('dv-cond').value = devis.cond;
 }
 dvFillFields();
-[['dv-num', 'num'], ['dv-valid', 'valid'], ['dv-delai', 'delai'], ['dv-cond', 'cond']].forEach(([id, k]) => $(id).addEventListener('input', e => { devis[k] = e.target.value; dvCalc(); }));
+[['dv-num', 'num'], ['dv-valid', 'valid'], ['dv-delai', 'delai'], ['dv-cond', 'cond']].forEach(([id, k]) => $(id).addEventListener('input', e => { devis[k] = e.target.value; dvCalcF(); }));
 /* Entreprise */
 /* Le logo est gardé à part : un logo trop lourd ne peut plus empêcher d'enregistrer le nom ou le téléphone,
    et un échec d'enregistrement n'efface plus jamais le logo affiché sans prévenir. */
@@ -1621,6 +1644,9 @@ try { entLogo = localStorage.getItem('cc:dv-logo') || ''; } catch(e){}
 if (!entLogo && ent.logo) { entLogo = ent.logo; try { localStorage.setItem('cc:dv-logo', entLogo); } catch(e){} }
 delete ent.logo;
 const entSave = () => { try { localStorage.setItem('cc:dv-ent', JSON.stringify(ent)); } catch(e){} };
+let entT = 0; const entSaveF = () => { clearTimeout(entT); entT = setTimeout(entSave, 300); };
+addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && entT) { clearTimeout(entT); entT = 0; entSave(); } });
+addEventListener('pagehide', () => { if (entT) { clearTimeout(entT); entT = 0; entSave(); } });
 const logoMsg = (fr, ok) => { const m = $('dv-logo-msg'); if (!fr) { m.hidden = true; return; } m.hidden = false; m.className = ok ? 'hint' : 'err'; m.textContent = (LANG === 'en' && trFR(fr) !== null) ? trFR(fr) : fr; };
 function logoStore(urls){
   for (const u of urls) { try { localStorage.setItem('cc:dv-logo', u); return u; } catch(e){} }
@@ -1632,7 +1658,7 @@ function entFill(){
   $('dv-logo-img').hidden = !entLogo; if (entLogo) $('dv-logo-img').src = entLogo; $('dv-logo-del').hidden = !entLogo;
 }
 entFill();
-[['dv-ent-nom', 'nom'], ['dv-ent-tel', 'tel'], ['dv-ent-adr', 'adr'], ['dv-ent-niu', 'niu']].forEach(([id, k]) => $(id).addEventListener('input', e => { ent[k] = e.target.value; entSave(); }));
+[['dv-ent-nom', 'nom'], ['dv-ent-tel', 'tel'], ['dv-ent-adr', 'adr'], ['dv-ent-niu', 'niu']].forEach(([id, k]) => $(id).addEventListener('input', e => { ent[k] = e.target.value; entSaveF(); }));
 $('dv-logo').addEventListener('change', e => {
   const f = e.target.files && e.target.files[0]; if (!f) return;
   const rd = new FileReader();
@@ -1697,16 +1723,16 @@ $('dv-print').addEventListener('click', () => {
   setTimeout(() => { document.title = old; }, 1000);
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('dv-doc').hidden) dvCloseDoc(); });
-$('dv-client').addEventListener('input', e => { devis.client = e.target.value; dvCalc(); });
-$('dv-objet').addEventListener('input', e => { devis.objet = e.target.value; dvCalc(); });
-$('dv-remise').addEventListener('input', e => { devis.remise = e.target.value; dvCalc(); });
-$('dv-tva-taux').addEventListener('input', e => { devis.taux = e.target.value; dvCalc(); });
+$('dv-client').addEventListener('input', e => { devis.client = e.target.value; dvCalcF(); });
+$('dv-objet').addEventListener('input', e => { devis.objet = e.target.value; dvCalcF(); });
+$('dv-remise').addEventListener('input', e => { devis.remise = e.target.value; dvCalcF(); });
+$('dv-tva-taux').addEventListener('input', e => { devis.taux = e.target.value; dvCalcF(); });
 $('dv-tva').addEventListener('change', e => { devis.tva = e.target.checked; dvCalc(); });
 document.querySelectorAll('[data-dv-add]').forEach(b => b.addEventListener('click', () => {
   const pr = DV_PRESETS[b.dataset.dvAdd]; dvAdd({des: pr.des, q: pr.u === 'forfait' ? '1' : '', u: pr.u, p: ''});
   const i = devis.lines.length - 1; const f = $(pr.des ? 'dv-q-' + i : 'dv-d-' + i); if (f) f.focus();
 }));
-$('dv-lines').addEventListener('input', e => { const el = e.target.closest('[data-dv]'); if (!el) return; devis.lines[+el.dataset.dv][el.dataset.k] = el.value; dvCalc(); });
+$('dv-lines').addEventListener('input', e => { const el = e.target.closest('[data-dv]'); if (!el) return; devis.lines[+el.dataset.dv][el.dataset.k] = el.value; dvCalcF(); });
 $('dv-lines').addEventListener('change', e => { const el = e.target.closest('select[data-dv]'); if (!el) return; devis.lines[+el.dataset.dv].u = el.value; dvCalc(); });
 $('dv-lines').addEventListener('click', e => { const b = e.target.closest('[data-dv-del]'); if (!b) return; devis.lines.splice(+b.dataset.dvDel, 1); dvRenderLines(); dvCalc(); });
 $('dv-out').addEventListener('click', e => {
@@ -1736,7 +1762,12 @@ document.addEventListener('click', e => {
 dvRenderLines(); dvCalc();
 
 /* ===== Préférences : langue et thème ===== */
-function recalcAll(){ plCalc(); cnCalc(); pwCalc(); ctCalc(); pqCalc(); cdCalc(); ktCalc(); klRender(); dvRenderLines(); dvCalc(); }
+var RENDER = {pliage: () => { plCalc(); ktCalc(); klRender(); }, cone: () => cnCalc(), poids: () => pwCalc(), cintrage: () => { ctCalc(); klRender(); }, piquage: () => pqCalc(), coude: () => cdCalc(), devis: () => { dvRenderLines(); dvCalc(); }};
+var stale = new Set();
+function recalcAll(){
+  const cur = (document.querySelector('section.panel.on') || {}).id || '';
+  Object.keys(RENDER).forEach(t => { if ('p-' + t === cur) RENDER[t](); else stale.add(t); });
+}
 function setLang(l){
   LANG = l; store.set('lang', l);
   document.documentElement.lang = l;

@@ -320,7 +320,7 @@ footer a{color:var(--muted)}
   <a href="app.html#confidentialite" data-en="Privacy">Confidentialité</a>
   <a href="app.html#formules" data-en="Formulas and sources">Formules et sources</a>
   <a href="app.html#avis" data-en="Give feedback">Donner mon avis</a>
-  <span data-en="Version 4.2.2 beta (01/11/2026)">Version 4.2.2 bêta (01/11/2026)</span>
+  <span data-en="Version 4.2.3 beta (01/11/2026)">Version 4.2.3 bêta (01/11/2026)</span>
 </footer>
 
 <script>
@@ -347,7 +347,7 @@ function setLang(l){
     el.setAttribute('aria-label', l === 'en' ? el.dataset.enAriaLabel : el.dataset.frAria);
   });
   document.querySelectorAll('[data-lang]').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === l ? 'true' : 'false'));
-  drawFold(currentT);
+  lastKey = ''; drawFold(currentT);
 }
 document.querySelectorAll('[data-lang]').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
 
@@ -366,8 +366,10 @@ const S1 = 47.13, S2 = 94.27, FLAT = 188.53;
 const svg = document.getElementById('fold');
 let currentT = 1;
 const nf = (x, d) => x.toLocaleString(LANG === 'en' ? 'en-US' : 'fr-FR', {minimumFractionDigits: d, maximumFractionDigits: d});
+let lastKey = '';
 function drawFold(t){
   currentT = t;
+  const key = t.toFixed(3) + LANG; if (key === lastKey) return; lastKey = key;
   const th = t * Math.PI / 2, c = Math.cos(th), s = Math.sin(th);
   const j1 = [-S2 / 2, 30], j2 = [S2 / 2, 30];
   const p0 = [j1[0] - S1 * c, j1[1] - S1 * s], p3 = [j2[0] + S1 * c, j2[1] - S1 * s];
@@ -391,16 +393,20 @@ const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)
 if (reduce) drawFold(1);
 else {
   const ease = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
-  const T = 7000; let t0 = null;
+  const T = 7000; let t0 = null, raf = 0, visible = true;
   const loop = now => {
+    raf = 0;
     if (t0 === null) t0 = now;
     const k = ((now - t0) % T) / T;
     let v;
     if (k < .14) v = 0; else if (k < .44) v = ease((k - .14) / .3); else if (k < .86) v = 1; else v = 1 - ease((k - .86) / .14);
-    drawFold(v); requestAnimationFrame(loop);
+    drawFold(v);
+    if (visible) raf = requestAnimationFrame(loop);
   };
   drawFold(1);
-  requestAnimationFrame(loop);
+  /* L'animation tourne seulement quand le dessin est à l'écran : plus de calcul ni de batterie consommés une fois défilé plus bas */
+  if ('IntersectionObserver' in window) new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible && !raf) raf = requestAnimationFrame(loop); }).observe(svg);
+  raf = requestAnimationFrame(loop);
 }
 
 /* Installation : propose la vraie boîte d'installation quand le navigateur la fournit */

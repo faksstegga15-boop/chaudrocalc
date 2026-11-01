@@ -622,6 +622,7 @@ K = (BA / (A en radians) − Ri) / e</code>
           <label class="btn" for="dv-logo">Ajouter un logo</label><input type="file" id="dv-logo" accept="image/*" hidden>
           <button class="btn" type="button" id="dv-logo-del" hidden>Retirer le logo</button>
         </div>
+        <p class="err" id="dv-logo-msg" aria-live="polite" hidden></p>
         <p class="hint">Ces informations restent sur ton appareil et servent à tous tes devis.</p>
       </div>
       <div class="box">
@@ -761,7 +762,7 @@ K = (BA / (A en radians) − Ri) / e</code>
 </main>
 <footer class="wrap foot">
   <p>Résultats théoriques. Vérifie sur chute avant la découpe définitive.</p>
-  <p>© 2026 STEGGA GROUP. Tous droits réservés. · <a href="#mentions-legales" data-tab="mentions-legales">Mentions légales</a> · <a href="#confidentialite" data-tab="confidentialite">Confidentialité</a> · <a href="./?accueil" class="home-link">Accueil</a> · <a href="#avis" data-tab="avis">Donner mon avis</a> · <span id="app-version">Version 4.2.1 bêta (01/11/2026)</span></p>
+  <p>© 2026 STEGGA GROUP. Tous droits réservés. · <a href="#mentions-legales" data-tab="mentions-legales">Mentions légales</a> · <a href="#confidentialite" data-tab="confidentialite">Confidentialité</a> · <a href="./?accueil" class="home-link">Accueil</a> · <a href="#avis" data-tab="avis">Donner mon avis</a> · <span id="app-version">Version 4.2.2 bêta (01/11/2026)</span></p>
 </footer>
 
 <script>
@@ -888,13 +889,14 @@ const I18N_EN = {
 "Devis copié. Colle-le où tu veux.":"Quote copied. Paste it wherever you like.","La copie n'est pas autorisée ici : utilise « Envoyer par WhatsApp ».":"Copying is not allowed here: use “Send via WhatsApp”.",
 "+ Ajouter au devis":"+ Add to quote","Ajouté au devis.":"Added to quote.","DEVIS":"QUOTE","Mon entreprise":"My business","Nom de l'entreprise":"Business name","Téléphone":"Phone","Adresse ou ville":"Address or city","NIU / RCCM (facultatif)":"Tax ID / trade register (optional)",
 "Ex. Atelier Faks Chaudronnerie":"E.g. Faks Metal Works","Ex. 6XX XX XX XX":"E.g. 6XX XX XX XX","Ex. Bonabéri, Douala":"E.g. Bonabéri, Douala","Numéros officiels":"Official numbers",
-"Ajouter un logo":"Add a logo","Retirer le logo":"Remove logo","Logo de l'entreprise":"Business logo","Ces informations restent sur ton appareil et servent à tous tes devis.":"This information stays on your device and is used for all your quotes.",
+"Ajouter un logo":"Add a logo","Retirer le logo":"Remove logo","Image illisible. Choisis une image PNG ou JPG.":"Unreadable image. Choose a PNG or JPG image.",
+"Mémoire de l'appareil pleine : le logo sert pour ce devis mais ne sera pas gardé à la prochaine ouverture. Libère de l'espace puis ajoute-le à nouveau.":"Device storage is full: the logo is used for this quote but will not be kept next time. Free up space, then add it again.","Logo de l'entreprise":"Business logo","Ces informations restent sur ton appareil et servent à tous tes devis.":"This information stays on your device and is used for all your quotes.",
 "N° du devis":"Quote no.","Validité":"Validity","jours":"days","Délai de réalisation":"Lead time","Ex. 10 jours ouvrés":"E.g. 10 working days","Conditions de paiement":"Payment terms","Ex. 50 % à la commande, solde à la livraison":"E.g. 50% on order, balance on delivery",
 "Aperçu et PDF":"Preview and PDF","Aperçu du devis":"Quote preview","Imprimer ou enregistrer en PDF":"Print or save as PDF","Fermer":"Close",
 "Dans la fenêtre d'impression, choisis « Enregistrer au format PDF » pour obtenir le fichier à envoyer.":"In the print window, choose “Save as PDF” to get the file to send.",
 "Valable jusqu'au":"Valid until","P.U. (FCFA)":"Unit price (FCFA)","Montant (FCFA)":"Amount (FCFA)","Prix nets, TVA non applicable.":"Net prices, VAT not applicable.",
 "Pour l'entreprise":"For the business","Bon pour accord : date et signature du client":"Approved: client's date and signature","Date":"Date","Devis indicatif établi avec ChaudroCalc.":"Indicative quote prepared with ChaudroCalc.",
-"Version de test":"Test version","Version 4.2.1 bêta (01/11/2026)":"Version 4.2.1 beta (01/11/2026)","Tu testes ChaudroCalc avant sa sortie. Un calcul faux, un mot pas clair, une idée ? Dis-le-moi.":"You are testing ChaudroCalc before its release. A wrong result, an unclear word, an idea? Tell me.",
+"Version de test":"Test version","Version 4.2.2 bêta (01/11/2026)":"Version 4.2.2 beta (01/11/2026)","Tu testes ChaudroCalc avant sa sortie. Un calcul faux, un mot pas clair, une idée ? Dis-le-moi.":"You are testing ChaudroCalc before its release. A wrong result, an unclear word, an idea? Tell me.",
 "Donner mon avis":"Give feedback","Masquer ce bandeau":"Hide this banner",
 "Ton retour sert à corriger les erreurs et à choisir les prochains calculs. Il est envoyé à STEGGA GROUP, l'éditeur de l'outil.":"Your feedback is used to fix errors and choose the next calculators. It is sent to STEGGA GROUP, the tool's publisher.",
 "Ne pas remplir":"Do not fill in","L'outil t'est-il utile ?":"Is the tool useful to you?","Note de 1 à 5":"Rating from 1 to 5","1 = pas du tout, 5 = indispensable.":"1 = not at all, 5 = essential.",
@@ -1517,9 +1519,27 @@ const dvSave = () => store.set('devis', devis);
 const money = x => fmt(Math.round(x), 0) + ' FCFA';
 const esc = t => String(t).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
 /* Prix en FCFA : « 1.500 » ou « 1 500 » = mille cinq cents (séparateur de milliers), sinon lecture normale */
+/* Prix en FCFA. Le franc CFA n'a pas de centimes en pratique, donc un séparateur suivi de groupes de 3 chiffres
+   est un séparateur de milliers : « 1.500 », « 1,500 », « 1 500 » et « 1.500.000 » valent 1 500 et 1 500 000.
+   Sinon le séparateur est décimal : « 1,5 », « 0,500 », « 2,75 ». Si points et virgules se mélangent
+   (« 1.500,50 » ou « 1,500.50 »), le dernier est la virgule décimale. */
 function numMoney(v){
-  const t = String(v).trim();
-  return /^\d{1,3}([. \u00A0\u202F]\d{3})+$/.test(t) ? Number(t.replace(/[. \u00A0\u202F]/g, '')) : num(t);
+  let t = String(v).trim().replace(/[\s\u00A0\u202F]/g, '');
+  if (t === '') return NaN;
+  const neg = t.startsWith('-'); if (neg) t = t.slice(1);
+  const dot = t.includes('.'), comma = t.includes(',');
+  let n;
+  if (dot && comma) {
+    const dec = t.lastIndexOf('.') > t.lastIndexOf(',') ? '.' : ',';
+    const grp = dec === '.' ? ',' : '.';
+    const [ent, frac] = [t.slice(0, t.lastIndexOf(dec)), t.slice(t.lastIndexOf(dec) + 1)];
+    n = new RegExp(`^[1-9]\\d{0,2}(\\${grp}\\d{3})*$`).test(ent) && /^\d+$/.test(frac) ? Number(ent.split(grp).join('') + '.' + frac) : NaN;
+  } else if (dot || comma) {
+    const sep = dot ? '.' : ',';
+    if (new RegExp(`^[1-9]\\d{0,2}(\\${sep}\\d{3})+$`).test(t)) n = Number(t.split(sep).join(''));
+    else n = /^\d+[.,]\d+$/.test(t) ? Number(t.replace(',', '.')) : NaN;
+  } else n = /^\d+$/.test(t) ? Number(t) : NaN;
+  return neg ? -n : n;
 }
 /* Quantité affichée : jusqu'à 2 décimales, sans arrondir 2,5 h en 3 h */
 const fmtQ = (q, u) => (Number.isFinite(q) ? q : 0).toLocaleString(LANG === 'en' ? 'en-US' : 'fr-FR', {minimumFractionDigits: u === 'kg' ? 2 : 0, maximumFractionDigits: 2});
@@ -1594,24 +1614,48 @@ function dvFillFields(){
 dvFillFields();
 [['dv-num', 'num'], ['dv-valid', 'valid'], ['dv-delai', 'delai'], ['dv-cond', 'cond']].forEach(([id, k]) => $(id).addEventListener('input', e => { devis[k] = e.target.value; dvCalc(); }));
 /* Entreprise */
-const entSave = () => { try { localStorage.setItem('cc:dv-ent', JSON.stringify(ent)); } catch(e){ ent.logo = ''; try { localStorage.setItem('cc:dv-ent', JSON.stringify(ent)); } catch(e2){} } };
+/* Le logo est gardé à part : un logo trop lourd ne peut plus empêcher d'enregistrer le nom ou le téléphone,
+   et un échec d'enregistrement n'efface plus jamais le logo affiché sans prévenir. */
+let entLogo = '';
+try { entLogo = localStorage.getItem('cc:dv-logo') || ''; } catch(e){}
+if (!entLogo && ent.logo) { entLogo = ent.logo; try { localStorage.setItem('cc:dv-logo', entLogo); } catch(e){} }
+delete ent.logo;
+const entSave = () => { try { localStorage.setItem('cc:dv-ent', JSON.stringify(ent)); } catch(e){} };
+const logoMsg = (fr, ok) => { const m = $('dv-logo-msg'); if (!fr) { m.hidden = true; return; } m.hidden = false; m.className = ok ? 'hint' : 'err'; m.textContent = (LANG === 'en' && trFR(fr) !== null) ? trFR(fr) : fr; };
+function logoStore(urls){
+  for (const u of urls) { try { localStorage.setItem('cc:dv-logo', u); return u; } catch(e){} }
+  return null;
+}
+entSave();
 function entFill(){
   $('dv-ent-nom').value = ent.nom; $('dv-ent-tel').value = ent.tel; $('dv-ent-adr').value = ent.adr; $('dv-ent-niu').value = ent.niu;
-  $('dv-logo-img').hidden = !ent.logo; if (ent.logo) $('dv-logo-img').src = ent.logo; $('dv-logo-del').hidden = !ent.logo;
+  $('dv-logo-img').hidden = !entLogo; if (entLogo) $('dv-logo-img').src = entLogo; $('dv-logo-del').hidden = !entLogo;
 }
 entFill();
 [['dv-ent-nom', 'nom'], ['dv-ent-tel', 'tel'], ['dv-ent-adr', 'adr'], ['dv-ent-niu', 'niu']].forEach(([id, k]) => $(id).addEventListener('input', e => { ent[k] = e.target.value; entSave(); }));
 $('dv-logo').addEventListener('change', e => {
   const f = e.target.files && e.target.files[0]; if (!f) return;
   const rd = new FileReader();
-  rd.onload = () => { const im = new Image(); im.onload = () => {
-    const k = Math.min(1, 240 / Math.max(im.width, im.height)), c = document.createElement('canvas');
-    c.width = Math.round(im.width * k); c.height = Math.round(im.height * k);
-    c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
-    ent.logo = c.toDataURL('image/png'); entSave(); entFill(); }; im.src = rd.result; };
+  const bad = () => logoMsg('Image illisible. Choisis une image PNG ou JPG.');
+  rd.onerror = bad;
+  rd.onload = () => { const im = new Image(); im.onerror = bad; im.onload = () => {
+    const draw = (max, type, q) => {
+      const k = Math.min(1, max / Math.max(im.width, im.height)), c = document.createElement('canvas');
+      c.width = Math.max(1, Math.round(im.width * k)); c.height = Math.max(1, Math.round(im.height * k));
+      const g = c.getContext('2d'); if (type === 'image/jpeg') { g.fillStyle = '#FFFFFF'; g.fillRect(0, 0, c.width, c.height); }
+      g.drawImage(im, 0, 0, c.width, c.height); return c.toDataURL(type, q);
+    };
+    /* Du plus fidèle au plus léger : PNG 240 px, JPEG 240 px, JPEG 160 px */
+    const png = draw(240, 'image/png');
+    const tries = (png.length < 150000 ? [png] : []).concat([draw(240, 'image/jpeg', 0.85), draw(160, 'image/jpeg', 0.7)]);
+    const saved = logoStore(tries);
+    entLogo = saved || tries[tries.length - 1];
+    entFill();
+    logoMsg(saved ? '' : 'Mémoire de l\'appareil pleine : le logo sert pour ce devis mais ne sera pas gardé à la prochaine ouverture. Libère de l\'espace puis ajoute-le à nouveau.');
+  }; im.src = rd.result; };
   rd.readAsDataURL(f); e.target.value = '';
 });
-$('dv-logo-del').addEventListener('click', () => { ent.logo = ''; entSave(); entFill(); });
+$('dv-logo-del').addEventListener('click', () => { entLogo = ''; try { localStorage.removeItem('cc:dv-logo'); } catch(e){} entFill(); logoMsg(''); });
 /* Feuille de devis */
 function dvDocHTML(){
   const t = dvTotals(), T = fr => (LANG === 'en' && trFR(fr) !== null) ? trFR(fr) : fr;
@@ -1620,7 +1664,7 @@ function dvDocHTML(){
   const nb = x => fmt(Math.round(x), 0);
   const co = [ent.adr, ent.tel ? 'Tél. ' + ent.tel : '', ent.niu].filter(Boolean).join('\n');
   return `<div class="hd">
-      <div class="ent">${ent.logo ? `<img src="${ent.logo}" alt="">` : ''}<div><div class="nm">${esc(ent.nom || T('Mon entreprise'))}</div><div class="co">${esc(co)}</div></div></div>
+      <div class="ent">${entLogo ? `<img src="${entLogo}" alt="">` : ''}<div><div class="nm">${esc(ent.nom || T('Mon entreprise'))}</div><div class="co">${esc(co)}</div></div></div>
       <div class="ttl"><div class="big">${T('DEVIS')}</div><div class="meta">N° ${esc(devis.num)}<br>${T('Date')} : ${d0.toLocaleDateString(loc)}${until ? `<br>${T('Valable jusqu\'au')} ${until}` : ''}</div></div>
     </div>
     <div class="blocks">

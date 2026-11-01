@@ -761,7 +761,7 @@ K = (BA / (A en radians) − Ri) / e</code>
 </main>
 <footer class="wrap foot">
   <p>Résultats théoriques. Vérifie sur chute avant la découpe définitive.</p>
-  <p>© 2026 STEGGA GROUP. Tous droits réservés. · <a href="#mentions-legales" data-tab="mentions-legales">Mentions légales</a> · <a href="#confidentialite" data-tab="confidentialite">Confidentialité</a> · <a href="./?accueil" class="home-link">Accueil</a> · <a href="#avis" data-tab="avis">Donner mon avis</a> · <span id="app-version">Version 4.2 bêta (01/11/2026)</span></p>
+  <p>© 2026 STEGGA GROUP. Tous droits réservés. · <a href="#mentions-legales" data-tab="mentions-legales">Mentions légales</a> · <a href="#confidentialite" data-tab="confidentialite">Confidentialité</a> · <a href="./?accueil" class="home-link">Accueil</a> · <a href="#avis" data-tab="avis">Donner mon avis</a> · <span id="app-version">Version 4.2.1 bêta (01/11/2026)</span></p>
 </footer>
 
 <script>
@@ -882,7 +882,7 @@ const I18N_EN = {
 "Au Cameroun, le taux effectif de 19,25 % ne s'applique qu'aux entreprises assujetties. Vérifie ta situation auprès d'un comptable ou des impôts.":"In Cameroon, the effective 19.25% rate applies only to VAT-registered businesses. Check your situation with an accountant or the tax office.",
 "Désignation":"Description","Quantité":"Quantity","Unité":"Unit","Prix unitaire":"Unit price","Supprimer la ligne":"Delete line",
 "Aucune ligne pour l'instant. Ajoute une ligne ci-dessous, ou une tôle depuis les onglets Poids et Virole & cône.":"No lines yet. Add a line below, or a plate from the Weight and Shell & cone tabs.",
-"Total du devis":"Quote total","Ajoute une première ligne pour commencer.":"Add a first line to start.","Total TTC":"Total incl. VAT","Total HT":"Total excl. VAT","Sous-total":"Subtotal","TVA":"VAT","Total":"Total","Qté":"Qty","Montant":"Amount","Montant :":"Amount:",
+"Total du devis":"Quote total","Ajoute une première ligne pour commencer.":"Add a first line to start.","Total TTC":"Total incl. VAT","Total HT":"Total excl. VAT","Sous-total":"Subtotal","TVA":"VAT","Total":"Total","Qté":"Qty","Montant":"Amount","Montant :":"Amount:","Quantité et prix doivent être positifs : ligne comptée à 0.":"Quantity and price must be positive: line counted as 0.",
 "Copier le texte":"Copy text","Nouveau devis":"New quote","Effacer tout le devis ?":"Clear the whole quote?","Oui, effacer":"Yes, clear",
 "Devis indicatif, à vérifier avant envoi. Ce n'est pas une facture ni un document comptable.":"Indicative quote, check it before sending. It is not an invoice or an accounting document.",
 "Devis copié. Colle-le où tu veux.":"Quote copied. Paste it wherever you like.","La copie n'est pas autorisée ici : utilise « Envoyer par WhatsApp ».":"Copying is not allowed here: use “Send via WhatsApp”.",
@@ -894,7 +894,7 @@ const I18N_EN = {
 "Dans la fenêtre d'impression, choisis « Enregistrer au format PDF » pour obtenir le fichier à envoyer.":"In the print window, choose “Save as PDF” to get the file to send.",
 "Valable jusqu'au":"Valid until","P.U. (FCFA)":"Unit price (FCFA)","Montant (FCFA)":"Amount (FCFA)","Prix nets, TVA non applicable.":"Net prices, VAT not applicable.",
 "Pour l'entreprise":"For the business","Bon pour accord : date et signature du client":"Approved: client's date and signature","Date":"Date","Devis indicatif établi avec ChaudroCalc.":"Indicative quote prepared with ChaudroCalc.",
-"Version de test":"Test version","Version 4.2 bêta (01/11/2026)":"Version 4.2 beta (01/11/2026)","Tu testes ChaudroCalc avant sa sortie. Un calcul faux, un mot pas clair, une idée ? Dis-le-moi.":"You are testing ChaudroCalc before its release. A wrong result, an unclear word, an idea? Tell me.",
+"Version de test":"Test version","Version 4.2.1 bêta (01/11/2026)":"Version 4.2.1 beta (01/11/2026)","Tu testes ChaudroCalc avant sa sortie. Un calcul faux, un mot pas clair, une idée ? Dis-le-moi.":"You are testing ChaudroCalc before its release. A wrong result, an unclear word, an idea? Tell me.",
 "Donner mon avis":"Give feedback","Masquer ce bandeau":"Hide this banner",
 "Ton retour sert à corriger les erreurs et à choisir les prochains calculs. Il est envoyé à STEGGA GROUP, l'éditeur de l'outil.":"Your feedback is used to fix errors and choose the next calculators. It is sent to STEGGA GROUP, the tool's publisher.",
 "Ne pas remplir":"Do not fill in","L'outil t'est-il utile ?":"Is the tool useful to you?","Note de 1 à 5":"Rating from 1 to 5","1 = pas du tout, 5 = indispensable.":"1 = not at all, 5 = essential.",
@@ -1516,11 +1516,23 @@ let dvConfirm = false;
 const dvSave = () => store.set('devis', devis);
 const money = x => fmt(Math.round(x), 0) + ' FCFA';
 const esc = t => String(t).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+/* Prix en FCFA : « 1.500 » ou « 1 500 » = mille cinq cents (séparateur de milliers), sinon lecture normale */
+function numMoney(v){
+  const t = String(v).trim();
+  return /^\d{1,3}([. \u00A0\u202F]\d{3})+$/.test(t) ? Number(t.replace(/[. \u00A0\u202F]/g, '')) : num(t);
+}
+/* Quantité affichée : jusqu'à 2 décimales, sans arrondir 2,5 h en 3 h */
+const fmtQ = (q, u) => (Number.isFinite(q) ? q : 0).toLocaleString(LANG === 'en' ? 'en-US' : 'fr-FR', {minimumFractionDigits: u === 'kg' ? 2 : 0, maximumFractionDigits: 2});
+/* Tous les montants sont arrondis au franc à chaque étape : écran, WhatsApp, PDF et montant en lettres restent identiques */
 function dvTotals(){
-  const lines = devis.lines.map(l => ({...l, q: num(l.q), p: num(l.p)})).map(l => ({...l, m: (Number.isFinite(l.q) ? l.q : 0) * (Number.isFinite(l.p) ? l.p : 0)}));
+  const lines = devis.lines.map(l => {
+    const q = num(l.q), p = numMoney(l.p);
+    const ok = x => Number.isFinite(x) && x >= 0;
+    return {...l, q, p, bad: (l.q !== '' && !ok(q)) || (l.p !== '' && !ok(p)), m: ok(q) && ok(p) ? Math.round(q * p) : 0};
+  });
   const sub = lines.reduce((a, l) => a + l.m, 0);
-  const r = Math.min(100, Math.max(0, num(devis.remise) || 0)), rem = sub * r / 100, ht = sub - rem;
-  const taux = Math.max(0, num(devis.taux) || 0), tva = devis.tva ? ht * taux / 100 : 0;
+  const r = Math.min(100, Math.max(0, num(devis.remise) || 0)), rem = Math.round(sub * r / 100), ht = sub - rem;
+  const taux = Math.max(0, num(devis.taux) || 0), tva = devis.tva ? Math.round(ht * taux / 100) : 0;
   return {lines, sub, r, rem, ht, taux, tva, ttc: ht + tva};
 }
 function dvRenderLines(){
@@ -1544,7 +1556,7 @@ function dvText(t){
   L.push(`${T('DEVIS')} ${devis.num}${devis.objet ? ' · ' + devis.objet : ''}`, `${T('Date')} : ${new Date(devis.date).toLocaleDateString(LANG === 'en' ? 'en-GB' : 'fr-FR')}`);
   if (devis.client) L.push(`${T('Client')} : ${devis.client}`);
   L.push('');
-  t.lines.forEach((l, i) => L.push(`${i + 1}. ${l.des || '…'} : ${fmt(l.q || 0, l.u === 'kg' ? 2 : 0)} ${l.u} × ${money(l.p || 0)} = ${money(l.m)}`));
+  t.lines.forEach((l, i) => L.push(`${i + 1}. ${l.des || '…'} : ${fmtQ(l.q, l.u)} ${l.u} × ${money(l.p || 0)} = ${money(l.m)}`));
   L.push('', `${T('Sous-total')} : ${money(t.sub)}`);
   if (t.rem) L.push(`${T('Remise')} (${fmt(t.r, 1)} %) : − ${money(t.rem)}`);
   if (devis.tva) L.push(`${T('Total HT')} : ${money(t.ht)}`, `${T('TVA')} (${fmt(t.taux, 2)} %) : ${money(t.tva)}`, `${T('Total TTC')} : ${money(t.ttc)}`);
@@ -1558,10 +1570,15 @@ function dvText(t){
 function dvCalc(){
   dvSave();
   const t = dvTotals(), out = $('dv-out');
-  t.lines.forEach((l, i) => { const a = $('dv-a-' + i); if (a) a.innerHTML = `Montant : <b>${money(l.m)}</b>`; });
+  t.lines.forEach((l, i) => {
+    const a = $('dv-a-' + i); if (a) a.innerHTML = l.bad ? '<span class="err" style="margin:0">Quantité et prix doivent être positifs : ligne comptée à 0.</span>' : `Montant : <b>${money(l.m)}</b>`;
+    const q = $('dv-q-' + i), pp = $('dv-p-' + i);
+    if (q) q.setAttribute('aria-invalid', String(devis.lines[i].q !== '' && !(num(devis.lines[i].q) >= 0)));
+    if (pp) pp.setAttribute('aria-invalid', String(devis.lines[i].p !== '' && !(numMoney(devis.lines[i].p) >= 0)));
+  });
   if (!devis.lines.length) { out.innerHTML = `<div class="cote"><span class="lbl">Total du devis</span><span class="val">0<small>FCFA</small></span><div class="dim"><span class="arr l"></span><span class="arr r"></span></div></div><p class="note">Ajoute une première ligne pour commencer.</p>`; return; }
   out.innerHTML = cote(devis.tva ? 'Total TTC' : 'Total du devis', Math.round(t.ttc), 'FCFA', 0) +
-    `<div class="tbl"><table><thead><tr><th>Désignation</th><th>Qté</th><th>Montant</th></tr></thead><tbody>${t.lines.map(l => `<tr><td>${esc(l.des || '…')}</td><td>${fmt(l.q || 0, l.u === 'kg' ? 2 : 0)} ${esc(l.u)}</td><td>${money(l.m)}</td></tr>`).join('')}</tbody></table></div>` +
+    `<div class="tbl"><table><thead><tr><th>Désignation</th><th>Qté</th><th>Montant</th></tr></thead><tbody>${t.lines.map(l => `<tr><td>${esc(l.des || '…')}</td><td>${fmtQ(l.q, l.u)} ${esc(l.u)}</td><td>${money(l.m)}</td></tr>`).join('')}</tbody></table></div>` +
     kv([['Sous-total', money(t.sub)], ...(t.rem ? [[`Remise (${fmt(t.r, 1)} %)`, '− ' + money(t.rem)]] : []),
         ...(devis.tva ? [['Total HT', money(t.ht)], [`TVA (${fmt(t.taux, 2)} %)`, money(t.tva)]] : [])]) +
     `<div class="btns"><button class="btn primary" type="button" id="dv-preview">Aperçu et PDF</button><button class="btn" type="button" id="dv-wa">Envoyer par WhatsApp</button><button class="btn" type="button" id="dv-copy">Copier le texte</button></div>
@@ -1611,7 +1628,7 @@ function dvDocHTML(){
       <div class="blk"><div class="lb">${T('Objet')}</div><div class="vl">${esc(devis.objet || '…')}</div></div>
     </div>
     <div class="tw"><table><thead><tr><th>N°</th><th>${T('Désignation')}</th><th>${T('Qté')}</th><th>${T('Unité')}</th><th>${T('P.U. (FCFA)')}</th><th>${T('Montant (FCFA)')}</th></tr></thead>
-      <tbody>${t.lines.map((l, i) => `<tr><td>${i + 1}</td><td>${esc(l.des || '…')}</td><td>${fmt(l.q || 0, l.u === 'kg' ? 2 : 0)}</td><td>${esc(l.u)}</td><td>${nb(l.p || 0)}</td><td>${nb(l.m)}</td></tr>`).join('')}</tbody></table></div>
+      <tbody>${t.lines.map((l, i) => `<tr><td>${i + 1}</td><td>${esc(l.des || '…')}</td><td>${fmtQ(l.q, l.u)}</td><td>${esc(l.u)}</td><td>${nb(l.p || 0)}</td><td>${nb(l.m)}</td></tr>`).join('')}</tbody></table></div>
     <div class="tot"><dl>
       <dt>${T('Sous-total')}</dt><dd>${money(t.sub)}</dd>
       ${t.rem ? `<dt>${T('Remise')} (${fmt(t.r, 1)} %)</dt><dd>− ${money(t.rem)}</dd>` : ''}

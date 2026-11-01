@@ -1,7 +1,7 @@
 // ChaudroCalc service worker
 // Pages : réseau d'abord (toujours la dernière version en ligne), cache si hors ligne.
 // Autres fichiers (icônes, polices) : cache d'abord.
-const CACHE = 'chaudrocalc-v8';
+const CACHE = 'chaudrocalc-v9';
 const SHELL = ['./', 'index.html', 'app.html', 'manifest.json', 'icon-192.png', 'icon-512.png',
   'fonts/barlow-condensed-latin-600-normal.woff2', 'fonts/barlow-condensed-latin-700-normal.woff2',
   'fonts/ibm-plex-sans-latin-400-normal.woff2', 'fonts/ibm-plex-sans-latin-500-normal.woff2',

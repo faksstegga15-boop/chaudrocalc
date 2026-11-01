@@ -99,6 +99,68 @@ textarea{width:100%;min-width:0;font:15px/1.5 var(--f-body);color:var(--ink);bac
 textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .hp{position:absolute!important;left:-9999px!important;width:1px;height:1px;overflow:hidden}
 .ok-msg{color:var(--accent);font-weight:600;margin:0}
+.dv-lines{display:grid;gap:10px}
+.dv-line{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:10px;border:1px solid var(--line);border-radius:4px;background:var(--surface-2)}
+.dv-line .des{grid-column:1 / -1}
+.dv-line .nums{display:grid;grid-template-columns:minmax(0,1fr) 76px minmax(0,1.2fr);gap:8px;grid-column:1}
+.dv-line .amt{grid-column:1;font:500 14px var(--f-mono);font-variant-numeric:tabular-nums;color:var(--muted)}
+.dv-line .amt b{color:var(--ink);font-weight:500}
+.dv-line .del{grid-column:2;grid-row:2 / span 2;align-self:center}
+.dv-line label.f{font-size:12px}
+.dv-line select,.dv-line input{font-size:15px;padding:7px 8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips .btn{padding:6px 10px;font-size:13px}
+.add-devis{margin-top:4px}
+.dv-total{font:500 15px var(--f-mono);font-variant-numeric:tabular-nums}
+.dv-confirm{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.logo-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.logo-row img{width:56px;height:56px;object-fit:contain;border:1px solid var(--line);border-radius:4px;background:#fff}
+#dv-doc{position:fixed;inset:0;z-index:50;overflow:auto;background:#5B6573;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+#dv-doc .doc-bar{position:sticky;top:0;z-index:2;display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:#17202A;color:#E5EBF1;padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+#dv-doc .doc-bar b{font:700 17px var(--f-display);text-transform:uppercase;letter-spacing:.05em;margin-right:auto}
+#dv-doc .doc-bar .btn{background:#1F2A36;color:#E5EBF1;border-color:#2C3947}
+#dv-doc .doc-bar .btn.primary{background:#86A2FF;color:#0A1024;border-color:#86A2FF}
+#dv-doc .doc-hint{color:#E5EBF1;font-size:13px;text-align:center;margin:10px 16px 0}
+.sheet{width:min(794px,calc(100% - 24px));margin:14px auto 28px;background:#FFFFFF;color:#16202B;padding:clamp(18px,5vw,48px);box-shadow:0 10px 40px rgba(0,0,0,.35);font:13.5px/1.5 var(--f-body);color-scheme:light}
+.sheet .hd{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;border-bottom:3px solid #1C44C9;padding-bottom:16px}
+.sheet .ent{display:flex;gap:12px;align-items:flex-start;min-width:0}
+.sheet .ent img{width:64px;height:64px;object-fit:contain}
+.sheet .ent .nm{font:700 22px/1.05 var(--f-display);text-transform:uppercase;letter-spacing:.02em}
+.sheet .ent .co{color:#566475;font-size:12.5px;white-space:pre-line}
+.sheet .ttl{text-align:right}
+.sheet .ttl .big{font:700 34px/1 var(--f-display);color:#1C44C9;letter-spacing:.06em}
+.sheet .ttl .meta{font:500 12.5px/1.6 var(--f-mono);color:#16202B}
+.sheet .blocks{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;margin:18px 0}
+.sheet .blk{border:1px solid #C6CFD9;border-radius:4px;padding:10px 12px;min-width:0}
+.sheet .blk .lb{font:600 11px var(--f-display);letter-spacing:.12em;text-transform:uppercase;color:#566475;margin-bottom:2px}
+.sheet .blk .vl{font-weight:600;white-space:pre-line;overflow-wrap:anywhere}
+.sheet .tw{overflow-x:auto}
+.sheet table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:520px}
+.sheet th{background:#1C44C9;color:#FFFFFF;font:600 11.5px var(--f-display);letter-spacing:.08em;text-transform:uppercase;padding:8px;text-align:right}
+.sheet td{padding:8px;border-bottom:1px solid #E3E8EE;text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;color:#16202B}
+.sheet th:nth-child(2),.sheet td:nth-child(2){text-align:left;font-family:var(--f-body)}
+.sheet tbody tr:nth-child(even) td{background:#F4F6F9}
+.sheet .tot{display:flex;justify-content:flex-end;margin-top:12px}
+.sheet .tot dl{display:grid;grid-template-columns:auto auto;gap:6px 24px;margin:0;min-width:min(300px,100%)}
+.sheet .tot dt{color:#566475}
+.sheet .tot dd{margin:0;text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.sheet .tot .grand{border-top:2px solid #16202B;padding-top:6px;font-weight:700;color:#1C44C9;font-size:15px}
+.sheet .words{margin:14px 0 0;font-style:italic}
+.sheet .cond{margin-top:18px;display:grid;gap:4px;font-size:12.5px}
+.sheet .sign{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:28px}
+.sheet .sign div{border-top:1px solid #16202B;padding-top:6px;min-height:70px;font-size:12px;color:#566475}
+.sheet .foot{margin-top:24px;border-top:1px solid #E3E8EE;padding-top:8px;font-size:11px;color:#566475;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+@media (max-width:520px){.sheet .blocks,.sheet .sign{grid-template-columns:1fr}.sheet .ttl{text-align:left}}
+@page{size:A4;margin:12mm}
+@media print{
+  html.print-devis,html.print-devis body{background:#FFFFFF!important}
+  html.print-devis header.top,html.print-devis footer,html.print-devis main>:not(#dv-doc),html.print-devis #dv-doc .doc-bar,html.print-devis #dv-doc .doc-hint,html.print-devis body::before{display:none!important}
+  html.print-devis #dv-doc{position:static;overflow:visible;background:#FFFFFF;padding:0}
+  html.print-devis .sheet{width:auto;margin:0;padding:0;box-shadow:none}
+  html.print-devis .sheet table{min-width:0}
+  html.print-devis .sheet th{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html.print-devis .sheet tbody tr:nth-child(even) td{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
 section.panel{display:none}
 section.panel.on{display:block}
 .intro{max-width:62ch;color:var(--muted);margin:0 0 18px}
@@ -200,6 +262,7 @@ footer.foot a:hover{color:var(--accent)}
       <button role="tab" id="t-cintrage" data-tab="cintrage" aria-selected="false">Cintrage</button>
       <button role="tab" id="t-piquage" data-tab="piquage" aria-selected="false">Piquage</button>
       <button role="tab" id="t-coude" data-tab="coude" aria-selected="false">Coude</button>
+      <button role="tab" id="t-devis" data-tab="devis" aria-selected="false">Devis</button>
       <button role="tab" id="t-formules" data-tab="formules" aria-selected="false">Formules</button>
     </nav></div>
   </div>
@@ -539,6 +602,77 @@ K = (BA / (A en radians) − Ri) / e</code>
   </div>
 </section>
 
+<!-- DEVIS -->
+<section class="panel" id="p-devis" role="tabpanel" aria-labelledby="t-devis">
+  <p class="intro">Prépare un devis rapide : matière, découpe, pliage, soudure, fournitures. Ajoute une tôle directement depuis les onglets Poids ou Virole &amp; cône, puis envoie le devis par WhatsApp.</p>
+  <div class="grid">
+    <fieldset>
+      <div class="box">
+        <h2>Mon entreprise</h2>
+        <div class="row">
+          <label class="f"><b>Nom de l'entreprise</b><input id="dv-ent-nom" autocomplete="organization" placeholder="Ex. Atelier Faks Chaudronnerie"></label>
+          <label class="f"><b>Téléphone</b><input id="dv-ent-tel" inputmode="tel" autocomplete="tel" placeholder="Ex. 6XX XX XX XX"></label>
+        </div>
+        <div class="row">
+          <label class="f"><b>Adresse ou ville</b><input id="dv-ent-adr" placeholder="Ex. Bonabéri, Douala"></label>
+          <label class="f"><b>NIU / RCCM (facultatif)</b><input id="dv-ent-niu" placeholder="Numéros officiels"></label>
+        </div>
+        <div class="logo-row">
+          <img id="dv-logo-img" alt="Logo de l'entreprise" hidden>
+          <label class="btn" for="dv-logo">Ajouter un logo</label><input type="file" id="dv-logo" accept="image/*" hidden>
+          <button class="btn" type="button" id="dv-logo-del" hidden>Retirer le logo</button>
+        </div>
+        <p class="hint">Ces informations restent sur ton appareil et servent à tous tes devis.</p>
+      </div>
+      <div class="box">
+        <h2>Client et travail</h2>
+        <div class="row">
+          <label class="f"><b>Client</b><input id="dv-client" autocomplete="off" placeholder="Nom du client"></label>
+          <label class="f"><b>Objet</b><input id="dv-objet" autocomplete="off" placeholder="Ex. trémie inox, 2 pièces"></label>
+        </div>
+        <div class="row">
+          <label class="f"><b>N° du devis</b><input id="dv-num" autocomplete="off"></label>
+          <label class="f"><b>Validité</b><span class="unit"><input id="dv-valid" inputmode="numeric" value="30"><i>jours</i></span></label>
+          <label class="f"><b>Délai de réalisation</b><input id="dv-delai" placeholder="Ex. 10 jours ouvrés"></label>
+        </div>
+        <label class="f"><b>Conditions de paiement</b><input id="dv-cond" placeholder="Ex. 50 % à la commande, solde à la livraison"></label>
+      </div>
+      <div class="box">
+        <h2>Lignes du devis</h2>
+        <div class="dv-lines" id="dv-lines"></div>
+        <div class="chips" aria-label="Ajouter une ligne">
+          <button class="btn" type="button" data-dv-add="matiere">+ Matière</button>
+          <button class="btn" type="button" data-dv-add="decoupe">+ Découpe</button>
+          <button class="btn" type="button" data-dv-add="pliage">+ Pliage</button>
+          <button class="btn" type="button" data-dv-add="soudure">+ Soudure</button>
+          <button class="btn" type="button" data-dv-add="fournitures">+ Fournitures</button>
+          <button class="btn" type="button" data-dv-add="transport">+ Transport</button>
+          <button class="btn" type="button" data-dv-add="libre">+ Autre ligne</button>
+        </div>
+      </div>
+      <div class="box">
+        <h2>Remise et TVA</h2>
+        <div class="row">
+          <label class="f"><b>Remise</b><span class="unit"><input id="dv-remise" inputmode="decimal" value="0"><i>%</i></span></label>
+          <label class="f"><b>Taux de TVA</b><span class="unit"><input id="dv-tva-taux" inputmode="decimal" value="19,25"><i>%</i></span></label>
+        </div>
+        <label class="check"><input type="checkbox" id="dv-tva"><span>Ajouter la TVA (seulement si ton entreprise y est soumise)</span></label>
+        <p class="hint">Au Cameroun, le taux effectif de 19,25 % ne s'applique qu'aux entreprises assujetties. Vérifie ta situation auprès d'un comptable ou des impôts.</p>
+      </div>
+    </fieldset>
+    <div class="result" id="dv-out" aria-live="polite"></div>
+  </div>
+</section>
+
+<div id="dv-doc" hidden>
+  <div class="doc-bar"><b>Aperçu du devis</b>
+    <button class="btn primary" type="button" id="dv-print">Imprimer ou enregistrer en PDF</button>
+    <button class="btn" type="button" id="dv-close">Fermer</button>
+  </div>
+  <p class="doc-hint">Dans la fenêtre d'impression, choisis « Enregistrer au format PDF » pour obtenir le fichier à envoyer.</p>
+  <div class="sheet" id="dv-sheet"></div>
+</div>
+
 <!-- AVIS -->
 <section class="panel" id="p-avis" aria-labelledby="h-avis">
   <p class="intro">Ton retour sert à corriger les erreurs et à choisir les prochains calculs. Il est envoyé à STEGGA GROUP, l'éditeur de l'outil.</p>
@@ -627,7 +761,7 @@ K = (BA / (A en radians) − Ri) / e</code>
 </main>
 <footer class="wrap foot">
   <p>Résultats théoriques. Vérifie sur chute avant la découpe définitive.</p>
-  <p>© 2026 STEGGA GROUP. Tous droits réservés. · <a href="#mentions-legales" data-tab="mentions-legales">Mentions légales</a> · <a href="#confidentialite" data-tab="confidentialite">Confidentialité</a> · <a href="./?accueil" class="home-link">Accueil</a> · <a href="#avis" data-tab="avis">Donner mon avis</a> · <span id="app-version">Version 4.1 bêta (30/10/2026)</span></p>
+  <p>© 2026 STEGGA GROUP. Tous droits réservés. · <a href="#mentions-legales" data-tab="mentions-legales">Mentions légales</a> · <a href="#confidentialite" data-tab="confidentialite">Confidentialité</a> · <a href="./?accueil" class="home-link">Accueil</a> · <a href="#avis" data-tab="avis">Donner mon avis</a> · <span id="app-version">Version 4.2 bêta (01/11/2026)</span></p>
 </footer>
 
 <script>
@@ -740,8 +874,27 @@ const I18N_EN = {
 "Efface tes saisies et ta liste de facteurs K. L'application reste installée.":"Erases your entries and your K-factor list. The app stays installed.",
 "Tes saisies et ta liste de facteurs K vont être effacées de cet appareil.":"Your entries and K-factor list will be erased from this device.","Rien n'a été effacé.":"Nothing was erased.","Données effacées. La page se recharge.":"Data erased. Reloading the page.",
 "Résultats théoriques. Vérifie sur chute avant la découpe définitive.":"Theoretical results. Check on scrap before the final cut.","© 2026 STEGGA GROUP. Tous droits réservés. ·":"© 2026 STEGGA GROUP. All rights reserved. ·","Confidentialité":"Privacy","Accueil":"Home",
-"Utiliser":"Use",
-"Version de test":"Test version","Version 4.1 bêta (30/10/2026)":"Version 4.1 beta (30/10/2026)","Tu testes ChaudroCalc avant sa sortie. Un calcul faux, un mot pas clair, une idée ? Dis-le-moi.":"You are testing ChaudroCalc before its release. A wrong result, an unclear word, an idea? Tell me.",
+"Utiliser":"Use","Devis":"Quote",
+"Prépare un devis rapide : matière, découpe, pliage, soudure, fournitures. Ajoute une tôle directement depuis les onglets Poids ou Virole & cône, puis envoie le devis par WhatsApp.":"Build a quick quote: material, cutting, bending, welding, supplies. Add a plate straight from the Weight or Shell & cone tabs, then send the quote via WhatsApp.",
+"Client et travail":"Client and job","Client":"Client","Objet":"Job","Nom du client":"Client name","Ex. trémie inox, 2 pièces":"E.g. stainless hopper, 2 parts",
+"Lignes du devis":"Quote lines","Ajouter une ligne":"Add a line","+ Matière":"+ Material","+ Découpe":"+ Cutting","+ Pliage":"+ Bending","+ Soudure":"+ Welding","+ Fournitures":"+ Supplies","+ Transport":"+ Transport","+ Autre ligne":"+ Other line",
+"Remise et TVA":"Discount and VAT","Remise":"Discount","Taux de TVA":"VAT rate","Ajouter la TVA (seulement si ton entreprise y est soumise)":"Add VAT (only if your business is liable)",
+"Au Cameroun, le taux effectif de 19,25 % ne s'applique qu'aux entreprises assujetties. Vérifie ta situation auprès d'un comptable ou des impôts.":"In Cameroon, the effective 19.25% rate applies only to VAT-registered businesses. Check your situation with an accountant or the tax office.",
+"Désignation":"Description","Quantité":"Quantity","Unité":"Unit","Prix unitaire":"Unit price","Supprimer la ligne":"Delete line",
+"Aucune ligne pour l'instant. Ajoute une ligne ci-dessous, ou une tôle depuis les onglets Poids et Virole & cône.":"No lines yet. Add a line below, or a plate from the Weight and Shell & cone tabs.",
+"Total du devis":"Quote total","Ajoute une première ligne pour commencer.":"Add a first line to start.","Total TTC":"Total incl. VAT","Total HT":"Total excl. VAT","Sous-total":"Subtotal","TVA":"VAT","Total":"Total","Qté":"Qty","Montant":"Amount","Montant :":"Amount:",
+"Copier le texte":"Copy text","Nouveau devis":"New quote","Effacer tout le devis ?":"Clear the whole quote?","Oui, effacer":"Yes, clear",
+"Devis indicatif, à vérifier avant envoi. Ce n'est pas une facture ni un document comptable.":"Indicative quote, check it before sending. It is not an invoice or an accounting document.",
+"Devis copié. Colle-le où tu veux.":"Quote copied. Paste it wherever you like.","La copie n'est pas autorisée ici : utilise « Envoyer par WhatsApp ».":"Copying is not allowed here: use “Send via WhatsApp”.",
+"+ Ajouter au devis":"+ Add to quote","Ajouté au devis.":"Added to quote.","DEVIS":"QUOTE","Mon entreprise":"My business","Nom de l'entreprise":"Business name","Téléphone":"Phone","Adresse ou ville":"Address or city","NIU / RCCM (facultatif)":"Tax ID / trade register (optional)",
+"Ex. Atelier Faks Chaudronnerie":"E.g. Faks Metal Works","Ex. 6XX XX XX XX":"E.g. 6XX XX XX XX","Ex. Bonabéri, Douala":"E.g. Bonabéri, Douala","Numéros officiels":"Official numbers",
+"Ajouter un logo":"Add a logo","Retirer le logo":"Remove logo","Logo de l'entreprise":"Business logo","Ces informations restent sur ton appareil et servent à tous tes devis.":"This information stays on your device and is used for all your quotes.",
+"N° du devis":"Quote no.","Validité":"Validity","jours":"days","Délai de réalisation":"Lead time","Ex. 10 jours ouvrés":"E.g. 10 working days","Conditions de paiement":"Payment terms","Ex. 50 % à la commande, solde à la livraison":"E.g. 50% on order, balance on delivery",
+"Aperçu et PDF":"Preview and PDF","Aperçu du devis":"Quote preview","Imprimer ou enregistrer en PDF":"Print or save as PDF","Fermer":"Close",
+"Dans la fenêtre d'impression, choisis « Enregistrer au format PDF » pour obtenir le fichier à envoyer.":"In the print window, choose “Save as PDF” to get the file to send.",
+"Valable jusqu'au":"Valid until","P.U. (FCFA)":"Unit price (FCFA)","Montant (FCFA)":"Amount (FCFA)","Prix nets, TVA non applicable.":"Net prices, VAT not applicable.",
+"Pour l'entreprise":"For the business","Bon pour accord : date et signature du client":"Approved: client's date and signature","Date":"Date","Devis indicatif établi avec ChaudroCalc.":"Indicative quote prepared with ChaudroCalc.",
+"Version de test":"Test version","Version 4.2 bêta (01/11/2026)":"Version 4.2 beta (01/11/2026)","Tu testes ChaudroCalc avant sa sortie. Un calcul faux, un mot pas clair, une idée ? Dis-le-moi.":"You are testing ChaudroCalc before its release. A wrong result, an unclear word, an idea? Tell me.",
 "Donner mon avis":"Give feedback","Masquer ce bandeau":"Hide this banner",
 "Ton retour sert à corriger les erreurs et à choisir les prochains calculs. Il est envoyé à STEGGA GROUP, l'éditeur de l'outil.":"Your feedback is used to fix errors and choose the next calculators. It is sent to STEGGA GROUP, the tool's publisher.",
 "Ne pas remplir":"Do not fill in","L'outil t'est-il utile ?":"Is the tool useful to you?","Note de 1 à 5":"Rating from 1 to 5","1 = pas du tout, 5 = indispensable.":"1 = not at all, 5 = essential.",
@@ -904,7 +1057,7 @@ function bindMat(selId, rhoId, cb){
 }
 
 /* ===== Onglets ===== */
-const TABS = ['pliage', 'cone', 'poids', 'cintrage', 'piquage', 'coude', 'formules'];
+const TABS = ['pliage', 'cone', 'poids', 'cintrage', 'piquage', 'coude', 'devis', 'formules'];
 const PAGES = ['mentions-legales', 'confidentialite', 'avis'];
 function showTab(t){
   if (!TABS.includes(t) && !PAGES.includes(t)) t = 'pliage';
@@ -1069,7 +1222,8 @@ function cnCalc(){
     const L = Math.PI * D1, m = L * h * e * 1e-9 * rho;
     return out.innerHTML = cote('Longueur développée', L, 'mm') +
       kv([['Diamètre moyen Dm', fmt(D1) + ' mm'], ['Largeur de tôle (hauteur)', fmt(h) + ' mm'], ['Flan', `${fmt(L, 1)} × ${fmt(h, 1)} mm`], ['Masse du flan', fmt(m) + ' kg']]) +
-      `<p class="note">Longueur prise sur la fibre moyenne. Le jeu de soudure et les surlongueurs de roulage ne sont pas compris.</p>`;
+      `<p class="note">Longueur prise sur la fibre moyenne. Le jeu de soudure et les surlongueurs de roulage ne sont pas compris.</p>` + addToDevisBtn('cone') +
+      ((window.__dvPending = window.__dvPending || {}).cone = {des: `${matLabel('cn-mat')} virole Ø${fmt(d1, 0)} × H${fmt(h, 0)} × ${fmt(e, 1)} mm`, q: (Math.round(m * 100) / 100).toString().replace('.', ','), u: 'kg', p: ''}, '');
   }
   const d2 = val('cn-d2', {min: 0});
   if (Number.isNaN(d2)) return out.innerHTML = err('Le petit diamètre doit être positif ou nul.');
@@ -1080,7 +1234,8 @@ function cnCalc(){
     kv([['Petit rayon R2', fmt(r.R2) + ' mm'], ['Angle du secteur', fmt(r.ang) + '°'], ['Corde du secteur (sur R1)', fmt(r.chord) + ' mm'],
         ['Génératrice g', fmt(r.g) + ' mm'], ['Diamètres moyens', `${fmt(D1, 1)} / ${fmt(D2, 1)} mm`],
         ['Contrôle : arc sur R1 = π × D1', fmt(r.arc1) + ' mm'], ['Masse du développé (net)', fmt(m) + ' kg']]) +
-    cnSketch(r) + `<p class="note">Cône droit à axes confondus. La masse ne compte pas les chutes du flan rectangulaire.</p>`;
+    cnSketch(r) + `<p class="note">Cône droit à axes confondus. La masse ne compte pas les chutes du flan rectangulaire.</p>` + addToDevisBtn('cone');
+  (window.__dvPending = window.__dvPending || {}).cone = {des: `${matLabel('cn-mat')} cône Ø${fmt(d1, 0)} / Ø${fmt(d2, 0)} × H${fmt(h, 0)} × ${fmt(e, 1)} mm`, q: (Math.round(m * 100) / 100).toString().replace('.', ','), u: 'kg', p: ''};
 }
 document.querySelectorAll('[data-cn]').forEach(b => b.addEventListener('click', () => { cnMode = b.dataset.cn; cnCalc(); }));
 ['cn-dt', 'cn-e', 'cn-d1', 'cn-d2', 'cn-h', 'cn-rho'].forEach(id => { const v = store.get(id); if (v !== null && v !== undefined) $(id).value = v; $(id).addEventListener('input', cnCalc); });
@@ -1112,7 +1267,8 @@ function pwCalc(){
   out.innerHTML = cote('Masse unitaire', m, 'kg') +
     kv([['Pièce', dims], ['Surface', fmt(area / 1e6, 4) + ' m²'], ['Masse au m² (épaisseur e)', fmt(e * rho / 1000) + ' kg/m²'],
         ['Quantité', String(qty)], ['Masse totale', fmt(m * qty) + ' kg']]) +
-    `<p class="note">Masse nette de la pièce, sans les chutes de découpe.</p>`;
+    `<p class="note">Masse nette de la pièce, sans les chutes de découpe.</p>` + addToDevisBtn('poids');
+  (window.__dvPending = window.__dvPending || {}).poids = {des: `${matLabel('pw-mat')} ${dims}${qty > 1 ? ' (×' + qty + ')' : ''}`, q: (Math.round(m * qty * 100) / 100).toString().replace('.', ','), u: 'kg', p: ''};
 }
 document.querySelectorAll('[data-pw]').forEach(b => b.addEventListener('click', () => { pwMode = b.dataset.pw; pwCalc(); }));
 ['pw-l', 'pw-w', 'pw-de', 'pw-di', 'pw-e', 'pw-q', 'pw-rho'].forEach(id => { const v = store.get(id); if (v !== null && v !== undefined) $(id).value = v; $(id).addEventListener('input', pwCalc); });
@@ -1321,8 +1477,205 @@ $('ct-kl').addEventListener('change', () => {
 ['pl-e', 'pl-ri'].forEach(id => $(id).addEventListener('input', ktCalc));
 klRender(); ktCalc();
 
+/* ===== DEVIS ===== */
+const DV_PRESETS = {
+  matiere: {des: 'Tôle acier', u: 'kg'}, decoupe: {des: 'Découpe', u: 'm'}, pliage: {des: 'Pliage', u: 'u'},
+  soudure: {des: 'Soudure (main-d\'œuvre)', u: 'h'}, fournitures: {des: 'Fournitures (électrodes, disques…)', u: 'forfait'},
+  transport: {des: 'Transport', u: 'forfait'}, libre: {des: '', u: 'u'}
+};
+const DV_UNITS = ['kg', 'm', 'm²', 'u', 'h', 'forfait'];
+let devis = store.get('devis') || {client: '', objet: '', lines: [], remise: '0', tva: false, taux: '19,25'};
+let ent = store.get('dv-ent') || {nom: '', tel: '', adr: '', niu: '', logo: ''};
+const dvNum = seq => `DEV-${new Date().getFullYear()}-${String(seq).padStart(3, '0')}`;
+if (!devis.num) devis.num = dvNum(store.get('dv-seq') || 1);
+if (!devis.date) devis.date = new Date().toISOString();
+if (devis.valid === undefined) devis.valid = '30';
+['delai', 'cond'].forEach(k => { if (devis[k] === undefined) devis[k] = ''; });
+/* Montant en lettres (français) */
+function enLettres(n){
+  const U = ['zéro','un','deux','trois','quatre','cinq','six','sept','huit','neuf','dix','onze','douze','treize','quatorze','quinze','seize','dix-sept','dix-huit','dix-neuf'];
+  const D = ['', '', 'vingt', 'trente', 'quarante', 'cinquante', 'soixante'];
+  const c100 = x => { if (x < 20) return U[x]; const t = Math.floor(x / 10), r = x % 10;
+    if (t < 7) return D[t] + (r === 0 ? '' : r === 1 ? ' et un' : '-' + U[r]);
+    if (t === 7) return 'soixante' + (r === 1 ? ' et onze' : '-' + U[10 + r]);
+    if (t === 8) return 'quatre-vingt' + (r === 0 ? 's' : '-' + U[r]);
+    return 'quatre-vingt-' + U[10 + r]; };
+  const c1000 = x => { const h = Math.floor(x / 100), r = x % 100; let w = '';
+    if (h) w = (h > 1 ? U[h] + ' ' : '') + 'cent' + (h > 1 && r === 0 ? 's' : '');
+    if (r) w += (w ? ' ' : '') + c100(r); return w; };
+  n = Math.round(Math.abs(n)); if (n === 0) return 'zéro';
+  const mrd = Math.floor(n / 1e9), mil = Math.floor(n / 1e6) % 1000, k = Math.floor(n / 1000) % 1000, r = n % 1000, out = [];
+  const inv = w => w.replace(/(vingt|cent)s$/, '$1');
+  if (mrd) out.push(inv(c1000(mrd)) + ' milliard' + (mrd > 1 ? 's' : ''));
+  if (mil) out.push(inv(c1000(mil)) + ' million' + (mil > 1 ? 's' : ''));
+  if (k) out.push((k === 1 ? '' : inv(c1000(k)) + ' ') + 'mille');
+  if (r) out.push(c1000(r));
+  return out.join(' ');
+}
+let dvConfirm = false;
+const dvSave = () => store.set('devis', devis);
+const money = x => fmt(Math.round(x), 0) + ' FCFA';
+const esc = t => String(t).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+function dvTotals(){
+  const lines = devis.lines.map(l => ({...l, q: num(l.q), p: num(l.p)})).map(l => ({...l, m: (Number.isFinite(l.q) ? l.q : 0) * (Number.isFinite(l.p) ? l.p : 0)}));
+  const sub = lines.reduce((a, l) => a + l.m, 0);
+  const r = Math.min(100, Math.max(0, num(devis.remise) || 0)), rem = sub * r / 100, ht = sub - rem;
+  const taux = Math.max(0, num(devis.taux) || 0), tva = devis.tva ? ht * taux / 100 : 0;
+  return {lines, sub, r, rem, ht, taux, tva, ttc: ht + tva};
+}
+function dvRenderLines(){
+  const box = $('dv-lines');
+  box.innerHTML = devis.lines.length ? devis.lines.map((l, i) => `
+    <div class="dv-line">
+      <label class="f des"><b>Désignation</b><input id="dv-d-${i}" data-dv="${i}" data-k="des" value="${esc(l.des)}"></label>
+      <div class="nums">
+        <label class="f"><b>Quantité</b><input id="dv-q-${i}" data-dv="${i}" data-k="q" inputmode="decimal" value="${esc(l.q)}"></label>
+        <label class="f"><b>Unité</b><select id="dv-u-${i}" data-dv="${i}" data-k="u">${DV_UNITS.map(u => `<option${u === l.u ? ' selected' : ''}>${u}</option>`).join('')}</select></label>
+        <label class="f"><b>Prix unitaire</b><span class="unit"><input id="dv-p-${i}" data-dv="${i}" data-k="p" inputmode="decimal" value="${esc(l.p)}"><i>FCFA</i></span></label>
+      </div>
+      <span class="amt" id="dv-a-${i}"></span>
+      <button class="btn del" type="button" data-dv-del="${i}" aria-label="Supprimer la ligne">✕</button>
+    </div>`).join('') : '<p class="hint">Aucune ligne pour l\'instant. Ajoute une ligne ci-dessous, ou une tôle depuis les onglets Poids et Virole &amp; cône.</p>';
+}
+function dvText(t){
+  const T = fr => (LANG === 'en' && trFR(fr) !== null) ? trFR(fr) : fr;
+  const L = [];
+  if (ent.nom) L.push(ent.nom + (ent.tel ? ' · ' + ent.tel : ''));
+  L.push(`${T('DEVIS')} ${devis.num}${devis.objet ? ' · ' + devis.objet : ''}`, `${T('Date')} : ${new Date(devis.date).toLocaleDateString(LANG === 'en' ? 'en-GB' : 'fr-FR')}`);
+  if (devis.client) L.push(`${T('Client')} : ${devis.client}`);
+  L.push('');
+  t.lines.forEach((l, i) => L.push(`${i + 1}. ${l.des || '…'} : ${fmt(l.q || 0, l.u === 'kg' ? 2 : 0)} ${l.u} × ${money(l.p || 0)} = ${money(l.m)}`));
+  L.push('', `${T('Sous-total')} : ${money(t.sub)}`);
+  if (t.rem) L.push(`${T('Remise')} (${fmt(t.r, 1)} %) : − ${money(t.rem)}`);
+  if (devis.tva) L.push(`${T('Total HT')} : ${money(t.ht)}`, `${T('TVA')} (${fmt(t.taux, 2)} %) : ${money(t.tva)}`, `${T('Total TTC')} : ${money(t.ttc)}`);
+  else L.push(`${T('Total')} : ${money(t.ttc)}`);
+  if (devis.valid) L.push(`${T('Validité')} : ${devis.valid} ${T('jours')}`);
+  if (devis.delai) L.push(`${T('Délai de réalisation')} : ${devis.delai}`);
+  if (devis.cond) L.push(`${T('Conditions de paiement')} : ${devis.cond}`);
+  L.push('', T('Devis indicatif établi avec ChaudroCalc.'));
+  return L.join('\n');
+}
+function dvCalc(){
+  dvSave();
+  const t = dvTotals(), out = $('dv-out');
+  t.lines.forEach((l, i) => { const a = $('dv-a-' + i); if (a) a.innerHTML = `Montant : <b>${money(l.m)}</b>`; });
+  if (!devis.lines.length) { out.innerHTML = `<div class="cote"><span class="lbl">Total du devis</span><span class="val">0<small>FCFA</small></span><div class="dim"><span class="arr l"></span><span class="arr r"></span></div></div><p class="note">Ajoute une première ligne pour commencer.</p>`; return; }
+  out.innerHTML = cote(devis.tva ? 'Total TTC' : 'Total du devis', Math.round(t.ttc), 'FCFA', 0) +
+    `<div class="tbl"><table><thead><tr><th>Désignation</th><th>Qté</th><th>Montant</th></tr></thead><tbody>${t.lines.map(l => `<tr><td>${esc(l.des || '…')}</td><td>${fmt(l.q || 0, l.u === 'kg' ? 2 : 0)} ${esc(l.u)}</td><td>${money(l.m)}</td></tr>`).join('')}</tbody></table></div>` +
+    kv([['Sous-total', money(t.sub)], ...(t.rem ? [[`Remise (${fmt(t.r, 1)} %)`, '− ' + money(t.rem)]] : []),
+        ...(devis.tva ? [['Total HT', money(t.ht)], [`TVA (${fmt(t.taux, 2)} %)`, money(t.tva)]] : [])]) +
+    `<div class="btns"><button class="btn primary" type="button" id="dv-preview">Aperçu et PDF</button><button class="btn" type="button" id="dv-wa">Envoyer par WhatsApp</button><button class="btn" type="button" id="dv-copy">Copier le texte</button></div>
+     <div id="dv-msg" aria-live="polite"></div>
+     <div class="dv-confirm">${dvConfirm ? '<span class="err" style="margin:0">Effacer tout le devis ?</span><button class="btn" type="button" id="dv-reset-yes">Oui, effacer</button><button class="btn" type="button" id="dv-reset-no">Annuler</button>' : '<button class="btn" type="button" id="dv-reset">Nouveau devis</button>'}</div>
+     <p class="note">Devis indicatif, à vérifier avant envoi. Ce n'est pas une facture ni un document comptable.</p>`;
+}
+function dvAdd(line){ devis.lines.push(line); dvRenderLines(); dvCalc(); }
+function dvFillFields(){
+  $('dv-client').value = devis.client; $('dv-objet').value = devis.objet; $('dv-remise').value = devis.remise; $('dv-tva').checked = !!devis.tva; $('dv-tva-taux').value = devis.taux;
+  $('dv-num').value = devis.num; $('dv-valid').value = devis.valid; $('dv-delai').value = devis.delai; $('dv-cond').value = devis.cond;
+}
+dvFillFields();
+[['dv-num', 'num'], ['dv-valid', 'valid'], ['dv-delai', 'delai'], ['dv-cond', 'cond']].forEach(([id, k]) => $(id).addEventListener('input', e => { devis[k] = e.target.value; dvCalc(); }));
+/* Entreprise */
+const entSave = () => { try { localStorage.setItem('cc:dv-ent', JSON.stringify(ent)); } catch(e){ ent.logo = ''; try { localStorage.setItem('cc:dv-ent', JSON.stringify(ent)); } catch(e2){} } };
+function entFill(){
+  $('dv-ent-nom').value = ent.nom; $('dv-ent-tel').value = ent.tel; $('dv-ent-adr').value = ent.adr; $('dv-ent-niu').value = ent.niu;
+  $('dv-logo-img').hidden = !ent.logo; if (ent.logo) $('dv-logo-img').src = ent.logo; $('dv-logo-del').hidden = !ent.logo;
+}
+entFill();
+[['dv-ent-nom', 'nom'], ['dv-ent-tel', 'tel'], ['dv-ent-adr', 'adr'], ['dv-ent-niu', 'niu']].forEach(([id, k]) => $(id).addEventListener('input', e => { ent[k] = e.target.value; entSave(); }));
+$('dv-logo').addEventListener('change', e => {
+  const f = e.target.files && e.target.files[0]; if (!f) return;
+  const rd = new FileReader();
+  rd.onload = () => { const im = new Image(); im.onload = () => {
+    const k = Math.min(1, 240 / Math.max(im.width, im.height)), c = document.createElement('canvas');
+    c.width = Math.round(im.width * k); c.height = Math.round(im.height * k);
+    c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+    ent.logo = c.toDataURL('image/png'); entSave(); entFill(); }; im.src = rd.result; };
+  rd.readAsDataURL(f); e.target.value = '';
+});
+$('dv-logo-del').addEventListener('click', () => { ent.logo = ''; entSave(); entFill(); });
+/* Feuille de devis */
+function dvDocHTML(){
+  const t = dvTotals(), T = fr => (LANG === 'en' && trFR(fr) !== null) ? trFR(fr) : fr;
+  const loc = LANG === 'en' ? 'en-GB' : 'fr-FR', d0 = new Date(devis.date), days = parseInt(devis.valid, 10);
+  const until = Number.isFinite(days) && days > 0 ? new Date(d0.getTime() + days * 864e5).toLocaleDateString(loc) : '';
+  const nb = x => fmt(Math.round(x), 0);
+  const co = [ent.adr, ent.tel ? 'Tél. ' + ent.tel : '', ent.niu].filter(Boolean).join('\n');
+  return `<div class="hd">
+      <div class="ent">${ent.logo ? `<img src="${ent.logo}" alt="">` : ''}<div><div class="nm">${esc(ent.nom || T('Mon entreprise'))}</div><div class="co">${esc(co)}</div></div></div>
+      <div class="ttl"><div class="big">${T('DEVIS')}</div><div class="meta">N° ${esc(devis.num)}<br>${T('Date')} : ${d0.toLocaleDateString(loc)}${until ? `<br>${T('Valable jusqu\'au')} ${until}` : ''}</div></div>
+    </div>
+    <div class="blocks">
+      <div class="blk"><div class="lb">${T('Client')}</div><div class="vl">${esc(devis.client || '…')}</div></div>
+      <div class="blk"><div class="lb">${T('Objet')}</div><div class="vl">${esc(devis.objet || '…')}</div></div>
+    </div>
+    <div class="tw"><table><thead><tr><th>N°</th><th>${T('Désignation')}</th><th>${T('Qté')}</th><th>${T('Unité')}</th><th>${T('P.U. (FCFA)')}</th><th>${T('Montant (FCFA)')}</th></tr></thead>
+      <tbody>${t.lines.map((l, i) => `<tr><td>${i + 1}</td><td>${esc(l.des || '…')}</td><td>${fmt(l.q || 0, l.u === 'kg' ? 2 : 0)}</td><td>${esc(l.u)}</td><td>${nb(l.p || 0)}</td><td>${nb(l.m)}</td></tr>`).join('')}</tbody></table></div>
+    <div class="tot"><dl>
+      <dt>${T('Sous-total')}</dt><dd>${money(t.sub)}</dd>
+      ${t.rem ? `<dt>${T('Remise')} (${fmt(t.r, 1)} %)</dt><dd>− ${money(t.rem)}</dd>` : ''}
+      ${devis.tva ? `<dt>${T('Total HT')}</dt><dd>${money(t.ht)}</dd><dt>${T('TVA')} (${fmt(t.taux, 2)} %)</dt><dd>${money(t.tva)}</dd>` : ''}
+      <dt class="grand">${devis.tva ? T('Total TTC') : T('Total')}</dt><dd class="grand">${money(t.ttc)}</dd>
+    </dl></div>
+    ${LANG === 'fr' ? `<p class="words">Arrêté le présent devis à la somme de ${enLettres(t.ttc)} francs CFA (${money(t.ttc)}).</p>` : ''}
+    <div class="cond">
+      ${devis.delai ? `<div><b>${T('Délai de réalisation')} :</b> ${esc(devis.delai)}</div>` : ''}
+      ${devis.cond ? `<div><b>${T('Conditions de paiement')} :</b> ${esc(devis.cond)}</div>` : ''}
+      ${!devis.tva ? `<div>${T('Prix nets, TVA non applicable.')}</div>` : ''}
+    </div>
+    <div class="sign"><div>${T('Pour l\'entreprise')}</div><div>${T('Bon pour accord : date et signature du client')}</div></div>
+    <div class="foot"><span>${T('Devis indicatif établi avec ChaudroCalc.')}</span><span>${esc(devis.num)}</span></div>`;
+}
+function dvOpenDoc(){ $('dv-sheet').innerHTML = dvDocHTML(); $('dv-doc').hidden = false; document.documentElement.classList.add('print-devis'); $('dv-doc').scrollTop = 0; }
+function dvCloseDoc(){ $('dv-doc').hidden = true; document.documentElement.classList.remove('print-devis'); }
+$('dv-close').addEventListener('click', dvCloseDoc);
+$('dv-print').addEventListener('click', () => {
+  const old = document.title; document.title = (devis.num || 'Devis') + (devis.client ? ' ' + devis.client : '');
+  try { window.print(); } catch(e){}
+  setTimeout(() => { document.title = old; }, 1000);
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('dv-doc').hidden) dvCloseDoc(); });
+$('dv-client').addEventListener('input', e => { devis.client = e.target.value; dvCalc(); });
+$('dv-objet').addEventListener('input', e => { devis.objet = e.target.value; dvCalc(); });
+$('dv-remise').addEventListener('input', e => { devis.remise = e.target.value; dvCalc(); });
+$('dv-tva-taux').addEventListener('input', e => { devis.taux = e.target.value; dvCalc(); });
+$('dv-tva').addEventListener('change', e => { devis.tva = e.target.checked; dvCalc(); });
+document.querySelectorAll('[data-dv-add]').forEach(b => b.addEventListener('click', () => {
+  const pr = DV_PRESETS[b.dataset.dvAdd]; dvAdd({des: pr.des, q: pr.u === 'forfait' ? '1' : '', u: pr.u, p: ''});
+  const i = devis.lines.length - 1; const f = $(pr.des ? 'dv-q-' + i : 'dv-d-' + i); if (f) f.focus();
+}));
+$('dv-lines').addEventListener('input', e => { const el = e.target.closest('[data-dv]'); if (!el) return; devis.lines[+el.dataset.dv][el.dataset.k] = el.value; dvCalc(); });
+$('dv-lines').addEventListener('change', e => { const el = e.target.closest('select[data-dv]'); if (!el) return; devis.lines[+el.dataset.dv].u = el.value; dvCalc(); });
+$('dv-lines').addEventListener('click', e => { const b = e.target.closest('[data-dv-del]'); if (!b) return; devis.lines.splice(+b.dataset.dvDel, 1); dvRenderLines(); dvCalc(); });
+$('dv-out').addEventListener('click', e => {
+  const id = e.target.closest('button') && e.target.closest('button').id;
+  const msg = (fr, ok) => { const m = $('dv-msg'); if (!m) return; m.innerHTML = `<p class="${ok ? 'ok-msg' : 'err'}"></p>`; m.firstChild.textContent = (LANG === 'en' && trFR(fr) !== null) ? trFR(fr) : fr; };
+  if (id === 'dv-wa') { location.href = 'https://wa.me/?text=' + encodeURIComponent(dvText(dvTotals())); }
+  if (id === 'dv-copy') {
+    const txt = dvText(dvTotals());
+    (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(() => msg('Devis copié. Colle-le où tu veux.', true))
+      .catch(() => msg('La copie n\'est pas autorisée ici : utilise « Envoyer par WhatsApp ».'));
+  }
+  if (id === 'dv-reset') { dvConfirm = true; dvCalc(); }
+  if (id === 'dv-reset-no') { dvConfirm = false; dvCalc(); }
+  if (id === 'dv-preview') dvOpenDoc();
+  if (id === 'dv-reset-yes') { const seq = (store.get('dv-seq') || 1) + 1; store.set('dv-seq', seq);
+    dvConfirm = false; devis = {client: '', objet: '', lines: [], remise: '0', tva: false, taux: devis.taux, num: dvNum(seq), date: new Date().toISOString(), valid: devis.valid, delai: '', cond: devis.cond};
+    dvFillFields(); $('dv-client').value = ''; $('dv-objet').value = ''; $('dv-remise').value = '0'; $('dv-tva').checked = false; dvRenderLines(); dvCalc(); }
+});
+/* Ajout depuis Poids et Virole & cône */
+function matLabel(sel){ const m = MATS.find(x => x[0] === $(sel).value); if (!m || m[2] === null) return 'Tôle'; const n = m[1].replace(/ \(.*\)$/, ''); return 'Tôle ' + n.charAt(0).toLowerCase() + n.slice(1); }
+function addToDevisBtn(where){ return `<div class="btns add-devis"><button class="btn" type="button" data-add-devis="${where}">+ Ajouter au devis</button><span class="hint" data-add-ok="${where}" hidden>Ajouté au devis.</span></div>`; }
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-add-devis]'); if (!b || !window.__dvPending || !window.__dvPending[b.dataset.addDevis]) return;
+  const l = window.__dvPending[b.dataset.addDevis]; dvAdd({...l});
+  const ok = document.querySelector(`[data-add-ok="${b.dataset.addDevis}"]`); if (ok) ok.hidden = false;
+});
+dvRenderLines(); dvCalc();
+
 /* ===== Préférences : langue et thème ===== */
-function recalcAll(){ plCalc(); cnCalc(); pwCalc(); ctCalc(); pqCalc(); cdCalc(); ktCalc(); klRender(); }
+function recalcAll(){ plCalc(); cnCalc(); pwCalc(); ctCalc(); pqCalc(); cdCalc(); ktCalc(); klRender(); dvRenderLines(); dvCalc(); }
 function setLang(l){
   LANG = l; store.set('lang', l);
   document.documentElement.lang = l;

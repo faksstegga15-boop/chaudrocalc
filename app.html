@@ -113,6 +113,39 @@ textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .add-devis{margin-top:4px}
 .dv-total{font:500 15px var(--f-mono);font-variant-numeric:tabular-nums}
 .dv-confirm{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.hlp{appearance:none;display:inline-grid;place-items:center;width:22px;height:22px;margin-left:6px;padding:0;border-radius:50%;border:1.5px solid var(--accent);background:var(--surface);color:var(--accent);font:700 13px/1 var(--f-body);vertical-align:middle;cursor:pointer;flex:none;text-transform:none;letter-spacing:0}
+.hlp:hover{background:var(--accent);color:var(--accent-ink)}
+.hlp::before{content:"";position:absolute;width:40px;height:40px;margin:-9px}
+.hlp{position:relative}
+dl.kv dt{display:flex;align-items:center;flex-wrap:wrap}
+.tbl th .hlp{width:18px;height:18px;font-size:11px;margin-left:4px}
+label.f b .hlp{width:20px;height:20px;font-size:12px;margin-left:5px;vertical-align:-4px}
+#help{position:fixed;inset:auto 0 0 0;z-index:60;padding-bottom:env(safe-area-inset-bottom,0px);padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+.help-card{max-width:560px;margin:0 auto 12px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:10px;padding:16px 16px 14px;box-shadow:0 -6px 40px rgba(0,0,0,.28);display:grid;gap:8px}
+.help-card h3{margin:0;font:700 19px var(--f-display);text-transform:uppercase;letter-spacing:.04em}
+.help-card p{margin:0;font-size:15px;line-height:1.55}
+.help-card .btn{justify-self:end}
+.guide{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);margin:0 0 18px}
+.guide summary{cursor:pointer;padding:12px 16px;font:700 17px var(--f-display);text-transform:uppercase;letter-spacing:.05em;color:var(--accent);list-style:none;display:flex;align-items:center;gap:8px}
+.guide summary::-webkit-details-marker{display:none}
+.guide summary::before{content:"?";display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font:700 13px var(--f-body)}
+.guide[open] summary{border-bottom:1px solid var(--line)}
+.guide-body{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;padding:14px 16px 16px}
+@media (min-width:760px){.guide-body{grid-template-columns:minmax(0,320px) minmax(0,1fr);align-items:center}}
+.guide-svg{width:100%;max-width:340px;height:auto;display:block;margin:0 auto}
+.guide ol{margin:0;padding-left:20px;display:grid;gap:6px;font-size:15px}
+.guide .hint{margin-top:10px}
+.gk{transition:opacity .2s}
+svg.focus .gk:not(.on){opacity:.28}
+.gk.on text{fill:var(--accent)!important;font-weight:700;opacity:1!important}
+.gk.on line,.gk.on path{stroke:var(--accent)!important;stroke-width:2.6}
+.gk.on [stroke="transparent"]{stroke:var(--accent)!important}
+@media (prefers-reduced-motion:no-preference){.gk.on text{animation:glow 1.2s ease-in-out infinite alternate}}
+@keyframes glow{from{opacity:.55}to{opacity:1}}
+.cote-preview{border:1px dashed var(--accent);border-radius:6px;background:var(--bg);padding:6px}
+.cote-preview svg{display:block;width:100%;max-width:300px;height:auto;max-height:150px;margin:0 auto}
+#help-fig{background:var(--bg);border-radius:6px;padding:6px}
+#help-fig svg{display:block;width:100%;max-width:300px;height:auto;max-height:160px;margin:0 auto}
 .logo-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .logo-row img{width:56px;height:56px;object-fit:contain;border:1px solid var(--line);border-radius:4px;background:#fff}
 #dv-doc{position:fixed;inset:0;z-index:50;overflow:auto;background:#5B6573;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -278,6 +311,7 @@ footer.foot a:hover{color:var(--accent)}
 <!-- PLIAGE -->
 <section class="panel on" id="p-pliage" role="tabpanel" aria-labelledby="t-pliage">
   <p class="intro">Longueur développée d'une pièce pliée à partir des cotes extérieures. Chaque pli retire une déduction calculée avec le facteur K.</p>
+  <details class="guide" id="guide-pliage"><summary>Comment ça marche ?</summary><div class="guide-body"><svg class="guide-svg" viewBox="0 0 320 170" role="img" aria-hidden="true"><defs><marker id="ar" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L8 4 L0 8 z" fill="var(--muted)"/></marker></defs><path d="M70 20 V120 Q70 140 90 140 H260" fill="none" stroke="var(--accent)" stroke-width="12" stroke-linejoin="round"/><g class="gk" data-k="f:pl-k r:Rayon de fibre neutre r:Longueur développée"><path d="M70 20 V120 Q70 140 90 140 H260" fill="none" stroke="var(--surface)" stroke-width="1.2" stroke-dasharray="4 3"/><text x="150" y="128" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--muted)">K·e</text></g><g class="gk" data-k="f:pl-leg-0 f:kt-a1"><line x1="46" y1="20" x2="46" y2="146" stroke="var(--muted)" stroke-width="1" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="22" y="86" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink)">a</text></g><g class="gk" data-k="f:pl-leg-1 f:kt-b1"><line x1="64" y1="162" x2="260" y2="162" stroke="var(--muted)" stroke-width="1" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="160" y="160" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink)">b</text></g><g class="gk" data-k="f:pl-ri f:pl-a-0 f:kt-a"><text x="96" y="122" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink)">Ri</text><path d="M92 126 L80 132" stroke="var(--muted)" stroke-width="1"/></g><g class="gk" data-k="f:pl-e"><text x="270" y="144" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink)">e</text><path d="M266 134 V146" stroke="var(--muted)" stroke-width="1.5"/></g></svg><div><ol><li>Mesure l'épaisseur e de ta tôle et note le rayon intérieur Ri de ton outil de pliage.</li><li>Entre le facteur K. Tu ne le connais pas ? Fais un essai avec « Trouver K par un essai », plus bas.</li><li>Entre les cotes extérieures a, b… de chaque aile, et l'angle de chaque pli entre elles.</li><li>Lis la longueur développée : c'est la longueur de la bande à découper avant pliage.</li></ol><p class="hint">Touche « ? » à côté d'un mot pour savoir ce qu'il veut dire.</p></div></div></details>
   <div class="grid">
     <fieldset>
       <div class="box">
@@ -329,6 +363,7 @@ footer.foot a:hover{color:var(--accent)}
 <!-- VIROLE & CONE -->
 <section class="panel" id="p-cone" role="tabpanel" aria-labelledby="t-cone">
   <p class="intro">Développé d'une virole ou d'un cône (tronqué ou complet) à axes confondus, calculé sur la fibre moyenne.</p>
+  <details class="guide" id="guide-cone"><summary>Comment ça marche ?</summary><div class="guide-body"><svg class="guide-svg" viewBox="0 0 320 170" role="img" aria-hidden="true"><defs><marker id="ar" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L8 4 L0 8 z" fill="var(--muted)"/></marker></defs><path d="M30 140 L60 40 H120 L150 140 Z" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2"/><g class="gk" data-k="f:cn-d1"><line x1="30" y1="156" x2="150" y2="156" stroke="var(--muted)" stroke-width="1" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="80" y="153" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink)">D1</text></g><g class="gk" data-k="f:cn-d2"><line x1="60" y1="26" x2="120" y2="26" stroke="var(--muted)" stroke-width="1" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="80" y="22" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink)">D2</text></g><g class="gk" data-k="f:cn-h"><line x1="164" y1="40" x2="164" y2="140" stroke="var(--muted)" stroke-width="1" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="170" y="94" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink)">H</text></g><g class="gk" data-k="r:Génératrice g"><path d="M150 140 L120 40" stroke="transparent" stroke-width="3" fill="none"/><text x="140" y="80" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink)" opacity="0">g</text></g><path d="M250 20 L200 140 A130 130 0 0 0 300 140 Z" fill="none" stroke="none"/><path d="M206 130 A118 118 0 0 0 296 128" fill="none" stroke="var(--accent)" stroke-width="2"/><path d="M232 70 A58 58 0 0 0 274 70" fill="none" stroke="var(--accent)" stroke-width="2"/><path d="M254 14 L206 130 M254 14 L296 128" stroke="var(--muted)" stroke-width="1" stroke-dasharray="4 3"/><circle cx="254" cy="14" r="2.5" fill="var(--ink)"/><g class="gk" data-k="r:Grand rayon de traçage R1 r:Contrôle : arc sur R1 = π × D1"><path d="M254 14 L206 130" stroke="transparent" stroke-width="3"/><text x="212" y="98" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink)">R1</text></g><g class="gk" data-k="r:Petit rayon R2"><path d="M254 14 L232 70" stroke="transparent" stroke-width="3"/><text x="240" y="62" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink)">R2</text></g><g class="gk" data-k="r:Angle du secteur"><text x="248" y="40" font-family="IBM Plex Mono,monospace" font-size="10" fill="var(--muted)">α</text></g><g class="gk" data-k="r:Corde du secteur (sur R1)"><line x1="206" y1="130" x2="296" y2="128" stroke="transparent" stroke-width="1.5" stroke-dasharray="4 3"/></g></svg><div><ol><li>Indique si tes diamètres sont extérieurs, intérieurs ou moyens.</li><li>Entre le grand diamètre D1, le petit D2 (0 pour un cône pointu) et la hauteur H.</li><li>Sur la tôle, trace au compas le grand rayon R1 puis le petit rayon R2, depuis le même centre.</li><li>Trace un premier rayon, reporte l'angle α du secteur (ou la corde), trace le second rayon. Découpe la couronne et roule-la.</li></ol><p class="hint">Touche « ? » à côté d'un mot pour savoir ce qu'il veut dire.</p></div></div></details>
   <div class="grid">
     <fieldset>
       <div class="box">
@@ -364,6 +399,7 @@ footer.foot a:hover{color:var(--accent)}
 <!-- POIDS -->
 <section class="panel" id="p-poids" role="tabpanel" aria-labelledby="t-poids">
   <p class="intro">Masse d'une tôle découpée : volume × masse volumique. Les dimensions sont en millimètres.</p>
+  <details class="guide" id="guide-poids"><summary>Comment ça marche ?</summary><div class="guide-body"><svg class="guide-svg" viewBox="0 0 320 170" role="img" aria-hidden="true"><defs><marker id="ar" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L8 4 L0 8 z" fill="var(--muted)"/></marker></defs><path d="M50 110 L120 60 H280 L210 110 Z" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"/><path d="M50 110 V122 H210 V110 M210 122 L280 72 V60" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"/><g class="gk" data-k="f:pw-l"><line x1="50" y1="140" x2="210" y2="140" stroke="var(--muted)" stroke-width="1" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="124" y="136" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink)">L</text></g><g class="gk" data-k="f:pw-w"><line x1="222" y1="126" x2="290" y2="78" stroke="var(--muted)" stroke-width="1" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="262" y="110" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink)">l</text></g><g class="gk" data-k="f:pw-e"><text x="32" y="120" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink)">e</text></g></svg><div><ol><li>Choisis la forme (rectangle, disque ou couronne) et entre les dimensions en mm.</li><li>Choisis la matière : sa masse volumique se met toute seule.</li><li>Lis la masse d'une pièce et la masse totale. Touche « Ajouter au devis » si tu prépares un devis.</li></ol><p class="hint">Touche « ? » à côté d'un mot pour savoir ce qu'il veut dire.</p></div></div></details>
   <div class="grid">
     <fieldset>
       <div class="box">
@@ -400,6 +436,7 @@ footer.foot a:hover{color:var(--accent)}
 <!-- CINTRAGE -->
 <section class="panel" id="p-cintrage" role="tabpanel" aria-labelledby="t-cintrage">
   <p class="intro">Longueur développée d'un arc cintré (tôle, fer plat, tube ou rond) et contrôle du rayon par la corde et la flèche.</p>
+  <details class="guide" id="guide-cintrage"><summary>Comment ça marche ?</summary><div class="guide-body"><svg class="guide-svg" viewBox="0 0 320 170" role="img" aria-hidden="true"><defs><marker id="ar" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L8 4 L0 8 z" fill="var(--muted)"/></marker></defs><path d="M40 140 A140 140 0 0 1 280 140" fill="none" stroke="var(--accent)" stroke-width="8"/><g class="gk" data-k="f:ck-c r:Corde face intérieure r:Corde face extérieure"><line x1="40" y1="140" x2="280" y2="140" stroke="var(--muted)" stroke-width="1.5"/><text x="150" y="158" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink)">c</text></g><g class="gk" data-k="f:ck-f r:Flèche face intérieure r:Flèche face extérieure"><line x1="160" y1="140" x2="160" y2="70" stroke="var(--muted)" stroke-width="1" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="166" y="110" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink)">f</text></g><g class="gk" data-k="f:ct-r r:Rayon mesuré r:Rayon extérieur"><line x1="160" y1="140" x2="250" y2="88" stroke="var(--muted)" stroke-width="1" stroke-dasharray="4 3"/><text x="206" y="128" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink)">R</text></g></svg><div><ol><li>Choisis tôle ou tube, puis entre le rayon et l'angle de l'arc.</li><li>Lis la longueur développée : c'est la longueur à découper avant roulage.</li><li>Après roulage, contrôle la pièce : pose une règle de longueur c, mesure la flèche f au milieu, et compare le rayon mesuré au rayon voulu.</li></ol><p class="hint">Touche « ? » à côté d'un mot pour savoir ce qu'il veut dire.</p></div></div></details>
   <div class="grid">
     <fieldset>
       <div class="box">
@@ -435,6 +472,7 @@ footer.foot a:hover{color:var(--accent)}
 <!-- PIQUAGE -->
 <section class="panel" id="p-piquage" role="tabpanel" aria-labelledby="t-piquage">
   <p class="intro">Tracé d'un piquage cylindrique sur un collecteur cylindrique : longueur de chaque génératrice du piquage (gueule de loup) et contour du trou dans le collecteur. Axes droits ou inclinés, concourants ou décalés.</p>
+  <details class="guide" id="guide-piquage"><summary>Comment ça marche ?</summary><div class="guide-body"><svg class="guide-svg" viewBox="0 0 320 170" role="img" aria-hidden="true"><defs><marker id="ar" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L8 4 L0 8 z" fill="var(--muted)"/></marker></defs><rect x="20" y="110" width="280" height="44" rx="4" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2"/><rect x="130" y="24" width="56" height="94" fill="var(--surface)" stroke="var(--accent)" stroke-width="2"/><path d="M130 112 Q158 124 186 112" fill="none" stroke="var(--accent)" stroke-width="2"/><line x1="20" y1="132" x2="300" y2="132" stroke="var(--muted)" stroke-width="1" stroke-dasharray="6 3"/><line x1="158" y1="14" x2="158" y2="132" stroke="var(--muted)" stroke-width="1" stroke-dasharray="6 3"/><g class="gk" data-k="f:pq-d r:Largeur du développé (2πr)"><line x1="130" y1="16" x2="186" y2="16" stroke="var(--muted)" stroke-width="1" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="190" y="20" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink)">d</text></g><g class="gk" data-k="f:pq-D"><line x1="306" y1="110" x2="306" y2="154" stroke="var(--muted)" stroke-width="1" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="290" y="104" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink)">D</text></g><g class="gk" data-k="f:pq-L"><line x1="112" y1="24" x2="112" y2="132" stroke="var(--muted)" stroke-width="1" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="96" y="80" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink)">L</text></g><g class="gk" data-k="f:pq-a"><text x="164" y="100" font-family="IBM Plex Mono,monospace" font-size="10" fill="var(--muted)">a</text></g><g class="gk" data-k="r:Écart (profondeur de la découpe)"><path d="M130 112 Q158 124 186 112" fill="none" stroke="transparent" stroke-width="3"/></g></svg><div><ol><li>Entre le diamètre du collecteur D, celui du piquage d, l'angle a entre les axes et la longueur L.</li><li>Sur la tôle, trace une ligne droite de la longueur « Largeur du développé » : c'est la coupe droite.</li><li>Reporte les abscisses du tableau sur cette ligne et trace une perpendiculaire à chaque point.</li><li>Sur chaque perpendiculaire, reporte la longueur du tableau. Relie les points par une courbe régulière : c'est la gueule de loup.</li><li>Pour le trou dans le collecteur, reporte de la même façon les cotes du second tableau.</li></ol><p class="hint">Touche « ? » à côté d'un mot pour savoir ce qu'il veut dire.</p></div></div></details>
   <div class="grid">
     <fieldset>
       <div class="box">
@@ -474,6 +512,7 @@ footer.foot a:hover{color:var(--accent)}
 <!-- COUDE -->
 <section class="panel" id="p-coude" role="tabpanel" aria-labelledby="t-coude">
   <p class="intro">Coude à segments (en tranches) : deux demi-éléments aux extrémités et des éléments entiers au milieu. L'outil donne l'angle de coupe, les longueurs de chaque génératrice et le gabarit.</p>
+  <details class="guide" id="guide-coude"><summary>Comment ça marche ?</summary><div class="guide-body"><svg class="guide-svg" viewBox="0 0 320 170" role="img" aria-hidden="true"><defs><marker id="ar" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L8 4 L0 8 z" fill="var(--muted)"/></marker></defs><path d="M60 160 V110 L90 70 L140 40 H200" fill="none" stroke="var(--accent)" stroke-width="22" stroke-linejoin="miter"/><path d="M48 107 L72 113 M80 60 L100 80 M140 28 L140 52" stroke="var(--surface)" stroke-width="2"/><g class="gk" data-k="f:cd-R"><circle cx="200" cy="160" r="2.5" fill="var(--ink)"/><line x1="200" y1="160" x2="96" y2="76" stroke="var(--muted)" stroke-width="1" stroke-dasharray="4 3"/><text x="150" y="128" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--ink)">R</text></g><g class="gk" data-k="f:cd-N r:Demi-élément : intérieur / extérieur t:Demi-élément"><text x="226" y="44" font-family="IBM Plex Mono,monospace" font-size="10" fill="var(--muted)">½</text><text x="30" y="150" font-family="IBM Plex Mono,monospace" font-size="10" fill="var(--muted)">½</text></g><g class="gk" data-k="r:Angle de coupe par soudure f:cd-phi r:Soudures"><path d="M48 107 L72 113 M80 60 L100 80 M140 28 L140 52" stroke="transparent" stroke-width="3"/></g></svg><div><ol><li>Entre le diamètre du tube, l'angle du coude, le rayon R et le nombre de pièces.</li><li>Lis l'angle de coupe et les longueurs de chaque génératrice.</li><li>Trace un gabarit de la largeur indiquée, reporte les longueurs du demi-élément et découpe-le. Enroule-le sur le tube pour tracer chaque coupe.</li><li>Un élément entier se trace en reportant deux fois les longueurs du demi-élément.</li></ol><p class="hint">Touche « ? » à côté d'un mot pour savoir ce qu'il veut dire.</p></div></div></details>
   <div class="grid">
     <fieldset>
       <div class="box">
@@ -605,6 +644,7 @@ K = (BA / (A en radians) − Ri) / e</code>
 <!-- DEVIS -->
 <section class="panel" id="p-devis" role="tabpanel" aria-labelledby="t-devis">
   <p class="intro">Prépare un devis rapide : matière, découpe, pliage, soudure, fournitures. Ajoute une tôle directement depuis les onglets Poids ou Virole &amp; cône, puis envoie le devis par WhatsApp.</p>
+  <details class="guide" id="guide-devis"><summary>Comment ça marche ?</summary><div class="guide-body"><div><ol><li>Remplis une seule fois « Mon entreprise » : nom, téléphone, logo.</li><li>Ajoute des lignes avec les boutons « + », ou une tôle depuis les onglets Poids et Virole & cône.</li><li>Entre la quantité et le prix unitaire de chaque ligne : les totaux se calculent tout seuls.</li><li>Touche « Aperçu et PDF » pour voir le devis mis en page, puis enregistre-le en PDF ou envoie-le par WhatsApp.</li></ol><p class="hint">Touche « ? » à côté d'un mot pour savoir ce qu'il veut dire.</p></div></div></details>
   <div class="grid">
     <fieldset>
       <div class="box">
@@ -673,6 +713,8 @@ K = (BA / (A en radians) − Ri) / e</code>
   <p class="doc-hint">Dans la fenêtre d'impression, choisis « Enregistrer au format PDF » pour obtenir le fichier à envoyer.</p>
   <div class="sheet" id="dv-sheet"></div>
 </div>
+
+<div id="help" hidden><div class="help-card" role="dialog" aria-labelledby="help-t" aria-describedby="help-d"><h3 id="help-t"></h3><div id="help-fig" hidden aria-hidden="true"></div><p id="help-d"></p><button class="btn primary" type="button" id="help-ok">Compris</button></div></div>
 
 <!-- AVIS -->
 <section class="panel" id="p-avis" aria-labelledby="h-avis">
@@ -762,7 +804,7 @@ K = (BA / (A en radians) − Ri) / e</code>
 </main>
 <footer class="wrap foot">
   <p>Résultats théoriques. Vérifie sur chute avant la découpe définitive.</p>
-  <p>© 2026 STEGGA GROUP. Tous droits réservés. · <a href="#mentions-legales" data-tab="mentions-legales">Mentions légales</a> · <a href="#confidentialite" data-tab="confidentialite">Confidentialité</a> · <a href="./?accueil" class="home-link">Accueil</a> · <a href="#avis" data-tab="avis">Donner mon avis</a> · <span id="app-version">Version 4.2.3 bêta (01/11/2026)</span></p>
+  <p>© 2026 STEGGA GROUP. Tous droits réservés. · <a href="#mentions-legales" data-tab="mentions-legales">Mentions légales</a> · <a href="#confidentialite" data-tab="confidentialite">Confidentialité</a> · <a href="./?accueil" class="home-link">Accueil</a> · <a href="#avis" data-tab="avis">Donner mon avis</a> · <span id="app-version">Version 4.3.1 bêta (07/11/2026)</span></p>
 </footer>
 
 <script>
@@ -875,7 +917,7 @@ const I18N_EN = {
 "Efface tes saisies et ta liste de facteurs K. L'application reste installée.":"Erases your entries and your K-factor list. The app stays installed.",
 "Tes saisies et ta liste de facteurs K vont être effacées de cet appareil.":"Your entries and K-factor list will be erased from this device.","Rien n'a été effacé.":"Nothing was erased.","Données effacées. La page se recharge.":"Data erased. Reloading the page.",
 "Résultats théoriques. Vérifie sur chute avant la découpe définitive.":"Theoretical results. Check on scrap before the final cut.","© 2026 STEGGA GROUP. Tous droits réservés. ·":"© 2026 STEGGA GROUP. All rights reserved. ·","Confidentialité":"Privacy","Accueil":"Home",
-"Utiliser":"Use","Devis":"Quote",
+"Utiliser":"Use","Comment ça marche ?":"How does it work?","Touche « ? » à côté d'un mot pour savoir ce qu'il veut dire.":"Tap “?” next to a word to see what it means.","Mesure l'épaisseur e de ta tôle et note le rayon intérieur Ri de ton outil de pliage.":"Measure the thickness t of your sheet and note the inside radius Ri of your bending tool.","Entre le facteur K. Tu ne le connais pas ? Fais un essai avec « Trouver K par un essai », plus bas.":"Enter the K-factor. Don't know it? Run a test with “Find K with a test bend”, further down.","Entre les cotes extérieures a, b… de chaque aile, et l'angle de chaque pli entre elles.":"Enter the outside dimensions a, b… of each leg, and the angle of each bend between them.","Lis la longueur développée : c'est la longueur de la bande à découper avant pliage.":"Read the flat length: it is the length of the strip to cut before bending.","Indique si tes diamètres sont extérieurs, intérieurs ou moyens.":"Say whether your diameters are outside, inside or mean.","Entre le grand diamètre D1, le petit D2 (0 pour un cône pointu) et la hauteur H.":"Enter the large diameter D1, the small one D2 (0 for a pointed cone) and the height H.","Sur la tôle, trace au compas le grand rayon R1 puis le petit rayon R2, depuis le même centre.":"On the plate, draw the large radius R1 then the small radius R2 with a compass, from the same centre.","Trace un premier rayon, reporte l'angle α du secteur (ou la corde), trace le second rayon. Découpe la couronne et roule-la.":"Draw a first radius, mark the sector angle α (or the chord), draw the second radius. Cut out the ring segment and roll it.","Choisis la forme (rectangle, disque ou couronne) et entre les dimensions en mm.":"Choose the shape (rectangle, disc or ring) and enter the dimensions in mm.","Choisis la matière : sa masse volumique se met toute seule.":"Choose the material: its density fills in by itself.","Lis la masse d'une pièce et la masse totale. Touche « Ajouter au devis » si tu prépares un devis.":"Read the mass of one part and the total mass. Tap “Add to quote” if you are preparing a quote.","Choisis tôle ou tube, puis entre le rayon et l'angle de l'arc.":"Choose plate or tube, then enter the radius and the arc angle.","Lis la longueur développée : c'est la longueur à découper avant roulage.":"Read the flat length: it is the length to cut before rolling.","Après roulage, contrôle la pièce : pose une règle de longueur c, mesure la flèche f au milieu, et compare le rayon mesuré au rayon voulu.":"After rolling, check the part: lay a straightedge of length c, measure the rise h at the middle, and compare the measured radius with the one you wanted.","Entre le diamètre du collecteur D, celui du piquage d, l'angle a entre les axes et la longueur L.":"Enter the header diameter D, the branch diameter d, the angle a between the axes and the length L.","Sur la tôle, trace une ligne droite de la longueur « Largeur du développé » : c'est la coupe droite.":"On the plate, draw a straight line as long as the “Pattern width”: this is the square cut.","Reporte les abscisses du tableau sur cette ligne et trace une perpendiculaire à chaque point.":"Mark the positions from the table on this line and draw a perpendicular at each point.","Sur chaque perpendiculaire, reporte la longueur du tableau. Relie les points par une courbe régulière : c'est la gueule de loup.":"On each perpendicular, mark the length from the table. Join the points with a smooth curve: this is the fish-mouth.","Pour le trou dans le collecteur, reporte de la même façon les cotes du second tableau.":"For the hole in the header, mark the dimensions from the second table the same way.","Entre le diamètre du tube, l'angle du coude, le rayon R et le nombre de pièces.":"Enter the pipe diameter, the elbow angle, the radius R and the number of pieces.","Lis l'angle de coupe et les longueurs de chaque génératrice.":"Read the cut angle and the lengths of each line.","Trace un gabarit de la largeur indiquée, reporte les longueurs du demi-élément et découpe-le. Enroule-le sur le tube pour tracer chaque coupe.":"Draw a template of the given width, mark the half segment lengths and cut it out. Wrap it around the pipe to mark each cut.","Un élément entier se trace en reportant deux fois les longueurs du demi-élément.":"A full segment is marked by doubling the half segment lengths.","Remplis une seule fois « Mon entreprise » : nom, téléphone, logo.":"Fill in “My business” once: name, phone, logo.","Ajoute des lignes avec les boutons « + », ou une tôle depuis les onglets Poids et Virole & cône.":"Add lines with the “+” buttons, or a plate from the Weight and Shell & cone tabs.","Entre la quantité et le prix unitaire de chaque ligne : les totaux se calculent tout seuls.":"Enter the quantity and unit price of each line: totals are worked out for you.","Touche « Aperçu et PDF » pour voir le devis mis en page, puis enregistre-le en PDF ou envoie-le par WhatsApp.":"Tap “Preview and PDF” to see the formatted quote, then save it as PDF or send it via WhatsApp.","Compris":"Got it","Devis":"Quote",
 "Prépare un devis rapide : matière, découpe, pliage, soudure, fournitures. Ajoute une tôle directement depuis les onglets Poids ou Virole & cône, puis envoie le devis par WhatsApp.":"Build a quick quote: material, cutting, bending, welding, supplies. Add a plate straight from the Weight or Shell & cone tabs, then send the quote via WhatsApp.",
 "Client et travail":"Client and job","Client":"Client","Objet":"Job","Nom du client":"Client name","Ex. trémie inox, 2 pièces":"E.g. stainless hopper, 2 parts",
 "Lignes du devis":"Quote lines","Ajouter une ligne":"Add a line","+ Matière":"+ Material","+ Découpe":"+ Cutting","+ Pliage":"+ Bending","+ Soudure":"+ Welding","+ Fournitures":"+ Supplies","+ Transport":"+ Transport","+ Autre ligne":"+ Other line",
@@ -896,7 +938,7 @@ const I18N_EN = {
 "Dans la fenêtre d'impression, choisis « Enregistrer au format PDF » pour obtenir le fichier à envoyer.":"In the print window, choose “Save as PDF” to get the file to send.",
 "Valable jusqu'au":"Valid until","P.U. (FCFA)":"Unit price (FCFA)","Montant (FCFA)":"Amount (FCFA)","Prix nets, TVA non applicable.":"Net prices, VAT not applicable.",
 "Pour l'entreprise":"For the business","Bon pour accord : date et signature du client":"Approved: client's date and signature","Date":"Date","Devis indicatif établi avec ChaudroCalc.":"Indicative quote prepared with ChaudroCalc.",
-"Version de test":"Test version","Version 4.2.3 bêta (01/11/2026)":"Version 4.2.3 beta (01/11/2026)","Tu testes ChaudroCalc avant sa sortie. Un calcul faux, un mot pas clair, une idée ? Dis-le-moi.":"You are testing ChaudroCalc before its release. A wrong result, an unclear word, an idea? Tell me.",
+"Version de test":"Test version","Version 4.3.1 bêta (07/11/2026)":"Version 4.3.1 beta (07/11/2026)","Tu testes ChaudroCalc avant sa sortie. Un calcul faux, un mot pas clair, une idée ? Dis-le-moi.":"You are testing ChaudroCalc before its release. A wrong result, an unclear word, an idea? Tell me.",
 "Donner mon avis":"Give feedback","Masquer ce bandeau":"Hide this banner",
 "Ton retour sert à corriger les erreurs et à choisir les prochains calculs. Il est envoyé à STEGGA GROUP, l'éditeur de l'outil.":"Your feedback is used to fix errors and choose the next calculators. It is sent to STEGGA GROUP, the tool's publisher.",
 "Ne pas remplir":"Do not fill in","L'outil t'est-il utile ?":"Is the tool useful to you?","Note de 1 à 5":"Rating from 1 to 5","1 = pas du tout, 5 = indispensable.":"1 = not at all, 5 = essential.",
@@ -1761,6 +1803,300 @@ document.addEventListener('click', e => {
 });
 dvRenderLines(); dvCalc();
 
+/* ===== Aide : explication simple de chaque champ, résultat et colonne (bouton « ? ») ===== */
+/* Clés : f:id du champ · r:libellé d'un résultat · t:titre de colonne · h:titre de bloc. Valeur : [titre, explication] */
+const HELP = {
+/* --- Pliage --- */
+'f:pl-e': ['Épaisseur e', "L'épaisseur de la tôle, en millimètres. Mesure-la au pied à coulisse plutôt que de te fier à la valeur commandée."],
+'f:pl-ri': ['Rayon intérieur Ri', "Le rayon de l'arrondi à l'intérieur du pli. Sur une presse plieuse, il dépend surtout de l'outil (rayon du poinçon, ouverture du vé). Il est souvent proche de l'épaisseur. Mesure-le sur une pièce d'essai avec une jauge de rayon."],
+'f:pl-k': ['Facteur K', "Quand on plie, l'extérieur de la tôle s'allonge et l'intérieur se raccourcit. Une ligne au milieu ne change pas de longueur : c'est la fibre neutre. K dit où elle se trouve : 0,5 = au milieu de l'épaisseur, moins de 0,5 = plus près de l'intérieur. Il est souvent entre 0,3 et 0,5. Si tu ne le connais pas, utilise « Trouver K par un essai »."],
+'h:Cotes extérieures': ['Cotes extérieures', "Mesure chaque aile à l'extérieur de la pièce, jusqu'au point où les deux faces extérieures se croisent (comme si l'angle était vif). C'est la cote que l'on trouve sur la plupart des plans. Entre deux cotes, indique l'angle de pliage : 90° pour un angle droit."],
+'h:Tôle et outil': ['Tôle et outil', "Ces trois valeurs décrivent ta tôle et ton outil de pliage. Elles servent à tous les plis de la pièce."],
+'h:Trouver K par un essai': ['Trouver K par un essai', "1. Coupe une bande de longueur connue (le flan), dans la même tôle. 2. Plie-la une fois avec ton outil habituel. 3. Mesure les deux ailes à l'extérieur. 4. Entre ces valeurs : l'outil calcule ton vrai K. Plus la mesure est précise, plus le K est juste."],
+'f:kt-l0': ['Flan avant pliage', "La longueur exacte de la bande d'essai avant de la plier."],
+'f:kt-a': ['Angle plié', "L'angle de pliage de ton essai. 90° pour un angle droit."],
+'f:kt-a1': ['Cote extérieure a', "La longueur de la première aile, mesurée à l'extérieur jusqu'au croisement des faces extérieures."],
+'f:kt-b1': ['Cote extérieure b', "La longueur de la deuxième aile, mesurée de la même façon."],
+'h:Mes facteurs K': ['Mes facteurs K', "Garde ici les K trouvés par tes essais, avec la matière et l'épaisseur. Tu les retrouves d'un toucher, ici et dans l'onglet Cintrage."],
+'r:Longueur développée': ['Longueur développée', "La longueur de la bande à découper avant pliage. C'est le chiffre à reporter sur la tôle plate."],
+'r:Somme des cotes extérieures': ['Somme des cotes extérieures', "L'addition de toutes les cotes que tu as saisies."],
+'r:Somme des déductions': ['Somme des déductions', "Ce qu'on retire au total des cotes, à cause des arrondis des plis. Développé = somme des cotes − somme des déductions."],
+'r:Rayon de fibre neutre': ['Rayon de fibre neutre', "Le rayon de la ligne qui ne change pas de longueur au pliage : rayon intérieur + K × épaisseur."],
+'t:BA': ['BA (longueur dans le pli)', "La longueur de tôle qui se trouve dans l'arrondi du pli, mesurée sur la fibre neutre."],
+'t:BD': ['BD (déduction de pli)', "Ce qu'on enlève pour ce pli quand on additionne les cotes extérieures."],
+'r:Déduction mesurée BD': ['Déduction mesurée', "Ce que ton essai a « perdu » au pliage : cote a + cote b − flan."],
+'r:BA correspondante': ['BA correspondante', "La longueur dans le pli qui correspond à ton essai."],
+'r:K mesuré': ['K mesuré', "Le facteur K de ta tôle avec ton outil. Touche « Utiliser ce K » pour le reprendre dans le calcul."],
+/* --- Virole et cône --- */
+'f:cn-dt': ['Diamètres saisis', "Dis quels diamètres tu as mesurés : extérieurs, intérieurs ou moyens (au milieu de l'épaisseur). Le calcul se fait toujours sur le diamètre moyen, pour que la pièce roulée tombe juste."],
+'f:cn-e': ['Épaisseur e', "L'épaisseur de la tôle à rouler."],
+'f:cn-d1': ['Grand diamètre D1', "Le diamètre du grand bord du cône (ou le diamètre de la virole)."],
+'f:cn-d2': ['Petit diamètre D2', "Le diamètre du petit bord. Mets 0 pour un cône qui finit en pointe."],
+'f:cn-h': ['Hauteur H', "La hauteur du cône, mesurée droite entre les deux bords (pas le long du flanc)."],
+'f:cn-rho': ['Masse volumique ρ', "Le poids d'un mètre cube de la matière, en kg. Acier : 7 850. Choisis la matière, la valeur se met toute seule."],
+'r:Grand rayon de traçage R1': ['Grand rayon R1', "Le rayon à tracer au compas (ou au trusquin) depuis le sommet, pour le grand bord du développé."],
+'r:Petit rayon R2': ['Petit rayon R2', "Le rayon à tracer depuis le même centre, pour le petit bord."],
+'r:Angle du secteur': ['Angle du secteur', "L'angle de la part de couronne à découper, mesuré au centre entre les deux rayons limites."],
+'r:Corde du secteur (sur R1)': ['Corde du secteur', "La distance en ligne droite entre les deux extrémités du grand arc. Pratique pour placer le deuxième rayon sans rapporteur."],
+'r:Génératrice g': ['Génératrice g', "La longueur du flanc du cône, d'un bord à l'autre. Elle vaut R1 − R2."],
+'r:Diamètres moyens': ['Diamètres moyens', "Les diamètres utilisés pour le calcul, au milieu de l'épaisseur."],
+'r:Contrôle : arc sur R1 = π × D1': ['Contrôle du grand arc', "La longueur du grand bord développé. Vérifie-la au mètre ruban sur ton traçage."],
+'r:Masse du développé (net)': ['Masse du développé', "Le poids de la pièce découpée, sans les chutes."],
+'r:Diamètre moyen Dm': ['Diamètre moyen', "Le diamètre au milieu de l'épaisseur, utilisé pour la longueur."],
+'r:Largeur de tôle (hauteur)': ['Largeur de tôle', "La hauteur de la virole, c'est-à-dire la largeur de la bande à découper."],
+'r:Flan': ['Flan', "Les dimensions du rectangle de tôle à découper avant roulage."],
+'r:Masse du flan': ['Masse du flan', "Le poids de ce rectangle de tôle."],
+/* --- Poids --- */
+'f:pw-e': ['Épaisseur e', "L'épaisseur de la tôle, en mm."],
+'f:pw-q': ['Quantité', "Le nombre de pièces identiques."],
+'f:pw-rho': ['Masse volumique ρ', "Le poids d'un mètre cube de la matière, en kg. Acier : 7 850. Choisis la matière, la valeur se met toute seule."],
+'r:Masse unitaire': ['Masse unitaire', "Le poids d'une seule pièce."],
+'r:Surface': ['Surface', "La surface de la pièce, en mètres carrés."],
+'r:Masse au m² (épaisseur e)': ['Masse au m²', "Le poids d'un mètre carré de cette tôle. Utile pour comparer avec la fiche du fournisseur."],
+'r:Masse totale': ['Masse totale', "Le poids de toutes les pièces : masse unitaire × quantité."],
+/* --- Cintrage --- */
+'f:ct-r': ['Rayon', "Pour une tôle ou un plat : le rayon de la face intérieure. Pour un tube ou un rond : le rayon mesuré au centre du tube (à l'axe)."],
+'f:ct-a': ['Angle de l’arc', "L'angle de la portion de cercle : 90° pour un quart de cercle, 180° pour un demi-cercle."],
+'f:ct-e': ['Épaisseur e', "L'épaisseur de la tôle ou du plat."],
+'f:ct-k': ['Facteur K', "La position de la fibre neutre (voir l'aide du Pliage). Pour un grand rayon, elle est presque au milieu : K proche de 0,5."],
+'f:ck-c': ['Corde mesurée', "Pose une règle droite sur la pièce roulée : la corde est la longueur de règle entre les deux points de contact."],
+'f:ck-f': ['Flèche mesurée', "L'écart entre la règle et la pièce, mesuré au milieu de la corde."],
+'r:Rayon extérieur': ['Rayon extérieur', "Le rayon de la face extérieure : rayon intérieur + épaisseur."],
+'r:Corde face intérieure': ['Corde intérieure', "La longueur en ligne droite entre les deux bouts de l'arc, côté intérieur. Sert à contrôler la pièce."],
+'r:Flèche face intérieure': ['Flèche intérieure', "La hauteur de l'arc au milieu de cette corde, côté intérieur."],
+'r:Corde face extérieure': ['Corde extérieure', "La même chose, mesurée côté extérieur."],
+'r:Flèche face extérieure': ['Flèche extérieure', "La hauteur de l'arc au milieu de la corde, côté extérieur."],
+'r:Rayon mesuré': ['Rayon mesuré', "Le vrai rayon de ta pièce roulée, calculé à partir de la corde et de la flèche. Compare-le au rayon voulu."],
+/* --- Piquage --- */
+'f:pq-D': ['Collecteur', "Le gros tube qui reçoit le piquage. Indique son diamètre extérieur."],
+'f:pq-d': ['Piquage', "Le tube qui vient se souder sur le collecteur. Indique son diamètre extérieur."],
+'f:pq-base': ['Base de calcul', "Sur les extérieurs : le piquage épouse l'extérieur du collecteur. Sur les fibres moyennes : calcul au milieu des épaisseurs. Choisis l'habitude de ton atelier."],
+'f:pq-a': ['Angle entre axes', "L'angle entre la ligne centrale du collecteur et celle du piquage. 90° pour un piquage droit."],
+'f:pq-e': ['Décalage des axes', "De combien l'axe du piquage est décalé par rapport à celui du collecteur. 0 si les deux axes se croisent (piquage centré)."],
+'f:pq-L': ['Longueur à l’axe L', "La distance mesurée sur l'axe du piquage, entre l'axe du collecteur et le bout droit du piquage."],
+'f:pq-n': ['Nombre de génératrices', "Les génératrices sont des lignes droites tracées sur le tube, dans sa longueur, à égale distance. Plus il y en a, plus la courbe découpée est précise. 12 suffit souvent."],
+'r:Largeur du développé (2πr)': ['Largeur du développé', "La longueur de la bande de tôle à rouler pour faire le piquage : son périmètre."],
+'r:Rayons de calcul R / r': ['Rayons de calcul', "Les rayons du collecteur et du piquage utilisés pour le calcul."],
+'r:Génératrice la plus longue': ['Génératrice la plus longue', "La plus grande hauteur à reporter sur le développé."],
+'r:Génératrice la plus courte': ['Génératrice la plus courte', "La plus petite hauteur à reporter."],
+'r:Écart (profondeur de la découpe)': ['Écart', "La différence entre la plus longue et la plus courte génératrice : la profondeur de la gueule de loup."],
+'r:Trou : développé sur le collecteur': ['Largeur du trou', "La largeur du trou à découper dans le collecteur, mesurée en suivant sa courbe (au ruban)."],
+'r:Trou : longueur le long du collecteur': ['Longueur du trou', "La longueur du trou dans le sens de l'axe du collecteur."],
+'t:Génér.': ['Génératrice', "Le numéro de la ligne tracée sur le développé."],
+'t:Abscisse': ['Abscisse', "La position de la ligne le long de la bande, depuis le bord de départ. Reporte-la sur la ligne de coupe droite."],
+'t:Longueur': ['Longueur', "La hauteur à reporter sur cette ligne, depuis la coupe droite. Relie ensuite les points par une courbe régulière."],
+'t:Angle t': ['Angle t', "La position de la ligne autour du tube, en degrés."],
+'t:Arc sur collecteur': ['Arc sur le collecteur', "Pour tracer le trou : distance mesurée en suivant le tour du collecteur, depuis sa ligne de repère."],
+'t:Le long de l’axe': ['Le long de l’axe', "Pour tracer le trou : distance mesurée dans le sens de l'axe du collecteur."],
+/* --- Coude --- */
+'f:cd-d': ['Diamètre extérieur', "Le diamètre extérieur du tube."],
+'f:cd-phi': ['Angle du coude', "De combien le coude fait tourner la conduite : 90° pour un coude d'équerre."],
+'f:cd-R': ['Rayon à l’axe R', "Le rayon de courbure du coude, mesuré au centre du tube."],
+'f:cd-N': ['Nombre de pièces', "Combien de tronçons forment le coude. Les deux bouts sont des demi-éléments et comptent chacun pour une pièce. Plus il y a de pièces, plus le coude est arrondi."],
+'f:cd-n': ['Génératrices', "Le nombre de lignes tracées sur le tube pour reporter la coupe. 12 suffit souvent."],
+'f:cd-ld': ['Droit aux bouts', "Une longueur droite ajoutée à chaque bout du coude, pour la soudure sur la conduite."],
+'r:Angle de coupe par soudure': ['Angle de coupe', "L'inclinaison de chaque coupe par rapport à une coupe droite. Les deux tubes soudés tournent ensemble du double de cet angle."],
+'r:Pièces': ['Pièces', "Le nombre total de tronçons à découper."],
+'r:Soudures': ['Soudures', "Le nombre de joints de soudure entre les tronçons."],
+'r:Déviation à chaque soudure': ['Déviation', "De combien la conduite tourne à chaque soudure."],
+'r:Largeur du gabarit (π × d)': ['Largeur du gabarit', "La longueur du gabarit à enrouler autour du tube : son périmètre."],
+'r:Demi-élément : intérieur / extérieur': ['Demi-élément', "Les longueurs du tronçon d'extrémité, côté intérieur du coude (le plus court) et côté extérieur (le plus long)."],
+'r:Élément entier : intérieur / extérieur': ['Élément entier', "Les longueurs d'un tronçon du milieu, côté intérieur et côté extérieur."],
+'t:Demi-élément': ['Demi-élément', "La longueur à reporter sur chaque ligne pour un tronçon d'extrémité."],
+'t:Élément entier': ['Élément entier', "La longueur à reporter sur chaque ligne pour un tronçon du milieu."],
+/* --- Devis --- */
+'h:Mon entreprise': ['Mon entreprise', "Tes coordonnées, ton logo et tes numéros officiels. Ils s'affichent en haut de chaque devis et restent sur ton téléphone."],
+'f:dv-ent-niu': ['NIU / RCCM', "Ton numéro d'identifiant unique (impôts) et ton numéro au registre du commerce, si ton entreprise en a. Facultatif."],
+'f:dv-num': ['N° du devis', "Le numéro du devis. Il augmente tout seul à chaque nouveau devis, mais tu peux le changer."],
+'f:dv-valid': ['Validité', "Le nombre de jours pendant lesquels tes prix restent valables. La date limite s'affiche sur le devis."],
+'f:dv-remise': ['Remise', "Une réduction en pourcentage sur le total."],
+'f:dv-tva-taux': ['TVA', "La taxe sur la valeur ajoutée. À ajouter seulement si ton entreprise y est soumise. Demande à un comptable en cas de doute."],
+'h:Lignes du devis': ['Lignes du devis', "Chaque ligne = un poste du travail : matière, découpe, soudure… Quantité × prix unitaire = montant. Les boutons « + » ajoutent une ligne déjà nommée."],
+'r:Sous-total': ['Sous-total', "L'addition de toutes les lignes, avant remise et TVA."],
+'r:Total HT': ['Total HT', "Hors taxes : le total après remise, sans la TVA."]
+};
+const HELP_EN = {
+'f:pl-e': ['Thickness t', 'The sheet thickness in millimetres. Measure it with a caliper rather than trusting the ordered value.'],
+'f:pl-ri': ['Inside radius Ri', 'The radius of the curve on the inside of the bend. On a press brake it mostly depends on the tooling (punch radius, die opening). It is often close to the thickness. Measure it on a test part with a radius gauge.'],
+'f:pl-k': ['K-factor', 'When you bend, the outside of the sheet stretches and the inside compresses. One line in between keeps its length: the neutral axis. K says where it is: 0.5 = middle of the thickness, below 0.5 = closer to the inside. It is often between 0.3 and 0.5. If you do not know it, use “Find K with a test bend”.'],
+'h:Cotes extérieures': ['Outside dimensions', 'Measure each leg on the outside of the part, up to the point where the two outside faces meet (as if the corner were sharp). This is the dimension found on most drawings. Between two legs, enter the bend angle: 90° for a right angle.'],
+'h:Tôle et outil': ['Sheet and tooling', 'These three values describe your sheet and your bending tool. They apply to every bend of the part.'],
+'h:Trouver K par un essai': ['Find K with a test bend', '1. Cut a strip of known length (the blank) from the same sheet. 2. Bend it once with your usual tooling. 3. Measure both legs on the outside. 4. Enter these values: the tool works out your real K. The more precise the measurement, the better the K.'],
+'f:kt-l0': ['Blank before bending', 'The exact length of the test strip before bending.'],
+'f:kt-a': ['Bend angle', 'The bend angle of your test. 90° for a right angle.'],
+'f:kt-a1': ['Outside dimension a', 'The length of the first leg, measured on the outside up to where the outside faces meet.'],
+'f:kt-b1': ['Outside dimension b', 'The length of the second leg, measured the same way.'],
+'h:Mes facteurs K': ['My K-factors', 'Keep the K values from your tests here, with material and thickness. Reuse them with one tap, here and in the Rolling tab.'],
+'r:Longueur développée': ['Flat length', 'The length of the strip to cut before bending. This is the figure to mark on the flat sheet.'],
+'r:Somme des cotes extérieures': ['Sum of outside dimensions', 'All the dimensions you entered, added up.'],
+'r:Somme des déductions': ['Sum of deductions', 'What is taken off the total because of the bend curves. Flat length = sum of dimensions − sum of deductions.'],
+'r:Rayon de fibre neutre': ['Neutral axis radius', 'The radius of the line that keeps its length when bent: inside radius + K × thickness.'],
+'t:BA': ['BA (length in the bend)', 'The length of sheet inside the bend curve, measured on the neutral axis.'],
+'t:BD': ['BD (bend deduction)', 'What is taken off for this bend when adding the outside dimensions.'],
+'r:Déduction mesurée BD': ['Measured deduction', 'What your test “lost” in bending: dimension a + dimension b − blank.'],
+'r:BA correspondante': ['Matching BA', 'The length in the bend that matches your test.'],
+'r:K mesuré': ['Measured K', 'The K-factor of your sheet with your tooling. Tap “Use this K” to put it in the calculation.'],
+'f:cn-dt': ['Diameters entered', 'Say which diameters you measured: outside, inside or mean (middle of the thickness). The calculation always uses the mean diameter so the rolled part fits.'],
+'f:cn-e': ['Thickness t', 'The thickness of the plate to roll.'],
+'f:cn-d1': ['Large diameter D1', 'The diameter of the large edge of the cone (or the shell diameter).'],
+'f:cn-d2': ['Small diameter D2', 'The diameter of the small edge. Enter 0 for a cone ending in a point.'],
+'f:cn-h': ['Height H', 'The height of the cone, measured straight between the two edges (not along the side).'],
+'f:cn-rho': ['Density ρ', 'The weight of one cubic metre of the material, in kg. Steel: 7,850. Choose the material and the value fills in.'],
+'r:Grand rayon de traçage R1': ['Large radius R1', 'The radius to draw with a compass or trammel from the apex, for the large edge of the pattern.'],
+'r:Petit rayon R2': ['Small radius R2', 'The radius to draw from the same centre, for the small edge.'],
+'r:Angle du secteur': ['Sector angle', 'The angle of the ring segment to cut, measured at the centre between the two limit radii.'],
+'r:Corde du secteur (sur R1)': ['Sector chord', 'The straight distance between the two ends of the large arc. Handy for placing the second radius without a protractor.'],
+'r:Génératrice g': ['Slant height g', 'The length of the side of the cone, from one edge to the other. It equals R1 − R2.'],
+'r:Diamètres moyens': ['Mean diameters', 'The diameters used for the calculation, in the middle of the thickness.'],
+'r:Contrôle : arc sur R1 = π × D1': ['Large arc check', 'The length of the large developed edge. Check it with a tape on your layout.'],
+'r:Masse du développé (net)': ['Pattern mass', 'The weight of the cut part, without offcuts.'],
+'r:Diamètre moyen Dm': ['Mean diameter', 'The diameter in the middle of the thickness, used for the length.'],
+'r:Largeur de tôle (hauteur)': ['Plate width', 'The shell height, i.e. the width of the strip to cut.'],
+'r:Flan': ['Blank', 'The size of the plate rectangle to cut before rolling.'],
+'r:Masse du flan': ['Blank mass', 'The weight of this plate rectangle.'],
+'f:pw-e': ['Thickness t', 'The plate thickness, in mm.'],
+'f:pw-q': ['Quantity', 'The number of identical parts.'],
+'f:pw-rho': ['Density ρ', 'The weight of one cubic metre of the material, in kg. Steel: 7,850. Choose the material and the value fills in.'],
+'r:Masse unitaire': ['Unit mass', 'The weight of one part.'],
+'r:Surface': ['Area', 'The area of the part, in square metres.'],
+'r:Masse au m² (épaisseur e)': ['Mass per m²', 'The weight of one square metre of this plate. Useful to compare with the supplier sheet.'],
+'r:Masse totale': ['Total mass', 'The weight of all parts: unit mass × quantity.'],
+'f:ct-r': ['Radius', 'For a plate or flat bar: the radius of the inside face. For a tube or round bar: the radius measured at the centre of the tube (centreline).'],
+'f:ct-a': ['Arc angle', 'The angle of the circle portion: 90° for a quarter circle, 180° for a half circle.'],
+'f:ct-e': ['Thickness t', 'The thickness of the plate or flat bar.'],
+'f:ct-k': ['K-factor', 'The position of the neutral axis (see the Bending help). For a large radius it is almost in the middle: K close to 0.5.'],
+'f:ck-c': ['Measured chord', 'Lay a straightedge on the rolled part: the chord is the length of straightedge between the two contact points.'],
+'f:ck-f': ['Measured rise', 'The gap between the straightedge and the part, measured at the middle of the chord.'],
+'r:Rayon extérieur': ['Outside radius', 'The radius of the outside face: inside radius + thickness.'],
+'r:Corde face intérieure': ['Inside chord', 'The straight length between the two ends of the arc, on the inside. Used to check the part.'],
+'r:Flèche face intérieure': ['Inside rise', 'The height of the arc at the middle of this chord, on the inside.'],
+'r:Corde face extérieure': ['Outside chord', 'The same, measured on the outside.'],
+'r:Flèche face extérieure': ['Outside rise', 'The height of the arc at the middle of the chord, on the outside.'],
+'r:Rayon mesuré': ['Measured radius', 'The real radius of your rolled part, from the chord and rise. Compare it with the radius you wanted.'],
+'f:pq-D': ['Header', 'The large pipe that receives the branch. Enter its outside diameter.'],
+'f:pq-d': ['Branch', 'The pipe that is welded onto the header. Enter its outside diameter.'],
+'f:pq-base': ['Calculation basis', 'Outside: the branch fits the outside of the header. Mean diameters: calculation in the middle of the thicknesses. Choose your shop practice.'],
+'f:pq-a': ['Angle between axes', 'The angle between the centreline of the header and that of the branch. 90° for a square branch.'],
+'f:pq-e': ['Axis offset', 'How far the branch axis is moved away from the header axis. 0 if both axes cross (centred branch).'],
+'f:pq-L': ['Length to axis L', 'The distance along the branch axis, from the header axis to the square end of the branch.'],
+'f:pq-n': ['Number of lines', 'Lines are straight lines drawn along the pipe, evenly spaced. The more there are, the more accurate the cut curve. 12 is often enough.'],
+'r:Largeur du développé (2πr)': ['Pattern width', 'The length of the plate strip to roll for the branch: its circumference.'],
+'r:Rayons de calcul R / r': ['Calculation radii', 'The header and branch radii used for the calculation.'],
+'r:Génératrice la plus longue': ['Longest line', 'The largest height to mark on the pattern.'],
+'r:Génératrice la plus courte': ['Shortest line', 'The smallest height to mark.'],
+'r:Écart (profondeur de la découpe)': ['Difference', 'Longest minus shortest line: the depth of the fish-mouth cut.'],
+'r:Trou : développé sur le collecteur': ['Hole width', 'The width of the hole to cut in the header, measured along its curve (with a tape).'],
+'r:Trou : longueur le long du collecteur': ['Hole length', 'The length of the hole along the header axis.'],
+'t:Génér.': ['Line', 'The number of the line drawn on the pattern.'],
+'t:Abscisse': ['Position', 'Where the line sits along the strip, from the starting edge. Mark it on the square cut line.'],
+'t:Longueur': ['Length', 'The height to mark on this line, from the square cut. Then join the points with a smooth curve.'],
+'t:Angle t': ['Angle t', 'The position of the line around the pipe, in degrees.'],
+'t:Arc sur collecteur': ['Arc on header', 'To mark the hole: distance measured around the header, from its reference line.'],
+'t:Le long de l’axe': ['Along the axis', 'To mark the hole: distance measured along the header axis.'],
+'f:cd-d': ['Outside diameter', 'The outside diameter of the pipe.'],
+'f:cd-phi': ['Elbow angle', 'How far the elbow turns the pipe: 90° for a square elbow.'],
+'f:cd-R': ['Centreline radius R', 'The bend radius of the elbow, measured at the centre of the pipe.'],
+'f:cd-N': ['Number of pieces', 'How many sections make up the elbow. Both ends are half segments and each counts as one piece. More pieces make a rounder elbow.'],
+'f:cd-n': ['Lines', 'The number of lines drawn on the pipe to mark the cut. 12 is often enough.'],
+'f:cd-ld': ['Straight at ends', 'A straight length added at each end of the elbow, for welding to the pipe.'],
+'r:Angle de coupe par soudure': ['Cut angle', 'The tilt of each cut compared with a square cut. The two welded pipes turn together by twice this angle.'],
+'r:Pièces': ['Pieces', 'The total number of sections to cut.'],
+'r:Soudures': ['Welds', 'The number of weld joints between sections.'],
+'r:Déviation à chaque soudure': ['Turn', 'How far the pipe turns at each weld.'],
+'r:Largeur du gabarit (π × d)': ['Template width', 'The length of the template to wrap around the pipe: its circumference.'],
+'r:Demi-élément : intérieur / extérieur': ['Half segment', 'The lengths of the end section, on the inside of the elbow (shortest) and on the outside (longest).'],
+'r:Élément entier : intérieur / extérieur': ['Full segment', 'The lengths of a middle section, inside and outside.'],
+'t:Demi-élément': ['Half segment', 'The length to mark on each line for an end section.'],
+'t:Élément entier': ['Full segment', 'The length to mark on each line for a middle section.'],
+'h:Mon entreprise': ['My business', 'Your contact details, logo and official numbers. They appear at the top of every quote and stay on your phone.'],
+'f:dv-ent-niu': ['Tax ID / trade register', 'Your tax identification number and trade register number, if your business has them. Optional.'],
+'f:dv-num': ['Quote no.', 'The quote number. It goes up by itself with each new quote, but you can change it.'],
+'f:dv-valid': ['Validity', 'The number of days your prices stay valid. The end date appears on the quote.'],
+'f:dv-remise': ['Discount', 'A percentage taken off the total.'],
+'f:dv-tva-taux': ['VAT', 'Value added tax. Add it only if your business is liable. Ask an accountant if unsure.'],
+'h:Lignes du devis': ['Quote lines', 'Each line = one item of the job: material, cutting, welding… Quantity × unit price = amount. The “+” buttons add a line already named.'],
+'r:Sous-total': ['Subtotal', 'All lines added up, before discount and VAT.'],
+'r:Total HT': ['Total excl. VAT', 'The total after discount, without VAT.']
+};
+/* Correspondance libellé affiché → clé, en tolérant un suffixe variable (ex. « Remise (10 %) ») */
+const HELP_R = Object.keys(HELP).filter(k => k[1] === ':' && 'rth'.includes(k[0]));
+function helpKeyFor(kind, text){
+  const t = text.replace(/\s+/g, ' ').trim().replace(/'/g, '’');
+  const exact = kind + ':' + t; if (HELP[exact]) return exact;
+  const alt = kind + ':' + text.replace(/\s+/g, ' ').trim(); if (HELP[alt]) return alt;
+  return null;
+}
+const hlpBtn = (key, label) => {
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'hlp'; b.dataset.help = key; b.textContent = '?';
+  b.setAttribute('aria-label', (LANG === 'en' ? 'Help: ' : 'Aide : ') + label);
+  return b;
+};
+/* Ajoute les « ? » : champs et titres une fois au démarrage, résultats et colonnes à chaque nouveau rendu */
+function helpify(root){
+  root.querySelectorAll('label.f').forEach(l => {
+    if (l.querySelector('.hlp')) return;
+    const ctl = l.querySelector('input,select'); const key = ctl && 'f:' + ctl.id;
+    if (key && HELP[key]) { const b = l.querySelector('b'); if (b) b.append(hlpBtn(key, b.textContent.trim())); }
+  });
+  root.querySelectorAll('.box > h2, dl.kv > dt, .cote > .lbl, .tbl th').forEach(el => {
+    if (el.querySelector('.hlp') || (el.nextElementSibling && el.nextElementSibling.classList && el.nextElementSibling.classList.contains('hlp'))) return;
+    const kind = el.tagName === 'H2' ? 'h' : el.tagName === 'TH' ? 't' : 'r';
+    const key = helpKeyFor(kind, el.textContent);
+    if (key) el.append(hlpBtn(key, el.textContent.trim()));
+  });
+}
+/* Fiche d'aide : un seul panneau en bas de l'écran, fermé par « Compris », Échap ou un toucher à côté */
+let helpReturn = null;
+function openHelp(key, from){
+  const [t, d] = (LANG === 'en' && HELP_EN[key]) ? HELP_EN[key] : HELP[key];
+  $('help-t').textContent = t; $('help-d').textContent = d;
+  const fig = $('help-fig'), svg = from && guideSvgFor(from), k2 = cleanKey(key);
+  if (svg && hasKey(svg, k2)) { fig.replaceChildren(cloneLit(svg, k2)); fig.hidden = false; } else { fig.replaceChildren(); fig.hidden = true; }
+  helpReturn = from || null; $('help').hidden = false; $('help-ok').focus();
+}
+/* ===== Schéma vivant : la cote du champ touché s'allume ===== */
+const keyTokens = g => g.dataset.k.split(' ').map(x => x.replace(/\u00a0/g, ' '));
+function cleanKey(k){ return k.replace(/^f:pl-leg-([2-9]|\d\d+)$/, '').replace(/^f:pl-a-\d+$/, 'f:pl-a-0'); }
+function guideSvgFor(el){ const sec = el.closest('section.panel'); return sec && document.querySelector('#guide-' + sec.id.slice(2) + ' svg'); }
+function hasKey(svg, key){ return !!svg && [...svg.querySelectorAll('.gk')].some(g => keyTokens(g).includes(key)); }
+function lightUp(svg, key){
+  svg.classList.toggle('focus', !!key);
+  svg.querySelectorAll('.gk').forEach(g => g.classList.toggle('on', !!key && keyTokens(g).includes(key)));
+}
+function cloneLit(svg, key){ const c = svg.cloneNode(true); c.removeAttribute('class'); lightUp(c, key); return c; }
+let prevBox = null;
+function clearPreview(){ document.querySelectorAll('.cote-preview').forEach(x => x.remove()); document.querySelectorAll('.guide-svg.focus').forEach(s => lightUp(s, null)); prevBox = null; }
+document.addEventListener('focusin', e => {
+  const el = e.target; if (!el.id || !el.matches('input,select')) return;
+  const key = cleanKey('f:' + el.id), svg = guideSvgFor(el);
+  if (!key || !hasKey(svg, key)) { if (!el.closest('.box') || el.closest('.box') !== prevBox) clearPreview(); return; }
+  lightUp(svg, key);
+  const box = el.closest('.box'); if (!box) return;
+  let pv = box.querySelector(':scope > .cote-preview');
+  if (box !== prevBox) { clearPreview(); lightUp(svg, key); }
+  if (!pv) { pv = document.createElement('div'); pv.className = 'cote-preview'; pv.setAttribute('aria-hidden', 'true'); const h = box.querySelector(':scope > h2'); h ? h.after(pv) : box.prepend(pv); }
+  pv.replaceChildren(cloneLit(svg, key)); prevBox = box;
+});
+document.addEventListener('focusout', () => setTimeout(() => {
+  const a = document.activeElement;
+  if (!a || !a.matches || !a.matches('input,select') || !a.closest('.box') || a.closest('.box') !== prevBox) clearPreview();
+}, 150));
+function closeHelp(){ $('help').hidden = true; if (helpReturn) { try { helpReturn.focus(); } catch(e){} helpReturn = null; } }
+document.addEventListener('click', e => {
+  const b = e.target.closest('.hlp'); if (b) { e.preventDefault(); e.stopPropagation(); openHelp(b.dataset.help, b); return; }
+  if (!$('help').hidden && !e.target.closest('.help-card')) closeHelp();
+}, true);
+$('help-ok').addEventListener('click', closeHelp);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('help').hidden) closeHelp(); });
+
+helpify(document.body);
+/* Les résultats sont redessinés à chaque calcul : on y remet les « ? ». Cet observateur est créé avant celui de la
+   traduction, il lit donc les libellés en français avant qu'ils soient traduits. */
+new MutationObserver(ms => { const done = new Set(); ms.forEach(m => { const t = m.target; if (m.type === 'childList' && m.addedNodes.length && t.nodeType === 1 && !t.closest('#help, #dv-doc')) { const r = t.closest('label.f') ? t.closest('label.f').parentElement : t; if (!done.has(r)) { done.add(r); helpify(r); } } }); })
+  .observe(document.body, {childList: true, subtree: true});
+function relabelHelp(){ document.querySelectorAll('.hlp').forEach(b => { const k = b.dataset.help, h = (LANG === 'en' && HELP_EN[k]) ? HELP_EN[k] : HELP[k]; if (h) b.setAttribute('aria-label', (LANG === 'en' ? 'Help: ' : 'Aide : ') + h[0]); }); }
+
 /* ===== Préférences : langue et thème ===== */
 var RENDER = {pliage: () => { plCalc(); ktCalc(); klRender(); }, cone: () => cnCalc(), poids: () => pwCalc(), cintrage: () => { ctCalc(); klRender(); }, piquage: () => pqCalc(), coude: () => cdCalc(), devis: () => { dvRenderLines(); dvCalc(); }};
 var stale = new Set();
@@ -1772,7 +2108,7 @@ function setLang(l){
   LANG = l; store.set('lang', l);
   document.documentElement.lang = l;
   document.querySelectorAll('[data-lang]').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === l ? 'true' : 'false'));
-  recalcAll(); trNode(document.body);
+  recalcAll(); helpify(document.body); trNode(document.body); relabelHelp();
 }
 function setTheme(t){
   const r = document.documentElement;
